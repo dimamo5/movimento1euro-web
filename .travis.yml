@@ -5,3 +5,8 @@ node_js:
 branches:
   only:
   - master
+deploy:
+  provider: script
+  script: .travis/deploy.sh
+  on:
+    branch: master
