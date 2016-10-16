@@ -5,8 +5,9 @@ set -xe
 
 if [ $TRAVIS_BRANCH == "master" ] ; then
 
+    git checkout master
     git remote add deploy ssh://travis@ldso.diogomoura.me/var/repo/ldso.git
-    git push deploy
+    git push deploy master
 
 else
 
