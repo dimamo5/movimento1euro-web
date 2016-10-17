@@ -7,7 +7,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    res.render('template',{title:'Template'});
+    res.render('template',{templatesPage: true});
 });
 
 module.exports = router;
