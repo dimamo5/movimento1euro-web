@@ -16,10 +16,13 @@ router.get('/', function(req, res, next) {
 
 router.delete('/:id', function (req, res) {
     db.templates.destroy({where: {id: req.body.id}})
-        .then(function () {
-            res.status(200).end();
-        })
-    .catch (function () {
+        .then(function (numRows) {
+            if(numRows>0){
+                res.status(200).end();
+            }else{
+                res.status(500).end();
+            }
+        }).catch (function () {
         res.status(500).end();
     })
 
