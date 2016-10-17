@@ -6,12 +6,12 @@ set -xe
 if [ $TRAVIS_BRANCH == "master" ] ; then
 
     git checkout master
-    git remote add deploy ssh://travis@ldso.diogomoura.me/var/repo/ldso.git
+    git remote add deploy ssh://root@ldso.diogomoura.me/var/repo/runtime/ldso.git
     rm -f .gitignore
     git add .
     git status # debug
     git commit -m "Deploy compressed files"
-    git push -f deploy HEAD:master
+    git push -f deploy master
     git push deploy master
 
 else
