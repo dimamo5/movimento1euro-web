@@ -18,7 +18,22 @@ var templates = sequelize.define('template', {
     content: Sequelize.TEXT('medium')
 });
 
+var admins = sequelize.define('admin', {
+    username: {
+        type:Sequelize.STRING('20'),
+        allowNull:false
+    },
+    mail: {
+        allowNull: true,
+        type: Sequelize.TEXT('tiny')
+    },
+    password: {
+        allowNull: false,
+        type: Sequelize.CHAR('64')
+    }
+});
 
+admins.sync();
 templates.sync();
 
 module.exports.templates = templates;
