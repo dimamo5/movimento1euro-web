@@ -7,9 +7,9 @@ var db = require('../database/database.js')
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     db.templates.findAll().then(function (allTemplates) {
-        res.render('template',{templatesPage: true, templates: allTemplates});
+        res.render('template', {templatesPage: true, templates: allTemplates});
     });
 });
 
@@ -17,15 +17,27 @@ router.get('/', function(req, res, next) {
 router.delete('/:id', function (req, res) {
     db.templates.destroy({where: {id: req.body.id}})
         .then(function (numRows) {
-            if(numRows>0){
+            if (numRows > 0) {
                 res.status(200).end();
-            }else{
+            } else {
                 res.status(500).end();
             }
-        }).catch (function () {
+        }).catch(function () {
         res.status(500).end();
     })
+});
 
+router.put('/',function (req, res) {
+    db.templates.upsert({name: req.body.name, content: req.body.content})
+        .then(function (sucess) {
+            if (sucess)
+                res.status(200).end();
+            else
+                res.status(500).end();
+        })
+        .catch(function(){
+            res.status(500).end();
+        })
 });
 
 
