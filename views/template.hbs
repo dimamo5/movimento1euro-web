@@ -18,13 +18,43 @@
                 </div>
             </div>
             <!-- /.row -->
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkbox">
+                            <label class="col-md-2">
+                                <input type="checkbox" name="check">
+                            </label>
+                        </div>
+                    </th>
+                    <th>Nome</th>
+                    <th>Conteúdo</th>
+                </tr>
+                </thead>
+                {{#with templates}}
+                    {{#each templates}}
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="checkbox">
+                                <label class="col-md-2">
+                                    <input type="checkbox" name="check">
+                                </label>
+                            </div>
+                        </td>
+                        <td>{{name}}</td>
+                        <td>{{content}}</td>
+                    </tr>
+                    </tbody>
+                    {{/each}}
+                {{/with}}
+            </table>
+            <!-- /.container-fluid -->
 
         </div>
-        <!-- /.container-fluid -->
+        <!-- /#page-wrapper -->
 
     </div>
-    <!-- /#page-wrapper -->
-
-</div>
 
 {{> footer }}
