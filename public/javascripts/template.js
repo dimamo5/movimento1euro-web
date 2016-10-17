@@ -10,5 +10,4 @@ if($templates.length>0){
 
         }
     }*/
-$('.page-header').append( "<p>Test</p>" );
 }

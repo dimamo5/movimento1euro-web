@@ -7,8 +7,10 @@ var db = require('../database/database.js')
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-    res.render('template', {templatesPage: true, templates: db.getAllTemplates()});
+router.get('/', function(req, res, next) {
+    db.templates.findAll().then(function (allTemplates) {
+        res.render('template',{templatesPage: true, templates: allTemplates});
+    });
 });
 
 
