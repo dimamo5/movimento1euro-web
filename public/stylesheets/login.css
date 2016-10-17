@@ -1,24 +1,17 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
-
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 .login-page {
-  width: 360px;
-  padding: 8% 0 0;
+  /*width: 360px;
+  padding: 8% 0 0; */
   margin: auto;
 }
 .form {
+  background-color: #8DC26F;
   position: relative;
   z-index: 1;
-  background: #FFFFFF;
-  max-width: 360px;
+ /* background: #FFFFFF;*/
+  height: 400px;
+  width: 600px;
   margin: 0 auto 100px;
   padding: 45px;
   text-align: center;
@@ -30,10 +23,10 @@ a {
   background: #f2f2f2;
   width: 100%;
   border: 0;
-  margin: 0 0 15px;
-  padding: 15px;
+  margin: 0 0 20px;
+  padding: 30px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 20px;
 }
 .form button {
   font-family: "Roboto", sans-serif;
@@ -42,9 +35,9 @@ a {
   background: #4CAF50;
   width: 100%;
   border: 0;
-  padding: 15px;
+  padding: 30px;
   color: #FFFFFF;
-  font-size: 14px;
+  font-size: 25px;
   -webkit-transition: all 0.3 ease;
   transition: all 0.3 ease;
   cursor: pointer;
@@ -99,11 +92,11 @@ a {
   color: #EF3B3A;
 }
 body {
-  background: #76b852; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
-  background: -moz-linear-gradient(right, #76b852, #8DC26F);
-  background: -o-linear-gradient(right, #76b852, #8DC26F);
-  background: linear-gradient(to left, #76b852, #8DC26F);
+  background: white; /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, white, white);
+  background: -moz-linear-gradient(right, white, white);
+  background: -o-linear-gradient(right, white, white);
+  background: linear-gradient(to left, white, white);
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
