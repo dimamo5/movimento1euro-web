@@ -1,4 +1,4 @@
 # movimento1euro WEB APP
 LDSO Project
 Usefull links:
-- [Pivotal Tracker](pivotaltracker.com/n/projects/1880007)
+- [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/1880007)
