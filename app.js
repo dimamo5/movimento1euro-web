@@ -38,6 +38,13 @@ app.use(session({
 }));
 
 app.use('/', auth);
+app.use(function (req, res, next) {
+    if (req.session.id && req.session.username) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+});
 app.use('/templates', template);
 
 // catch 404 and forward to error handler
