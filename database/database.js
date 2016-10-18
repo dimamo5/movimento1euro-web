@@ -18,13 +18,14 @@ var templates = sequelize.define('template', {
     content: Sequelize.TEXT('medium')
 });
 
+
 var admins = sequelize.define('admin', {
     username: {
         type: Sequelize.STRING('20'),
         allowNull: false
     },
     name: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.TEXT('tiny')
     },
     password: {
