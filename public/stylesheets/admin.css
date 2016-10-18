@@ -225,3 +225,12 @@ ul.alert-dropdown {
 .panel-yellow > a:hover {
     color: #df8a13;
 }
+
+.header-page{
+    border-bottom: 1px solid #eee;
+}
+
+.crud{
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
