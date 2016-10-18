@@ -19,6 +19,25 @@ var templates = sequelize.define('template', {
 });
 
 
+var admins = sequelize.define('admin', {
+    username: {
+        type: Sequelize.STRING('20'),
+        allowNull: false
+    },
+    name: {
+        allowNull: false,
+        type: Sequelize.TEXT('tiny')
+    },
+    password: {
+        allowNull: false,
+        type: Sequelize.CHAR('64')
+    }
+});
+
+admins.findOrCreate({where: {username: 'root'}, defaults: {username: 'root', name: 'root', password: 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg='}});
+admins.sync();
 templates.sync();
 
+
 module.exports.templates = templates;
+module.exports.admins = admins;

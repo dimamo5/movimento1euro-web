@@ -22,9 +22,9 @@
    <img class="center-block" src="../images/M1Egif.gif">
     <div class="login-page center-block">
         <div class="form">
-            <form class="login-form">
-                <input type="text" placeholder="username"/>
-                <input type="password" placeholder="password"/>
+            <form class="login-form" method="POST" action="/process_login">
+                <input type="text" name="username" placeholder="username"/>
+                <input type="password" name="password" placeholder="password"/>
                 <button>login</button>
             </form>
         </div>

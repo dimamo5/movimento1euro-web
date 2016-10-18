@@ -6,7 +6,7 @@ var express = require('express');
 var db = require('../database/database.js')
 var router = express.Router();
 
-/* GET users listing. */
+/* GET templates listing. */
 router.get('/', function (req, res, next) {
     db.templates.findAll().then(function (allTemplates) {
         res.render('template', {templatesPage: true, templates: allTemplates});
@@ -15,7 +15,7 @@ router.get('/', function (req, res, next) {
 
 
 router.delete('/:id', function (req, res) {
-    db.templates.destroy({where: {id: req.body.id}})
+    db.templates.destroy({where: {id: req.params.id}})
         .then(function (numRows) {
             if (numRows > 0) {
                 res.status(200).end();
@@ -27,6 +27,7 @@ router.delete('/:id', function (req, res) {
     })
 });
 
+/* CREATE/UPDATE function*/
 router.put('/',function (req, res) {
     db.templates.upsert({name: req.body.name, content: req.body.content})
         .then(function (sucess) {
