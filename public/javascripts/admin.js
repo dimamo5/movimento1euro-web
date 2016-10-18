@@ -5,6 +5,7 @@ $(document).ready(function () {
     var table = new Vue({
         el: '#table',
         data: {
+            checkAll:false,
             templates: []
         },
         beforeCreate: function () {
@@ -14,15 +15,14 @@ $(document).ready(function () {
                 }
             })
         },
-        methods: {
+        watch:{
             checkAll: function () {
                 for (var i = 0; i < this.templates.length; i++) {
-                    if (this.templates[i]['select'] == false)
-                        this.templates[i]['select'] = true;
-                    else
-                        this.templates[i]['select'] = false;
+                    this.templates[i]['select'] = this.checkAll;
                 }
-            },
+            }
+        },
+        methods: {
             remove: function () {
                 var url = '/templates/';
                 for (var i = 0; i < this.templates.length; i++) {
