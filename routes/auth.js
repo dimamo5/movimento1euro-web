@@ -26,8 +26,10 @@ router.post('/process_login', function (req, res) {
     if (req.session.id && req.session.username) {
         res.redirect('/users');
     } else if (req.body.username && req.body.password) {
+        console.log(req.body.username,req.body.password);
         var username = req.body.username;
         var password = crypto.createHash('sha256').update(req.body.password).digest('base64');
+        console.log('password', password);
         db.admins.findOne({
                 where: {
                     password: password,
@@ -38,23 +40,26 @@ router.post('/process_login', function (req, res) {
             if (admin) {
                 req.session.id = admin.id;
                 req.session.username = admin.username;
-                res.status(200).end();
+                res.redirect('/users');
             } else {
-                res.status(403).end();
+                res.redirect('/login?error=1');
             }
         }).catch(function () {
             res.status(500).end();
         })
     } else {
-        res.status(400).end();
+        res.redirect('/login');
     }
 });
 
-router.post('/logout', function (res, req) {
+router.get('/logout', function (req, res) {
     if (req.session.id && req.session.username) {
         req.session.destroy(function (err) {
             console.log("Error removing session: ", err);
-        })
+        });
+        res.redirect('/login');
+    }else{
+        res.redirect('/users');
     }
 });
 
