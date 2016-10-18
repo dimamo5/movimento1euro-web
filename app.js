@@ -3,7 +3,7 @@ var hbs = require('hbs');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var session = require('express-session')
+var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -38,6 +38,13 @@ app.use(session({
 }));
 
 app.use('/', auth);
+app.use(function (req, res, next) {
+    if (req.session.id && req.session.username) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+});
 app.use('/templates', template);
 
 // catch 404 and forward to error handler

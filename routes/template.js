@@ -6,11 +6,15 @@ var express = require('express');
 var db = require('../database/database.js')
 var router = express.Router();
 
-/* GET users listing. */
+/* GET templates listing. */
 router.get('/', function (req, res, next) {
+    res.render('template', {templatesPage: true});
+});
+
+router.get('/all', function (req, res) {
     db.templates.findAll().then(function (allTemplates) {
-        res.render('template', {templatesPage: true, templates: allTemplates});
-    });
+        res.json(allTemplates);
+    })
 });
 
 
@@ -18,7 +22,8 @@ router.delete('/:id', function (req, res) {
     db.templates.destroy({where: {id: req.params.id}})
         .then(function (numRows) {
             if (numRows > 0) {
-                res.status(200).end();
+                res.status(200);
+                res.json({removed:req.params.id})
             } else {
                 res.status(500).end();
             }
@@ -27,7 +32,8 @@ router.delete('/:id', function (req, res) {
     })
 });
 
-router.put('/',function (req, res) {
+/* CREATE/UPDATE function*/
+router.put('/', function (req, res) {
     db.templates.upsert({name: req.body.name, content: req.body.content})
         .then(function (sucess) {
             if (sucess)
@@ -35,7 +41,7 @@ router.put('/',function (req, res) {
             else
                 res.status(500).end();
         })
-        .catch(function(){
+        .catch(function () {
             res.status(500).end();
         })
 });

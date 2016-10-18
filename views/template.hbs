@@ -7,8 +7,7 @@
 
     <div id="page-wrapper">
 
-        <div class="container-fluid">
-
+        <div class="container-fluid" id="table">
             <!-- Page Heading -->
             <div class="row header-page">
                 <h1 class="col-lg-6">
@@ -17,7 +16,7 @@
                 <div class="col-lg-6 text-right crud">
                     <button type="button" class="btn btn-default">Criar</button>
                     <button type="button" class="btn btn-default">Editar</button>
-                    <button type="button" class="btn btn-default">Remover</button>
+                    <button v-on:click="remove" type="button" class="btn btn-default">Remover</button>
                 </div>
             </div>
             <!-- /.row -->
@@ -25,9 +24,9 @@
                 <thead>
                 <tr>
                     <th>
-                        <div class="checkbox">
+                        <div class="checkboxForAll">
                             <label class="col-md-2">
-                                <input type="checkbox" name="check">
+                                <input v-on:click="checkAll" type="checkbox" name="check">
                             </label>
                         </div>
                     </th>
@@ -35,23 +34,17 @@
                     <th>Conteúdo</th>
                 </tr>
                 </thead>
-                {{#with templates}}
-                    {{#each templates}}
-                        <tbody>
-                        <tr>
-                            <td>
-                                <div class="checkbox">
-                                    <label class="col-md-2">
-                                        <input type="checkbox" name="check">
-                                    </label>
-                                </div>
-                            </td>
-                            <td>{{name}}</td>
-                            <td>{{content}}</td>
-                        </tr>
-                        </tbody>
-                    {{/each}}
-                {{/with}}
+                <tbody>
+                    <tr v-for="template in templates">
+                        <td class="checkboxForAll">
+                            <label class="col-md-2">
+                                <input type="checkbox" name="check" v-model="template.select">
+                            </label>
+                        </td>
+                        <td>\{{template.name}}</td>
+                        <td>\{{template.content}}</td>
+                    </tr>
+                </tbody>
             </table>
             <!-- /.container-fluid -->
 
