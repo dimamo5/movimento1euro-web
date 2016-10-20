@@ -3,9 +3,11 @@
 # print outputs and exit on first failure
 set -xe
 
-if [ $TRAVIS_BRANCH == "master" ] ; then
+if [ "{$TRAVIS_BRANCH}" == "master" ] ; then
 
     git checkout master
+    git config user.name "Travis CI"
+    git config user.email "travis@ldso.diogomoura.me"
     git remote add deploy ssh://root@ldso.diogomoura.me/var/repo/ldso.git
     rm -f .gitignore
     git add .
