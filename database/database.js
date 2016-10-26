@@ -2,9 +2,11 @@
  * Created by diogo on 16/10/2016.
  */
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize('ldso', 'ldso', 'mypass', {
-    host: 'ldso.diogomoura.me',
-    port: 3306,
+var config= require('config');
+var dbConfig=config.get('dbConfig');
+var sequelize = new Sequelize(dbConfig.database, 'ldso', 'mypass', {
+    host: dbConfig.host,
+    port: dbConfig.port,
     dialect: 'mysql',
     pool: {
         max: 5,
