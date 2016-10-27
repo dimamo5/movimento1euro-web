@@ -4,8 +4,8 @@
 
 /*establishing Connection*/
 var Sequelize = require('sequelize');
-var config= require('config');
-var dbConfig=config.get('dbConfig');
+var config = require('config');
+var dbConfig = config.get('dbConfig');
 var sequelize = new Sequelize(dbConfig.database, 'ldso', 'mypass', {
     host: dbConfig.host,
     port: dbConfig.port,
@@ -48,7 +48,7 @@ var mobileAppUsers = sequelize.define('mobile_app_users', {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW
     },
-    token:{
+    token: {
         allowNull: false,
         type: Sequelize.STRING(24)
     }
@@ -68,7 +68,7 @@ var alerts = sequelize.define('alert', {
         type: Sequelize.BOOLEAN
     },
     //the alert should start 1<X<28 days before
-    start_alert:{
+    start_alert: {
         allowNull: false,
         type: Sequelize.INTEGER,
         max: 28,                  // only allow values
@@ -76,13 +76,13 @@ var alerts = sequelize.define('alert', {
     },
     //notification alert repetition periodicity till the due date
     repetition_periodicity: {
-       allowNull: false,
-       type: Sequelize.STRING(24)
-   }
+        allowNull: false,
+        type: Sequelize.STRING(24)
+    }
 });
 
 var messages = sequelize.define('message', {
-    msg_type:{
+    msg_type: {
         allowNull: false,
         type: Sequelize.ENUM('Manual', 'Template', 'Alert')
     },
@@ -92,26 +92,72 @@ var messages = sequelize.define('message', {
 });
 
 //association between users/Msgs
-var seenMessages = sequelize.define('seen_msg',{
-   seen: {
-       allowNull: false,
-       type: Sequelize.BOOLEAN
-   }
+var seenMessages = sequelize.define('seen_msg', {
+    seen: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+    }
 });
 
 /* Relation specification */
 messages.belongsToMany(mobileAppUsers, {through: seenMessages});
 mobileAppUsers.belongsToMany(messages, {through: seenMessages});
 templates.hasMany(messages);
-//TODO add 0..1 associations
+alerts.hasOne(templates);
 
+//============ WP Database Simulation ================
+
+var wpUsers = sequelize.define('wp_users', {
+    name: {
+        allowNull: false,
+        type: Sequelize.TEXT('tiny')
+    },
+    mail: {
+        allowNull: false,
+        type: Sequelize.TEXT('tiny'),
+        validate: {
+            isEmail: true            // checks for email format (foo@bar.com)
+        }
+    },
+    password: {
+        allowNull: false,
+        type: Sequelize.TEXT('tiny')
+    }
+
+});
+
+var wpCauses = sequelize.define('wp_causes', {
+    name: {
+        allowNull: false,
+        type: Sequelize.TEXT('tiny')
+    },
+    description: {
+        allowNull: false,
+        type: Sequelize.TEXT('medium')
+    },
+    month: {
+        allowNull: false,
+        type: Sequelize.TEXT('tiny')
+    },
+    winner: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+    }
+});
+
+var wpCausesUsers = sequelize.define('wp_causes_users', {});
+
+wpCauses.belongsToMany(wpUsers, {through: wpCausesUsers});
+wpUsers.belongsToMany(wpCauses, {through: wpCausesUsers});
 
 //admin creation for dev purpose //Todo remove this code
-admins.findOrCreate({where: {username: 'root'}, defaults: {username: 'root', name: 'root', password: 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg='}});
+admins.findOrCreate({
+    where: {username: 'root'},
+    defaults: {username: 'root', name: 'root', password: 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg='}
+});
 
 //sincrioniza todas as tabelas
 sequelize.sync();
 
 
-module.exports.templates = templates;
-module.exports.admins = admins;
+module.exports = {admins,mobileAppUsers,templates,alerts,messages,wpUsers,wpCauses};

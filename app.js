@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 
 var auth = require('./routes/auth');
 var template = require('./routes/template');
+var api = require('./routes/api');
 
 var app = express();
 
@@ -45,6 +46,7 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
+app.use('/api', api);
 app.use('/templates', template);
 
 // catch 404 and forward to error handler
