@@ -50,7 +50,7 @@ var mobileAppUsers = sequelize.define('mobile_app_users', {
     },
     token: {
         allowNull: true,
-        defaultValue:null,
+        defaultValue: null,
         type: Sequelize.STRING(24)
     }
 });
@@ -123,8 +123,13 @@ var wpUsers = sequelize.define('wp_users', {
     password: {
         allowNull: false,
         type: Sequelize.TEXT('tiny')
-    }
-
+    },
+    lastPayment: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+    },
+    facebook: Sequelize.TEXT('medium')
 });
 
 var wpCauses = sequelize.define('wp_causes', {
@@ -161,4 +166,4 @@ admins.findOrCreate({
 sequelize.sync();
 
 
-module.exports = {admins,mobileAppUsers,templates,alerts,messages,wpUsers,wpCauses};
+module.exports = {admins, mobileAppUsers, templates, alerts, messages, wpUsers, wpCauses};
