@@ -13,4 +13,8 @@ function getUser(mail, password, next) {
     }
 }
 
+
+function generateToken() {
+
+}
 module.exports.getUser=getUser;

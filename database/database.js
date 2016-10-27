@@ -49,7 +49,8 @@ var mobileAppUsers = sequelize.define('mobile_app_users', {
         defaultValue: Sequelize.NOW
     },
     token: {
-        allowNull: false,
+        allowNull: true,
+        defaultValue:null,
         type: Sequelize.STRING(24)
     }
 });
