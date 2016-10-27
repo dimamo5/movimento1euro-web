@@ -3,7 +3,7 @@
 # print outputs and exit on first failure
 set -xe
 
-if [ "{$TRAVIS_BRANCH}" == "master" ] ; then
+if [ "$TRAVIS_BRANCH" = "master" ] ; then
 
     git checkout master
     git config user.name "Travis CI"
@@ -16,7 +16,7 @@ if [ "{$TRAVIS_BRANCH}" == "master" ] ; then
     git push -f deploy master
     echo "d14618518m0ura\n"
 
-elif [ "{$TRAVIS_BRANCH}" == "develop" ] ; then
+elif [ "$TRAVIS_BRANCH" = "develop" ] ; then
 
     git checkout develop
     git config user.name "Travis CI"
