@@ -110,8 +110,7 @@ templates.hasMany(messages);
 admins.findOrCreate({where: {username: 'root'}, defaults: {username: 'root', name: 'root', password: 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg='}});
 
 //sincrioniza todas as tabelas
-admins.sync();
-templates.sync();
+sequelize.sync();
 
 
 module.exports.templates = templates;
