@@ -1,7 +1,7 @@
 {
   "dbConfig":{
-    "host":"ldso.diogomoura.me",
-    "port": 3306,
+    "host":"localhost",
+    "port": 36791,
     "database":"ldso"
   },
   "serverConfig":{
