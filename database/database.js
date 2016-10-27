@@ -95,7 +95,7 @@ var messages = sequelize.define('message', {
 var seenMessages = sequelize.define('seen_msg',{
    seen: {
        allowNull: false,
-       type: sequelize.BOOLEAN
+       type: Sequelize.BOOLEAN
    }
 });
 
