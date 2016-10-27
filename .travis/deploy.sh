@@ -18,16 +18,15 @@ if [ "$TRAVIS_BRANCH" = "master" ] ; then
 
 elif [ "$TRAVIS_BRANCH" = "develop" ] ; then
 
-    git checkout master
+    git checkout develop
     git config user.name "Travis CI"
     git config user.email "travis@ldso.diogomoura.me"
-    git remote add deploy ssh://root@ldso.diogomoura.me/var/repo_staging/ldso.git
+    git remote add deploy ssh://travis@ldso.diogomoura.me/var/repo_staging/ldso.git
     rm -f .gitignore
     git add .
     git status # debug
     git commit -m "Deploy compressed files"
     git push -f deploy master
-    echo "d14618518m0ura\n"
 
 else
 

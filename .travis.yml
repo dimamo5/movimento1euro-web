@@ -9,5 +9,7 @@ deploy:
   provider: script
   skip_cleanup: true
   script: .travis/deploy.sh
+  on:
+    all_branches: true
 addons:
   ssh_known_hosts: ldso.diogomoura.me
