@@ -11,6 +11,15 @@ router.get('/', function (req, res, next) {
     res.render('template', {templatesPage: true});
 });
 
+/**
+ * @api {get} /all Gets all templates
+ * @apiName GetAllTemplates
+ * @apiGroup Templates
+ *
+ * @apiSuccess {String} name Name of the Template
+ * @apiSuccess {String} content Content of the Template
+ * @apiSuccess {Number} id Id of the Template
+ */
 router.get('/all', function (req, res) {
     db.templates.findAll().then(function (allTemplates) {
         res.json(allTemplates);
