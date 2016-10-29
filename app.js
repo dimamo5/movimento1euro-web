@@ -47,7 +47,7 @@ app.use(function (req, res, next) {
     }
 });
 app.use('/api', api);
-app.use('/templates', template);
+app.use('/Template', template);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

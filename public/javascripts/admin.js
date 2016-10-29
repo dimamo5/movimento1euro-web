@@ -9,32 +9,32 @@ $(document).ready(function () {
             templates: []
         },
         beforeCreate: function () {
-            $.get('/templates/all', (data)=> {
+            $.get('/Template/all', (data)=> {
                 for (var i = 0; i < data.length; i++) {
-                    this.templates.push({select: false, id: data[i].id, name: data[i].name, content: data[i].content});
+                    this.Template.push({select: false, id: data[i].id, name: data[i].name, content: data[i].content});
                 }
             })
         },
         watch:{
             checkAll: function () {
-                for (var i = 0; i < this.templates.length; i++) {
-                    this.templates[i]['select'] = this.checkAll;
+                for (var i = 0; i < this.Template.length; i++) {
+                    this.Template[i]['select'] = this.checkAll;
                 }
             }
         },
         methods: {
             remove: function () {
-                var url = '/templates/';
-                for (var i = 0; i < this.templates.length; i++) {
-                    if (this.templates[i].select) {
-                        var id = this.templates[i].id;
+                var url = '/Template/';
+                for (var i = 0; i < this.Template.length; i++) {
+                    if (this.Template[i].select) {
+                        var id = this.Template[i].id;
                         $.ajax({
                             url: url + id,
                             type: 'DELETE',
                             success: (data)=> {
-                                for (var i = 0; this.templates.length; i++) {
-                                    if (this.templates[i].id == data['removed']) {
-                                        this.templates.splice(i, 1);
+                                for (var i = 0; this.Template.length; i++) {
+                                    if (this.Template[i].id == data['removed']) {
+                                        this.Template.splice(i, 1);
                                     }
                                 }
                             }

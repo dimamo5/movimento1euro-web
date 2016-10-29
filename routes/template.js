@@ -6,29 +6,29 @@ var express = require('express');
 var db = require('../database/database.js')
 var router = express.Router();
 
-/* GET templates listing. */
+/* GET Template listing. */
 router.get('/', function (req, res, next) {
     res.render('template', {templatesPage: true});
 });
 
 /**
- * @api {get} /all Gets all templates
+ * @api {get} /all Gets all Template
  * @apiName GetAllTemplates
- * @apiGroup Templates
+ * @apiGroup Template
  *
  * @apiSuccess {String} name Name of the Template
  * @apiSuccess {String} content Content of the Template
  * @apiSuccess {Number} id Id of the Template
  */
 router.get('/all', function (req, res) {
-    db.templates.findAll().then(function (allTemplates) {
+    db.Template.findAll().then(function (allTemplates) {
         res.json(allTemplates);
     })
 });
 
 
 router.delete('/:id', function (req, res) {
-    db.templates.destroy({where: {id: req.params.id}})
+    db.Template.destroy({where: {id: req.params.id}})
         .then(function (numRows) {
             if (numRows > 0) {
                 res.status(200);
@@ -43,7 +43,7 @@ router.delete('/:id', function (req, res) {
 
 /* CREATE/UPDATE function*/
 router.put('/', function (req, res) {
-    db.templates.upsert({name: req.body.name, content: req.body.content})
+    db.Template.upsert({name: req.body.name, content: req.body.content})
         .then(function (sucess) {
             if (sucess)
                 res.status(200).end();
