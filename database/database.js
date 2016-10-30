@@ -422,6 +422,7 @@ function populateDB() {
         wpCauses2.save(), wpCauses3.save(), wpCauses4.save(), wpCauses5.save(), wpCauses6.save(), wpCauses7.save(),
         wpCauses8.save()])
         .then(function () {
+            //votacoes deste mes
             wpCauses6.setWpUsers([wpUser1, wpUser3, wpUser5, wpUser6]);
             wpCauses7.setWpUsers([wpUser8, wpUser10]);
             wpCauses8.setWpUsers([wpUser9]);
