@@ -4,11 +4,11 @@ var apiWrapper = require('../database/api_wrapper');
 var crypto = require('crypto');
 var router = express.Router();
 
-router.get('/login', function (req, res) {
+router.post('/login', function (req, res) {
     if (req.body.mail && req.body.password) {
         apiWrapper.getUser(req.body.mail, req.body.password, function (result) {
             if (result) {
-                db.mobileAppUsers.findOne({
+                db.AppUser.findOne({
                     where: {
                         external_link_id: result.id
                     }
@@ -19,6 +19,8 @@ router.get('/login', function (req, res) {
                         else {
                             crypto.randomBytes(48, function (err, buffer) {
                                 var token = buffer.toString('hex');
+                                result.token = token;
+                                result.save().then(res.json({result: 'success', token: token, id: result.id, name: result.name}))
                             });
                         }
                     }
@@ -34,10 +36,15 @@ router.get('/login', function (req, res) {
 ;
 
 router.get('/logout/:id', function (req, res) {
-    db.mobileAppUsers.update({token: null},
-        {where: {id: req.params.id, token: req.body.token}})
+    var auth = req.get("Authorization");
+    if(!auth){
+        res.json({result: 'Authorization required'});
+        return;
+    }
+    db.AppUser.update({token: null},
+        {where: {id: req.params.id, token: auth}})
         .then(function (results) {
-            if (results[0] > 0) {
+            if (results.length > 0) {
                 res.json({result: 'success'});
             } else {
                 res.json({result: 'error login out'})

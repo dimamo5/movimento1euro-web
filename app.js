@@ -39,6 +39,7 @@ app.use(session({
 }));
 
 app.use('/', auth);
+app.use('/api', api);
 app.use(function (req, res, next) {
     if (req.session.id && req.session.username) {
         next();
@@ -46,8 +47,7 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
-app.use('/api', api);
-app.use('/Template', template);
+app.use('/template', template);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
