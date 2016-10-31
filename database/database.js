@@ -166,7 +166,11 @@ function populateDB() {
 //admin creation for dev purpose
     Admin.findOrCreate({
         where: {username: 'root'},
-        defaults: {username: 'root', name: 'root', password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'}
+        defaults: {
+            username: 'root',
+            name: 'root',
+            password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
+        }
     });
 
     //Pass de todos é 123
@@ -414,7 +418,7 @@ function populateDB() {
             appUser1.setMessages([msg1], {seen: true}); //enviar mensagem manual
             appUser1.setMessages([msg4], {seen: true}); //enviar mensagem manual
             appUser3.setMessages([msg6], {seen: false}); //enviar mensagem manual
-            msg5.setAppUsers([appUser2,appUser4,appUser5,appUser6,appUser7], {seen: false}) //mesma mensagem template para multiplos utilizadores
+            msg5.setAppUsers([appUser2, appUser4, appUser5, appUser6, appUser7], {seen: false}) //mesma mensagem template para multiplos utilizadores
 
         });
     Promise.all([wpUser1.save(), wpUser2.save(), wpUser3.save(), wpUser4.save(), wpUser5.save(),
@@ -432,9 +436,16 @@ function populateDB() {
 
 
 //sincrioniza todas as tabelas
-sequelize.sync({force: true})
-    .then(function () {
-        populateDB();
-    });
+function clear() {
+    return sequelize.sync({force: true});
+}
 
-module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause};
+if (process.env.NODE_ENV == 'development') {
+    clear()
+        .then(function () {
+            populateDB();
+        });
+}
+
+
+module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, clear};
