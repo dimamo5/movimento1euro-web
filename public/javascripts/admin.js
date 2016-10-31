@@ -9,7 +9,7 @@ $(document).ready(function () {
             templates: []
         },
         beforeCreate: function () {
-            $.get('/templates/all', (data)=> {
+            $.get('/templates/api', (data)=> {
                 for (var i = 0; i < data.length; i++) {
                     this.templates.push({select: false, id: data[i].id, name: data[i].name, content: data[i].content});
                 }
@@ -24,7 +24,7 @@ $(document).ready(function () {
         },
         methods: {
             remove: function () {
-                var url = '/templates/';
+                var url = '/templates/api/';
                 for (var i = 0; i < this.templates.length; i++) {
                     if (this.templates[i].select) {
                         var id = this.templates[i].id;
