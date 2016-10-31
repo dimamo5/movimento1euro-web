@@ -12,27 +12,28 @@ router.get('/', function (req, res, next) {
 });
 
 /**
- * @api {get} /all Gets all Template
+ * @api {get} templates/api/ Gets all templates
  * @apiName GetAllTemplates
- * @apiGroup Template
+ * @apiGroup Templates
+ * @apiHeader {Number} cookieId User must login to receive cookieID
  *
  * @apiSuccess {String} name Name of the Template
  * @apiSuccess {String} content Content of the Template
  * @apiSuccess {Number} id Id of the Template
  */
-router.get('/all', function (req, res) {
-    db.Template.findAll().then(function (allTemplates) {
-        res.json(allTemplates);
+router.get('/api', function (req, res) {
+    db.templates.findAll().then(function (allTemplates) {
+        res.json({result: 'success', templates: allTemplates});
     })
 });
 
 
-router.delete('/:id', function (req, res) {
-    db.Template.destroy({where: {id: req.params.id}})
+router.delete('/api/:id', function (req, res) {
+    db.templates.destroy({where: {id: req.params.id}})
         .then(function (numRows) {
             if (numRows > 0) {
                 res.status(200);
-                res.json({removed:req.params.id})
+                res.json({removed: req.params.id})
             } else {
                 res.status(500).end();
             }
@@ -41,9 +42,23 @@ router.delete('/:id', function (req, res) {
     })
 });
 
-/* CREATE/UPDATE function*/
-router.put('/', function (req, res) {
-    db.Template.upsert({name: req.body.name, content: req.body.content})
+/* CREATE function*/
+router.put('/api/', function (req, res) {
+    db.templates.upsert({name: req.body.name, content: req.body.content})
+        .then(function (sucess) {
+            if (sucess)
+                res.status(200).end();
+            else
+                res.status(500).end();
+        })
+        .catch(function () {
+            res.status(500).end();
+        })
+})
+;
+// CREATE function
+router.put('/api/:id', function (req, res) {
+    db.templates.upsert({name: req.body.name, content: req.body.content})
         .then(function (sucess) {
             if (sucess)
                 res.status(200).end();
@@ -54,6 +69,5 @@ router.put('/', function (req, res) {
             res.status(500).end();
         })
 });
-
 
 module.exports = router;
