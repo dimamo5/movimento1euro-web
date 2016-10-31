@@ -166,7 +166,7 @@ function populateDB() {
 //admin creation for dev purpose
     Admin.findOrCreate({
         where: {username: 'root'},
-        defaults: {username: 'root', name: 'root', password: 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg='}
+        defaults: {username: 'root', name: 'root', password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'}
     });
 
     //Pass de todos é 123
