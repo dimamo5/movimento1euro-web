@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 describe('Authenticate User', function () {
 
-    this.timeout(5000)
+    this.timeout(25000);
     var token;
     before(function (done) {
         var appUser1 = db.AppUser.build({
