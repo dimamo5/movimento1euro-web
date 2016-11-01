@@ -2,7 +2,8 @@
   "dbConfig":{
     "host":"ldso.diogomoura.me",
     "port": 3306,
-    "database":"ldso_staging"
+    "database":"ldso_staging",
+    "logging":true
   },
   "serverConfig":{
     "port":3001

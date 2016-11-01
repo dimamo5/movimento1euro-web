@@ -9,6 +9,7 @@ var dbConfig = config.get('dbConfig');
 var sequelize = new Sequelize(dbConfig.database, 'ldso', 'mypass', {
     host: dbConfig.host,
     port: dbConfig.port,
+    logging:dbConfig.logging,
     dialect: 'mysql',
     pool: {
         max: 5,

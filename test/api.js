@@ -88,7 +88,6 @@ describe('Authenticate User', function () {
             .set('Authorization', token)
             .end(function (err, res) {
                 expect(res).to.have.status(200);
-                console.log(res)
                 expect(res).to.be.json;
                 expect(res.body).to.have.property('result');
                 expect(res.body.result).to.be.equal('success');
