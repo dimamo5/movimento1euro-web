@@ -11,6 +11,7 @@ var router = express.Router();
  * Authentication for future calls to the API
  * @apiName Login
  * @apiGroup Authentication
+ * @apiVersion 0.1.0
  *
  * @apiParam {String} mail User Mail
  * @apiParam {String} password User Password
@@ -70,8 +71,8 @@ router.post('/login', function (req, res) {
  * @apiDescription Logout user by disabling his token and no future calls can be made by that token
  * @apiName Logout
  * @apiGroup Authentication
+ * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
- *
  *
  * @apiSuccess {String} result Returns 'success'
  *
@@ -99,6 +100,7 @@ router.get('/logout', function (req, res) {
  * @apiDescription Obtains the past winners
  * @apiName Past Winner Causes
  * @apiGroup Causes
+ * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
  * @apiSuccess {String} result Returns 'success'
@@ -134,6 +136,7 @@ router.get('/winnerCauses', function (req, res) {
  * the backoffice
  * @apiName Firebase Token
  * @apiGroup Notifications
+ * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
  * @apiParam {String} token New Firebase token
@@ -168,6 +171,7 @@ router.put('/firebaseToken', function (req, res) {
  * @apiDescription Votes for a specific cause in the current month
  * @apiName VoteCause
  * @apiGroup Causes
+ * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
  * @apiParam {Number} id Id of the cause the user wishes to vote
@@ -205,6 +209,7 @@ router.post('/voteCause/:id', function (req, res) {
  * @apiDescription Obtains the causes that an user can vote in the current month
  * @apiName Voting Causes
  * @apiGroup Causes
+ * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
  * @apiSuccess {String} result Returns 'success'
