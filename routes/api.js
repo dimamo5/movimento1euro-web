@@ -78,21 +78,92 @@ router.post('/login', function (req, res) {
  *
  * @apiError {String} result Returns 'error'
  */
-router.get('/logout/:id', function (req, res) {
+router.get('/logout', function (req, res) {
+    var auth = req.get("Authorization");
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+    }else {
+        db.AppUser.update({token: null},
+            {where: {token: auth}})
+            .then(function (results) {
+                if (results.length > 0) {
+                    res.json({result: 'success'});
+                } else {
+                    res.json({result: 'error'})
+                }
+            })
+    }
+});
+
+router.get('/winnerCauses', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
         res.json({result: 'Authorization required'});
         return;
     }
-    db.AppUser.update({token: null},
-        {where: {id: req.params.id, token: auth}})
+    db.WpCause.findAll({
+        where: {
+            winner: true
+        }
+    })
         .then(function (results) {
-            if (results.length > 0) {
-                res.json({result: 'success'});
-            } else {
-                res.json({result: 'error'})
+            res.json(results)
+        })
+        .catch(res.json({result: 'error'}));
+});
+
+router.put('/firebaseToken', function (req, res) {
+    var auth = req.get("Authorization");
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+    } else if (!req.body.firebaseToken) {
+        res.json({result: 'Wrong params'})
+    } else {
+        db.WpUser.findOne({
+            where: {
+                token: auth
             }
         })
+            .then(function (result) {
+                result.firebase_token = req.body.firebaseToken;
+                result.save()
+                    .then(res.json({result: 'success'}));
+            })
+            .catch(res.json({result: 'error'}));
+    }
+});
+
+router.post('/voteCause/:id', function (req, res) {
+    var auth = req.get("Authorization");
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+    } else {
+        db.WpUser.findOne({
+            where: {
+                token: auth
+            }
+        })
+            .then(function (user) {
+                return db.WpCause.findOne({
+                    where: {
+                        id: req.params.id
+                    }
+                })
+                    .then(function (cause) {
+                        user.setWpCauses(cause);
+                    })
+            })
+            .catch(res.json({result: 'error'}));
+    }
+});
+
+router.get('/votingCauses/', function (req, res) {
+    var auth = req.get("Authorization");
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+    } else {
+        //TODO Fazer esta cena
+    }
 });
 
 module.exports = router;

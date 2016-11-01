@@ -53,7 +53,8 @@ var AppUser = sequelize.define('AppUser', {
         allowNull: true,
         defaultValue: null,
         type: Sequelize.STRING(96)
-    }
+    },
+    firebase_token:Sequelize.TEXT('tiny')
 });
 
 
