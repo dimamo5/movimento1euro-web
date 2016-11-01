@@ -66,13 +66,12 @@ router.post('/login', function (req, res) {
 ;
 
 /**
- * @api {get} /api/logout:id Logout
+ * @api {get} /api/logout Logout
  * @apiDescription Logout user by disabling his token and no future calls can be made by that token
  * @apiName Logout
  * @apiGroup Authentication
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {Number} id User Id
  *
  * @apiSuccess {String} result Returns 'success'
  *
@@ -112,6 +111,20 @@ router.get('/winnerCauses', function (req, res) {
         .catch(res.json({result: 'error'}));
 });
 
+/**
+ * @api {get} /api/firebaseToken Update firebase token
+ * @apiDescription In case of firebase giving a different token to push notifications, the mobile app should notify
+ * the server that the token has changed
+ * @apiName Firebase Token
+ * @apiGroup Notifications
+ * @apiHeader {String} Authorization User token
+ *
+ * @apiParam {String} token New Firebase token
+ *
+ * @apiSuccess {String} result Returns 'success'
+ *
+ * @apiError {String} result Returns 'error'
+ */
 router.put('/firebaseToken', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
