@@ -94,6 +94,22 @@ router.get('/logout', function (req, res) {
     }
 });
 
+/**
+ * @api {get} /api/winnerCauses Past Winner Causes
+ * @apiDescription Obtains the past winners
+ * @apiName Past Winner Causes
+ * @apiGroup Causes
+ * @apiHeader {String} Authorization User token
+ *
+ * @apiSuccess {String} result Returns 'success'
+ * @apiSuccess {Object[]} causes Array with all the causes
+ * @apiSuccess {Number} causes.year Year of the cause
+ * @apiSuccess {String} causes.name Name of the cause
+ * @apiSuccess {String} causes.description Description of the cause
+ * @apiSuccess {String} causes.month Month of the winning cause
+ *
+ * @apiError {String} result Returns the description of the error
+ */
 router.get('/winnerCauses', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
@@ -112,9 +128,10 @@ router.get('/winnerCauses', function (req, res) {
 });
 
 /**
- * @api {get} /api/firebaseToken Update firebase token
- * @apiDescription In case of firebase giving a different token to push notifications, the mobile app should notify
- * the server that the token has changed
+ * @api {put} /api/firebaseToken Update Firebase Token
+ * @apiDescription In case of firebase gives different token to push notifications, the mobile app should notify
+ * the server that the token has changed. If this token is outdated the user will not receive notifications sent by
+ * the backoffice
  * @apiName Firebase Token
  * @apiGroup Notifications
  * @apiHeader {String} Authorization User token
@@ -146,6 +163,19 @@ router.put('/firebaseToken', function (req, res) {
     }
 });
 
+/**
+ * @api {post} /api/voteCause/:id Vote for Cause
+ * @apiDescription Votes for a specific cause in the current month
+ * @apiName VoteCause
+ * @apiGroup Causes
+ * @apiHeader {String} Authorization User token
+ *
+ * @apiParam {Number} id Id of the cause the user wishes to vote
+ *
+ * @apiSuccess {String} result Returns 'success'
+ *
+ * @apiError {String} result Returns 'error'
+ */
 router.post('/voteCause/:id', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
@@ -170,6 +200,23 @@ router.post('/voteCause/:id', function (req, res) {
     }
 });
 
+/**
+ * @api {get} /api/votingCauses Causes in to vote
+ * @apiDescription Obtains the causes that an user can vote in the current month
+ * @apiName Voting Causes
+ * @apiGroup Causes
+ * @apiHeader {String} Authorization User token
+ *
+ * @apiSuccess {String} result Returns 'success'
+ * @apiSuccess {Object[]} causes Array with all the causes
+ * @apiSuccess {Number} causes.id Id of the cause
+ * @apiSuccess {Number} causes.year Year of the cause
+ * @apiSuccess {String} causes.month Month of the winning cause
+ * @apiSuccess {String} causes.name Name of the cause
+ * @apiSuccess {String} causes.description Description of the cause
+ *
+ * @apiError {String} result Returns the description of the error
+ */
 router.get('/votingCauses/', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
