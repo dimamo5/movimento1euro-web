@@ -2,6 +2,13 @@ language: node_js
 node_js:
   - "6.8.1"
   - "6.9"
+env:
+  - NODE_ENV=testing
+before_script:
+  - npm install -g mocha
+  - npm install -g istanbul
+install:
+  - npm install --save-dev
 branches:
   only:
   - master
