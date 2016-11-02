@@ -82,7 +82,7 @@ router.get('/logout', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
         res.json({result: 'Authorization required'});
-    }else {
+    } else {
         db.AppUser.update({token: null},
             {where: {token: auth}})
             .then(function (results) {
@@ -214,11 +214,6 @@ router.post('/voteCause/:id', function (req, res) {
  *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Object[]} causes Array with all the causes
- * @apiSuccess {Number} causes.id Id of the cause
- * @apiSuccess {Number} causes.year Year of the cause
- * @apiSuccess {String} causes.month Month of the winning cause
- * @apiSuccess {String} causes.name Name of the cause
- * @apiSuccess {String} causes.description Description of the cause
  *
  * @apiError {String} result Returns the description of the error
  */
@@ -227,8 +222,21 @@ router.get('/votingCauses/', function (req, res) {
     if (!auth) {
         res.json({result: 'Authorization required'});
     } else {
-        //TODO Fazer esta cena
+        db.WpCause.findAll({
+                where: {
+                    month: new Date().getMonth() + 1
+                }
+            }
+        )
+            .then(function (causes) {
+                res.json({result: 'success', causes: causes})
+            })
+            .catch(()=> {
+                    res.json({result: 'error'})
+                }
+            );
     }
 });
+
 
 module.exports = router;

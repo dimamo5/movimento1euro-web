@@ -82,6 +82,28 @@ describe('Authenticate User', function () {
             });
     });
 
+    it('should obtain the causes that an user can vote in the current month', function (done) {
+        chai.request(app)
+            .get('/votingCauses/')
+            .set('Authorization', token)
+            .end(function (err, res) {
+                db.WpCause.findAll({
+                        where: {
+                            month: new Date().getMonth() + 1
+                        }
+                    }
+                )
+                    .then(function (causes) {
+                        expect(res).to.have.status(200);
+                        expect(res).to.be.json;
+                        expect(res.body).to.have.property('result');
+                        expect(res.body.result).to.be.equal('success');
+                        res.json({result: 'success', causes: causes})
+                    })
+                done();
+            })
+    })
+
     it('should logout a user', function (done) {
         chai.request(app)
             .get('/api/logout')
@@ -93,7 +115,6 @@ describe('Authenticate User', function () {
                 expect(res.body.result).to.be.equal('success');
                 done();
             });
-
-
     });
+
 });

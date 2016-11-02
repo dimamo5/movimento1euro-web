@@ -18,7 +18,6 @@ var options = {
 };
 var sessionStore = new MySQLStore(options);
 
-
 var auth = require('./routes/auth');
 var template = require('./routes/template');
 var api = require('./routes/api');
