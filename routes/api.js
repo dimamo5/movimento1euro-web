@@ -151,17 +151,19 @@ router.put('/firebaseToken', function (req, res) {
     } else if (!req.body.firebaseToken) {
         res.json({result: 'Wrong params'})
     } else {
-        db.WpUser.findOne({
+        db.AppUser.findOne({
             where: {
                 token: auth
             }
         })
             .then(function (result) {
-                result.firebase_token = req.body.firebaseToken;
+                result.set('firebase_token',req.body.firebaseToken);
                 result.save()
                     .then(res.json({result: 'success'}));
             })
-            .catch(res.json({result: 'error'}));
+            .catch(()=>{
+                res.json({result: 'error'})
+            });
     }
 });
 
@@ -259,7 +261,7 @@ router.get('/votingCauses', function (req, res) {
  * @apiError {String} result Returns 'error'
  */
 router.put('/notificationSeen/:notificationId',function(req,res){
-
+    //TODO not a priority right now
 });
 
 module.exports = router;
