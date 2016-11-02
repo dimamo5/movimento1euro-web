@@ -84,7 +84,7 @@ describe('Authenticate User', function () {
 
     it('should obtain the causes that an user can vote in the current month', function (done) {
         chai.request(app)
-            .get('/votingCauses/')
+            .get('api/votingCauses/')
             .set('Authorization', token)
             .end(function (err, res) {
                 db.WpCause.findAll({
@@ -98,9 +98,10 @@ describe('Authenticate User', function () {
                         expect(res).to.be.json;
                         expect(res.body).to.have.property('result');
                         expect(res.body.result).to.be.equal('success');
-                        res.json({result: 'success', causes: causes})
+                        res.json({result: 'success', causes: causes});
+                        done();
                     })
-                done();
+                    .catch((err)=>done(err));
             })
     })
 

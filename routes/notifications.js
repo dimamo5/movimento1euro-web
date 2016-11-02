@@ -47,7 +47,3 @@ function sendToMany(ids, title, content, next) {
         }
     });
 }
-
-sendToMany(["ola1", "ola2"], "ola", "ola2", (err, status)=> {
-    console.log(err)
-});
