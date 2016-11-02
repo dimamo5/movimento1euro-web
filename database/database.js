@@ -9,7 +9,7 @@ var dbConfig = config.get('dbConfig');
 var sequelize = new Sequelize(dbConfig.database, 'ldso', 'mypass', {
     host: dbConfig.host,
     port: dbConfig.port,
-    logging:dbConfig.logging,
+    logging: dbConfig.logging,
     dialect: 'mysql',
     pool: {
         max: 5,
@@ -55,7 +55,7 @@ var AppUser = sequelize.define('AppUser', {
         defaultValue: null,
         type: Sequelize.STRING(96)
     },
-    firebase_token:Sequelize.TEXT('tiny')
+    firebase_token: Sequelize.TEXT('tiny')
 });
 
 
@@ -147,13 +147,16 @@ var WpCause = sequelize.define('WpCauses', {
     },
     month: {
         allowNull: false,
-        type: Sequelize.TEXT('tiny')
+        type: Sequelize.INTEGER,
+        max: 12,
+        min: 1
     },
     winner: {
         allowNull: false,
         type: Sequelize.BOOLEAN
     },
-    date: Sequelize.DATE
+    date: Sequelize.DATE,
+    image:Sequelize.TEXT('tiny')
 
 });
 
@@ -249,7 +252,7 @@ function populateDB() {
     var wpCauses1 = WpCause.build({
         name: 'Lar de Infância e Juventude Casa da Criança',
         description: 'A Casa da Criança é um Lar de Infância e Juventude (LIJ) e constitui uma das valências disponibilizadas à comunidade pela Santa Casa da Misericórdia do Peso da Régua (SCMPR). ',
-        month: 'janeiro',
+        month: '1',
         winner: true,
         date: new Date(2015, 1, 1, 10, 0, 0, 0)
     });
@@ -257,7 +260,7 @@ function populateDB() {
     var wpCauses2 = WpCause.build({
         name: 'ELO SOCIAL - IPSS',
         description: 'Elo Social – Associação para a Integração e Apoio ao Deficiente Jovem e Adulto, é uma Instituição Particular de Solidariedade Social, sediada em Lisboa, considerada Pessoa Coletiva de Utilidade Pública,...',
-        month: 'outubro',
+        month: '10',
         winner: true,
         date: new Date(2015, 10, 15, 11, 10, 0, 0)
     });
@@ -265,7 +268,7 @@ function populateDB() {
     var wpCauses3 = WpCause.build({
         name: 'ASSOCIAÇÃO NOVAMENTE',
         description: 'A Associação Novamente tem um grupo de interajuda, integrado por pessoas que passam pela mesma situação (TCE ou outra lesão cerebral adquirida), com vista a encontrar soluções pela partilha de experiências e troca de informações.',
-        month: 'Agosto',
+        month: '8',
         winner: false,
         date: new Date(2015, 8, 5, 18, 30, 0, 0)
     });
@@ -273,7 +276,7 @@ function populateDB() {
     var wpCauses4 = WpCause.build({
         name: ' Centro de Apoio Familiar e Aconselhamento Parental O FAROL ',
         description: 'No âmbito do Banco de Recursos, desenvolveu o projeto Grão a Grão que consiste na distribuição semanal de alimentos a 30 famílias carenciadas com crianças.  ',
-        month: 'janeiro',
+        month: '1',
         winner: false,
         date: new Date(2015, 1, 1, 10, 0, 0, 0)
     });
@@ -281,7 +284,7 @@ function populateDB() {
     var wpCauses5 = WpCause.build({
         name: 'Associação Alzheimer Portugal',
         description: 'Como membro da Alzheimer Europe a Associação participa ativamente no movimento europeu sobre as demências, procurando reunir e divulgar os conhecimentos mais recentes sobre a doença de Alzheimer, promovendo o seu estudo, a investigação das suas causas, efeitos, profilaxias e tratamentos.',
-        month: 'janeiro',
+        month: '1',
         winner: false,
         date: new Date(2015, 1, 1, 10, 0, 0, 0)
     });
@@ -289,7 +292,7 @@ function populateDB() {
     var wpCauses6 = WpCause.build({
         name: 'Lar da Boa Vontade',
         description: 'O Lar da Boa Vontade é uma residência adaptada para adultos com deficiência motora. Como tal é necessário a compra de material de Fisioterapia e Terapia Ocupacional, que promova não só a reabilitação motora, mas também as competências sociais e cognitivas dos nossos clientes, para que possam ser os mais independentes e funcionais possível!',
-        month: 'novembro',
+        month: '11',
         winner: false,
         date: new Date(2016, 11, 1, 10, 0, 0, 0)
     });
@@ -297,7 +300,7 @@ function populateDB() {
     var wpCauses7 = WpCause.build({
         name: 'Centro Raríssimo da Maia – Centro Multidisciplinar de Reabilitação Intensiva ',
         description: 'O Centro Raríssimo da Maia – Centro Multidisciplinar de Reabilitação Intensiva – presta serviços de saúde de excelência direcionados a portadores de deficiências mentais e raras. ',
-        month: 'novembro',
+        month: '11',
         winner: false,
         date: new Date(2016, 11, 1, 10, 0, 0, 0)
     });
@@ -305,7 +308,7 @@ function populateDB() {
     var wpCauses8 = WpCause.build({
         name: 'Elo Social – Associação para a Integração e Apoio às Pessoas com Deficiência Mental',
         description: 'Dado que apoiamos os mais diferentes níveis de deficiência mental – Ligeiro, Moderado, Grave e Profundo, muitos são os problemas físicos e orgânicos associados, sobretudo aos casos de paralisia cerebral e a outros mais dependentes, agudizados com o seu processo de envelhecimento. ',
-        month: 'novembro',
+        month: '11',
         winner: false,
         date: new Date(2016, 11, 1, 10, 0, 0, 0)
     });
