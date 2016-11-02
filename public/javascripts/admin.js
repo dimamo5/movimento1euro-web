@@ -5,26 +5,26 @@ $(document).ready(function () {
     var table = new Vue({
         el: '#table',
         data: {
+            checkAll:false,
             templates: []
         },
         beforeCreate: function () {
-            $.get('/templates/all', (data)=> {
+            $.get('/templates/api', (data)=> {
                 for (var i = 0; i < data.length; i++) {
                     this.templates.push({select: false, id: data[i].id, name: data[i].name, content: data[i].content});
                 }
             })
         },
-        methods: {
+        watch:{
             checkAll: function () {
                 for (var i = 0; i < this.templates.length; i++) {
-                    if (this.templates[i]['select'] == false)
-                        this.templates[i]['select'] = true;
-                    else
-                        this.templates[i]['select'] = false;
+                    this.templates[i]['select'] = this.checkAll;
                 }
-            },
+            }
+        },
+        methods: {
             remove: function () {
-                var url = '/templates/';
+                var url = '/templates/api/';
                 for (var i = 0; i < this.templates.length; i++) {
                     if (this.templates[i].select) {
                         var id = this.templates[i].id;

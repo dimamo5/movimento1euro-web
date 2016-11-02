@@ -28,9 +28,9 @@ router.post('/process_login', function (req, res) {
     } else if (req.body.username && req.body.password) {
         console.log(req.body.username,req.body.password);
         var username = req.body.username;
-        var password = crypto.createHash('sha256').update(req.body.password).digest('base64');
+        var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
         console.log('password', password);
-        db.admins.findOne({
+        db.Admin.findOne({
                 where: {
                     password: password,
                     username: username

@@ -14,11 +14,12 @@
                     Templates de Notificações
                 </h1>
                 <div class="col-lg-6 text-right crud">
-                    <button type="button" class="btn btn-default">Criar</button>
-                    <button type="button" class="btn btn-default">Editar</button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Criar</button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Editar</button>
                     <button v-on:click="remove" type="button" class="btn btn-default">Remover</button>
                 </div>
             </div>
+
             <!-- /.row -->
             <table class="table table-hover">
                 <thead>
@@ -26,7 +27,7 @@
                     <th>
                         <div class="checkboxForAll">
                             <label class="col-md-2">
-                                <input v-on:click="checkAll" type="checkbox" name="check">
+                                <input v-model="checkAll" type="checkbox" name="check">
                             </label>
                         </div>
                     </th>
@@ -52,5 +53,5 @@
         <!-- /#page-wrapper -->
 
     </div>
-
+{{> templateModal}}
 {{> footer }}
