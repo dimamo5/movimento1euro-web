@@ -6,9 +6,8 @@ var router = express.Router();
 
 
 /**
- * @api {post} /api/login Login User
- * @apiDescription Login user and retrieves information about in such as token that must be passed in a HTTP Header
- * Authentication for future calls to the API
+ * @api {post} /api/login User Login
+ * @apiDescription User login returns the token that must be passed in an HTTP Header in future calls to the API
  * @apiName Login
  * @apiGroup Authentication
  * @apiVersion 0.1.0
@@ -20,25 +19,26 @@ var router = express.Router();
  * @apiSuccess {String} token Token for future calls to the API
  * @apiSuccess {Number} id Id of the logged user
  * @apiSuccess {String} name Name of the logged user
+ * @apiSuccess {String} expDate Date of the last payment
  *
  * @apiError {String} result Returns 'login failed' or 'wrong params'
  */
 router.post('/login', function (req, res) {
     if (req.body.mail && req.body.password) {
-        apiWrapper.getUser(req.body.mail, req.body.password, function (result) {
-                if (result) {
+        apiWrapper.getUser(req.body.mail, req.body.password, function (wpuser) {
+                if (wpuser) {
                     db.AppUser.findOrCreate({
                         where: {
-                            external_link_id: result.id
+                            external_link_id: wpuser.id
                         },
                         defaults: {
-                            external_link_id: result.id,
-                            name: result.name
+                            external_link_id: wpuser.id,
+                            name: wpuser.name
                         }
                     }).spread(function (result) {
                         if (result) {
                             if (result.token) {
-                                res.json({result: 'success', token: result.token, id: id, name: result.name});
+                                res.json({result: 'success', token: result.token, id: id, name: result.name,expDate:wpuser.lastPayment});
                             }
                             else {
                                 crypto.randomBytes(48, function (err, buffer) {
@@ -63,12 +63,11 @@ router.post('/login', function (req, res) {
     else {
         res.json({result: 'wrong params'});
     }
-})
-;
+});
 
 /**
  * @api {get} /api/logout Logout
- * @apiDescription Logout user by disabling his token and no future calls can be made by that token
+ * @apiDescription User logout by disabling his token. No future calls can be made with that token
  * @apiName Logout
  * @apiGroup Authentication
  * @apiVersion 0.1.0
@@ -97,7 +96,7 @@ router.get('/logout', function (req, res) {
 
 /**
  * @api {get} /api/winnerCauses Past Winner Causes
- * @apiDescription Obtains the past winners
+ * @apiDescription Returns a string with the past winner causes
  * @apiName Past Winner Causes
  * @apiGroup Causes
  * @apiVersion 0.1.0
@@ -131,9 +130,9 @@ router.get('/winnerCauses', function (req, res) {
 
 /**
  * @api {put} /api/firebaseToken Update Firebase Token
- * @apiDescription In case of firebase gives different token to push notifications, the mobile app should notify
- * the server that the token has changed. If this token is outdated the user will not receive notifications sent by
- * the backoffice
+ * @apiDescription In the event of firebase returning a different token to push notifications, the mobile app should
+ * notify the server that the token has changed. If this token is outdated the user will not receive notifications
+ * sent by the backoffice
  * @apiName Firebase Token
  * @apiGroup Notifications
  * @apiVersion 0.1.0
@@ -167,8 +166,8 @@ router.put('/firebaseToken', function (req, res) {
 });
 
 /**
- * @api {post} /api/voteCause/:id Vote for Cause
- * @apiDescription Votes for a specific cause in the current month
+ * @api {post} /api/voteCause/:id Votes in Cause
+ * @apiDescription Votes in a specific cause in the current month
  * @apiName VoteCause
  * @apiGroup Causes
  * @apiVersion 0.1.0
@@ -205,7 +204,7 @@ router.post('/voteCause/:id', function (req, res) {
 });
 
 /**
- * @api {get} /api/votingCauses Causes in to vote
+ * @api {get} /api/votingCauses Causes to vote
  * @apiDescription Obtains the causes that an user can vote in the current month
  * @apiName Voting Causes
  * @apiGroup Causes
@@ -219,16 +218,35 @@ router.post('/voteCause/:id', function (req, res) {
  * @apiSuccess {String} causes.month Month of the winning cause
  * @apiSuccess {String} causes.name Name of the cause
  * @apiSuccess {String} causes.description Description of the cause
+ * @apiSuccess {String} causes.image Link to main image of the cause
  *
  * @apiError {String} result Returns the description of the error
  */
-router.get('/votingCauses/', function (req, res) {
+router.get('/votingCauses', function (req, res) {
     var auth = req.get("Authorization");
     if (!auth) {
         res.json({result: 'Authorization required'});
     } else {
         //TODO Fazer esta cena
     }
+});
+
+/**
+ * @api {put} /api/notificationSeen/:notificationId Set notification as seen
+ * @apiDescription Set notification as seen
+ * @apiName Set Notification Seen
+ * @apiGroup Notifications
+ * @apiVersion 0.1.0
+ * @apiHeader {String} Authorization User token
+ *
+ * @apiParam {Number} notificationId id of notification to be set as seen
+ *
+ * @apiSuccess {String} result Returns 'success'
+ *
+ * @apiError {String} result Returns 'error'
+ */
+router.put('/notificationSeen/:notificationId',function(req,res){
+
 });
 
 module.exports = router;

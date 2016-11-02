@@ -153,7 +153,8 @@ var WpCause = sequelize.define('WpCauses', {
         allowNull: false,
         type: Sequelize.BOOLEAN
     },
-    date: Sequelize.DATE
+    date: Sequelize.DATE,
+    image:Sequelize.TEXT('tiny')
 
 });
 
