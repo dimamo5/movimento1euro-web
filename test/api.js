@@ -114,6 +114,20 @@ describe('Causes', function () {
             password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             lastPayment: new Date(2012, 1, 12, 16, 25, 0, 0)
         });
+        var wpCauses1 = db.WpCause.build({
+            name: 'Lar de Infância e Juventude Casa da Criança',
+            description: 'A Casa da Criança é um Lar de Infância e Juventude (LIJ) e constitui uma das valências disponibilizadas à comunidade pela Santa Casa da Misericórdia do Peso da Régua (SCMPR). ',
+            month: '1',
+            winner: true,
+            date: new Date(2015, 1, 1, 10, 0, 0, 0)
+        });
+        var wpCauses2 = db.WpCause.build({
+            name: 'ELO SOCIAL - IPSS',
+            description: 'Elo Social – Associação para a Integração e Apoio ao Deficiente Jovem e Adulto, é uma Instituição Particular de Solidariedade Social, sediada em Lisboa, considerada Pessoa Coletiva de Utilidade Pública,...',
+            month: '10',
+            winner: true,
+            date: new Date(2015, 10, 15, 11, 10, 0, 0)
+        });
         var wpCauses6 = db.WpCause.build({
             name: 'Lar da Boa Vontade',
             description: 'O Lar da Boa Vontade é uma residência adaptada para adultos com deficiência motora. Como tal é necessário a compra de material de Fisioterapia e Terapia Ocupacional, que promova não só a reabilitação motora, mas também as competências sociais e cognitivas dos nossos clientes, para que possam ser os mais independentes e funcionais possível!',
@@ -137,6 +151,12 @@ describe('Causes', function () {
         });
 
         db.clear()
+            .then(function () {
+                return wpCauses1.save();
+            })
+            .then(function () {
+                return wpCauses2.save();
+            })
             .then(function () {
                 return wpCauses6.save();
             })
@@ -172,8 +192,36 @@ describe('Causes', function () {
                 done();
             })
     })
-})
-;
+
+
+    it('should obtain all past winner causes', function (done) {
+        chai.request(app)
+            .get('/api/winnerCauses')
+            .set('Authorization', TOKEN)
+            .end(function (err, res) {
+                expect(res).to.have.status(200);
+                expect(res).to.be.json;
+                expect(res.body).to.have.property('result');
+                expect(res.body.result).to.be.equal('success');
+                expect(res.body.causes).to.have.lengthOf(2);
+                done();
+
+            })
+    })
+
+    it('should set a vote from user in a specific cause', function (done) {
+        chai.request(app)
+            .post('/api/voteCause/1')
+            .set('Authorization', TOKEN)
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                done();
+            });
+    })
+
+
+});
 
 describe('Notification', function () {
     this.timeout(25000);
