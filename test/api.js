@@ -172,8 +172,19 @@ describe('Causes', function () {
                 done();
             })
     })
-})
-;
+
+    it('should set a vote from user in a specific cause', function (done) {
+        chai.request(app)
+            .post('/api/voteCause/1')
+            .set('Authorization', TOKEN)
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                done();
+            });
+    })
+
+});
 
 describe('Notification', function () {
     this.timeout(25000);
