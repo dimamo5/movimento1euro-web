@@ -1,8 +1,8 @@
-var express = require('express');
-var db = require('../database/database.js');
-var apiWrapper = require('../database/api_wrapper');
-var crypto = require('crypto');
-var router = express.Router();
+const express = require('express');
+const db = require('../database/database.js');
+const apiWrapper = require('../database/api_wrapper');
+const crypto = require('crypto');
+const router = express.Router();
 
 
 /**
@@ -23,52 +23,50 @@ var router = express.Router();
  *
  * @apiError {String} result Returns 'login failed' or 'wrong params'
  */
-router.post('/login', function (req, res) {
-    if (req.body.mail && req.body.password) {
-        apiWrapper.getUser(req.body.mail, req.body.password, function (wpuser) {
-                if (wpuser) {
-                    db.AppUser.findOrCreate({
-                        where: {
-                            external_link_id: wpuser.id
-                        },
-                        defaults: {
-                            external_link_id: wpuser.id,
-                            name: wpuser.name
-                        }
-                    }).spread(function (result) {
-                        if (result) {
-                            if (result.token) {
-                                res.json({
-                                    result: 'success',
-                                    token: result.token,
-                                    id: result.id,
-                                    name: result.name,
-                                    expDate: wpuser.lastPayment
-                                });
-                            }
-                            else {
-                                crypto.randomBytes(48, function (err, buffer) {
-                                    var token = buffer.toString('hex');
-                                    result.token = token;
-                                    result.save().then(res.json({
-                                        result: 'success',
-                                        token: token,
-                                        id: result.id,
-                                        name: result.name
-                                    }))
-                                });
-                            }
-                        }
-                    })
-                } else {
-                    res.json({result: 'login failed'});
-                }
+router.post('/login', (req, res) => {
+  if (req.body.mail && req.body.password) {
+    apiWrapper.getUser(req.body.mail, req.body.password, (wpuser) => {
+      if (wpuser) {
+        db.AppUser.findOrCreate({
+          where: {
+            external_link_id: wpuser.id,
+          },
+          defaults: {
+            external_link_id: wpuser.id,
+            name: wpuser.name,
+          },
+        }).spread((result) => {
+          if (result) {
+            if (result.token) {
+              res.json({
+                result: 'success',
+                token: result.token,
+                id: result.id,
+                name: result.name,
+                expDate: wpuser.lastPayment,
+              });
+            } else {
+              crypto.randomBytes(48, (err, buffer) => {
+                const token = buffer.toString('hex');
+                result.token = token;
+                result.save().then(res.json({
+                  result: 'success',
+                  token,
+                  id: result.id,
+                  name: result.name,
+                }));
+              });
             }
+          }
+        });
+      } else {
+        res.json({ result: 'login failed' });
+      }
+    }
         );
-    }
-    else {
-        res.json({result: 'wrong params'});
-    }
+  } else {
+    res.json({ result: 'wrong params' });
+  }
 });
 
 /**
@@ -83,21 +81,21 @@ router.post('/login', function (req, res) {
  *
  * @apiError {String} result Returns 'error'
  */
-router.get('/logout', function (req, res) {
-    var auth = req.get("Authorization");
-    if (!auth) {
-        res.json({result: 'Authorization required'});
-    } else {
-        db.AppUser.update({token: null},
-            {where: {token: auth}})
-            .then(function (results) {
-                if (results.length > 0) {
-                    res.json({result: 'success'});
-                } else {
-                    res.json({result: 'error'})
-                }
-            })
-    }
+router.get('/logout', (req, res) => {
+  const auth = req.get('Authorization');
+  if (!auth) {
+    res.json({ result: 'Authorization required' });
+  } else {
+    db.AppUser.update({ token: null },
+            { where: { token: auth } })
+            .then((results) => {
+              if (results.length > 0) {
+                res.json({ result: 'success' });
+              } else {
+                res.json({ result: 'error' });
+              }
+            });
+  }
 });
 
 /**
@@ -117,22 +115,22 @@ router.get('/logout', function (req, res) {
  *
  * @apiError {String} result Returns the description of the error
  */
-router.get('/winnerCauses', function (req, res) {
-    var auth = req.get("Authorization");
-    if (!auth) {
-        res.json({result: 'Authorization required'});
-        return;
-    }
-    db.WpCause.findAll({
-        where: {
-            winner: true
-        }
-    })
-        .then(function (result) {
-            res.json({result: 'success', causes: result})
+router.get('/winnerCauses', (req, res) => {
+  const auth = req.get('Authorization');
+  if (!auth) {
+    res.json({ result: 'Authorization required' });
+    return;
+  }
+  db.WpCause.findAll({
+    where: {
+      winner: true,
+    },
+  })
+        .then((result) => {
+          res.json({ result: 'success', causes: result });
         })
-        .catch(function () {
-            res.json({result: 'error'})
+        .catch(() => {
+          res.json({ result: 'error' });
         });
 });
 
@@ -152,27 +150,27 @@ router.get('/winnerCauses', function (req, res) {
  *
  * @apiError {String} result Returns 'error'
  */
-router.put('/firebaseToken', function (req, res) {
-    var auth = req.get("Authorization");
-    if (!auth) {
-        res.json({result: 'Authorization required'});
-    } else if (!req.body.firebaseToken) {
-        res.json({result: 'Wrong params'})
-    } else {
-        db.AppUser.findOne({
-            where: {
-                token: auth
-            }
-        })
-            .then(function (result) {
-                result.set('firebase_token', req.body.firebaseToken);
-                result.save()
-                    .then(res.json({result: 'success'}));
+router.put('/firebaseToken', (req, res) => {
+  const auth = req.get('Authorization');
+  if (!auth) {
+    res.json({ result: 'Authorization required' });
+  } else if (!req.body.firebaseToken) {
+    res.json({ result: 'Wrong params' });
+  } else {
+    db.AppUser.findOne({
+      where: {
+        token: auth,
+      },
+    })
+            .then((result) => {
+              result.set('firebase_token', req.body.firebaseToken);
+              result.save()
+                    .then(res.json({ result: 'success' }));
             })
-            .catch(()=> {
-                res.json({result: 'error'})
+            .catch(() => {
+              res.json({ result: 'error' });
             });
-    }
+  }
 });
 
 /**
@@ -189,41 +187,41 @@ router.put('/firebaseToken', function (req, res) {
  *
  * @apiError {String} result Returns 'error'
  */
-router.post('/voteCause/:id', function (req, res) {
-        var user;
-        var auth = req.get("Authorization");
-        if (!auth) {
-            res.json({result: 'Authorization required'});
-        } else {
-            db.AppUser.findOne({
-                where: {
-                    token: auth
-                }
-            }).then(function (user) {
-                return db.WpUser.findOne({
+router.post('/voteCause/:id', (req, res) => {
+  let user;
+  const auth = req.get('Authorization');
+  if (!auth) {
+    res.json({ result: 'Authorization required' });
+  } else {
+    db.AppUser.findOne({
+      where: {
+        token: auth,
+      },
+    }).then(user =>
+               db.WpUser.findOne({
+                 where: {
+                   id: user.external_link_id,
+                 },
+               })
+            )
+                .then((wpUser) => {
+                  user = wpUser;
+                  return db.WpCause.findOne({
                     where: {
-                        id: user.external_link_id
-                    }
+                      id: req.params.id,
+                    },
+                  });
                 })
-            })
-                .then(function (wpUser) {
-                    user = wpUser;
-                    return db.WpCause.findOne({
-                        where: {
-                            id: req.params.id
-                        }
-                    })
-                })
-                .then(function (cause) {
-                    user.setWpCauses(cause);
-                    res.json({result: 'success'})
+                .then((cause) => {
+                  user.setWpCauses(cause);
+                  res.json({ result: 'success' });
                 })
 
-                .catch(function () {
-                    res.json({result: 'error'});
+                .catch(() => {
+                  res.json({ result: 'error' });
                 });
-        }
-    }
+  }
+}
 );
 
 /**
@@ -245,25 +243,25 @@ router.post('/voteCause/:id', function (req, res) {
  *
  * @apiError {String} result Returns the description of the error
  */
-router.get('/votingCauses', function (req, res) {
-    var auth = req.get("Authorization");
-    if (!auth) {
-        res.json({result: 'Authorization required'});
-    } else {
-        db.WpCause.findAll({
-                where: {
-                    month: new Date().getMonth() + 1
-                }
-            }
-        )
-            .then(function (causes) {
-                res.json({result: 'success', causes: causes})
-            })
-            .catch(()=> {
-                    res.json({result: 'error'})
-                }
-            );
+router.get('/votingCauses', (req, res) => {
+  const auth = req.get('Authorization');
+  if (!auth) {
+    res.json({ result: 'Authorization required' });
+  } else {
+    db.WpCause.findAll({
+      where: {
+        month: new Date().getMonth() + 1,
+      },
     }
+        )
+            .then((causes) => {
+              res.json({ result: 'success', causes });
+            })
+            .catch(() => {
+              res.json({ result: 'error' });
+            }
+            );
+  }
 });
 
 /**
@@ -280,8 +278,8 @@ router.get('/votingCauses', function (req, res) {
  *
  * @apiError {String} result Returns 'error'
  */
-router.put('/notificationSeen/:notificationId', function (req, res) {
-    //TODO not a priority right now
+router.put('/notificationSeen/:notificationId', (req, res) => {
+    // TODO not a priority right now
 });
 
 module.exports = router;
