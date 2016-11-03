@@ -1,0 +1,57 @@
+{{> header}}
+
+<body>
+
+<div id="wrapper">
+    {{> navbar usersPage=usersPage }}
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid" id="table">
+            <!-- Page Heading -->
+            <div class="row header-page">
+                <h1 class="col-lg-6">
+                    Templates de Notificações
+                </h1>
+                <div class="col-lg-6 text-right crud">
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Criar</button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Editar</button>
+                    <button v-on:click="remove" type="button" class="btn btn-default">Remover</button>
+                </div>
+            </div>
+
+            <!-- /.row -->
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkboxForAll">
+                            <label class="col-md-2">
+                                <input v-model="checkAll" type="checkbox" name="check">
+                            </label>
+                        </div>
+                    </th>
+                    <th>Nome</th>
+                    <th>Conteúdo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="template in templates">
+                    <td class="checkboxForAll">
+                        <label class="col-md-2">
+                            <input type="checkbox" name="check" v-model="template.select">
+                        </label>
+                    </td>
+                    <td>\{{template.name}}</td>
+                    <td>\{{template.content}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+{{> templateModal}}
+{{> footer }}

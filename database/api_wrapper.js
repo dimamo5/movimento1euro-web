@@ -9,9 +9,14 @@ function getUser(mail, password, next) {
         password = crypto.createHash('sha256').update(password).digest('hex');
         db.WpUser.findOne({where: {mail: mail, password: password}})
             .then(next)
-    }else{
+    } else {
         next(null);
     }
 }
 
-module.exports.getUser=getUser;
+function getUsersInfo() {
+    return db.WpUser.findAll({attributes: {exclude: ['password']}})
+}
+
+module.exports.getUser = getUser;
+module.exports.getUsersInfo = getUsersInfo;

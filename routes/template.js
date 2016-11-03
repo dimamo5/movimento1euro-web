@@ -3,7 +3,7 @@
  */
 
 var express = require('express');
-var db = require('../database/database.js')
+var db = require('../database/database')
 var router = express.Router();
 
 /* GET Template listing. */
