@@ -41,7 +41,7 @@ router.post('/login', function (req, res) {
                                 res.json({
                                     result: 'success',
                                     token: result.token,
-                                    id: id,
+                                    id: result.id,
                                     name: result.name,
                                     expDate: wpuser.lastPayment
                                 });
@@ -128,10 +128,12 @@ router.get('/winnerCauses', function (req, res) {
             winner: true
         }
     })
-        .then(function (results) {
-            res.json(results)
+        .then(function (result) {
+            res.json({result: 'success', causes: result})
         })
-        .catch(res.json({result: 'error'}));
+        .catch(function () {
+            res.json({result: 'error'})
+        });
 });
 
 /**
@@ -222,11 +224,10 @@ router.post('/voteCause/:id', function (req, res) {
                 });
         }
     }
-)
-;
+);
 
 /**
- * @api {get} /api/votingCauses Causes to vote
+ * @api {get} /api/votingCauses Causes to vo\
  * @apiDescription Obtains the causes that an user can vote in the current month
  * @apiName Voting Causes
  * @apiGroup Causes
@@ -264,7 +265,6 @@ router.get('/votingCauses', function (req, res) {
             );
     }
 });
-
 
 /**
  * @api {put} /api/notificationSeen/:notificationId Set notification as seen
