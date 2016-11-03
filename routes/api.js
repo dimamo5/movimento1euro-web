@@ -38,7 +38,13 @@ router.post('/login', function (req, res) {
                     }).spread(function (result) {
                         if (result) {
                             if (result.token) {
-                                res.json({result: 'success', token: result.token, id: id, name: result.name,expDate:wpuser.lastPayment});
+                                res.json({
+                                    result: 'success',
+                                    token: result.token,
+                                    id: result.id,
+                                    name: result.name,
+                                    expDate: wpuser.lastPayment
+                                });
                             }
                             else {
                                 crypto.randomBytes(48, function (err, buffer) {
@@ -122,10 +128,12 @@ router.get('/winnerCauses', function (req, res) {
             winner: true
         }
     })
-        .then(function (results) {
-            res.json(results)
+        .then(function (result) {
+            res.json({result: 'success', causes: result})
         })
-        .catch(res.json({result: 'error'}));
+        .catch(function () {
+            res.json({result: 'error'})
+        });
 });
 
 /**
@@ -157,11 +165,11 @@ router.put('/firebaseToken', function (req, res) {
             }
         })
             .then(function (result) {
-                result.set('firebase_token',req.body.firebaseToken);
+                result.set('firebase_token', req.body.firebaseToken);
                 result.save()
                     .then(res.json({result: 'success'}));
             })
-            .catch(()=>{
+            .catch(()=> {
                 res.json({result: 'error'})
             });
     }
@@ -182,31 +190,44 @@ router.put('/firebaseToken', function (req, res) {
  * @apiError {String} result Returns 'error'
  */
 router.post('/voteCause/:id', function (req, res) {
-    var auth = req.get("Authorization");
-    if (!auth) {
-        res.json({result: 'Authorization required'});
-    } else {
-        db.WpUser.findOne({
-            where: {
-                token: auth
-            }
-        })
-            .then(function (user) {
-                return db.WpCause.findOne({
+        var user;
+        var auth = req.get("Authorization");
+        if (!auth) {
+            res.json({result: 'Authorization required'});
+        } else {
+            db.AppUser.findOne({
+                where: {
+                    token: auth
+                }
+            }).then(function (user) {
+                return db.WpUser.findOne({
                     where: {
-                        id: req.params.id
+                        id: user.external_link_id
                     }
                 })
-                    .then(function (cause) {
-                        user.setWpCauses(cause);
-                    })
             })
-            .catch(res.json({result: 'error'}));
+                .then(function (wpUser) {
+                    user = wpUser;
+                    return db.WpCause.findOne({
+                        where: {
+                            id: req.params.id
+                        }
+                    })
+                })
+                .then(function (cause) {
+                    user.setWpCauses(cause);
+                    res.json({result: 'success'})
+                })
+
+                .catch(function () {
+                    res.json({result: 'error'});
+                });
+        }
     }
-});
+);
 
 /**
- * @api {get} /api/votingCauses Causes to vote
+ * @api {get} /api/votingCauses Causes to vo\
  * @apiDescription Obtains the causes that an user can vote in the current month
  * @apiName Voting Causes
  * @apiGroup Causes
@@ -245,7 +266,6 @@ router.get('/votingCauses', function (req, res) {
     }
 });
 
-
 /**
  * @api {put} /api/notificationSeen/:notificationId Set notification as seen
  * @apiDescription Set notification as seen
@@ -260,7 +280,7 @@ router.get('/votingCauses', function (req, res) {
  *
  * @apiError {String} result Returns 'error'
  */
-router.put('/notificationSeen/:notificationId',function(req,res){
+router.put('/notificationSeen/:notificationId', function (req, res) {
     //TODO not a priority right now
 });
 
