@@ -46,16 +46,18 @@ $(document).ready(function () {
                     ,
                     filter: function () {
                         t = performance.now();
+                        let hasFilter = this.search.indexOf(':') !== -1;
                         let filter = this.search.split(':');
-                        if (filter.length > 1) {
+                        if (filter.length === 2) {
                             content = filter[1].trim();
                             filter = filter[0];
                         }
-                        if (filter === 'mail') {
+
+                        if (filter === 'mail' && hasFilter) {
                             for (user of this.users) {
                                 user.visible = user.mail.includes(content);
                             }
-                        } else if (filter === 'votou') {
+                        } else if (filter === 'votou' && hasFilter) {
                             for (user of this.users) {
                                 if (content === 's' || content === 'sim') {
                                     user.visible = user.votedMonth;
@@ -63,25 +65,30 @@ $(document).ready(function () {
                                 else if (content === 'n' || content === 'nao')
                                     user.visible = !user.votedMonth;
                             }
-                        }else if (filter === 'telemovel') {
+                        } else if (filter === 'telemovel' && hasFilter) {
                             for (user of this.users) {
                                 user.visible = user.cellphone.startsWith(content);
                             }
-                        } else if (filter === 'pagamento_em') {
+                        } else if (filter === 'pagamento_em' && hasFilter && content) {
                             for (user of this.users) {
-                                let diff = Date.now() - new Date(user.nextPayment);
+                                let diff = new Date(user.nextPayment) - Date.now();
                                 diff = Math.ceil(diff / (1000 * 3600 * 24));
-                                user.visible = content > diff;
+                                user.visible = content > diff && diff > 0;
                             }
-                        } else if (filter === 'ult_actividade_a_mais') {
+                        } else if (filter === 'ult_actividade_a_mais' && hasFilter && content) {
                             for (user of this.users) {
                                 let diff = Date.now() - new Date(user.lastVisit);
                                 diff = Math.ceil(diff / (1000 * 3600 * 24));
                                 user.visible = content < diff;
                             }
-                        } else {
+                        } else if (!hasFilter) {
+                            console.log("No filter")
                             for (user of this.users) {
                                 user.visible = user.name.includes(this.search);
+                            }
+                        } else {
+                            for (user of this.users) {
+                                user.visible = true;
                             }
                         }
                         t1 = performance.now();
