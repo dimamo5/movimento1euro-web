@@ -8,7 +8,6 @@ chai.use(chaiHttp);
 
 describe('Authenticate User', function () {
 
-    this.timeout(25000);
     var token;
     before(function (done) {
         var appUser1 = db.AppUser.build({
@@ -97,7 +96,6 @@ describe('Authenticate User', function () {
 });
 
 describe('Causes', function () {
-    this.timeout(25000);
 
     const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
 
@@ -224,7 +222,7 @@ describe('Causes', function () {
 });
 
 describe('Notification', function () {
-    this.timeout(25000);
+
     const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
     before(function (done) {
         var appUser1 = db.AppUser.build({
