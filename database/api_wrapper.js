@@ -25,12 +25,13 @@ function getUsersInfo() {
 function getWpUserInfo(user) {
     return db.WpUser.findById(user.external_link_id)
         .then((wpuser)=> {
-            let userPlain= user.toJSON();
-            let wpuserPlain= wpuser.toJSON();
-            let combined=userPlain;
-            combined["name"]=wpuserPlain.name;
-            combined["mail"]=wpuserPlain.mail;
-            combined["lastPayment"]=wpuserPlain.lastPayment;
+            let userPlain = user.toJSON();
+            let wpuserPlain = wpuser.toJSON();
+            let combined = userPlain;
+            combined["name"] = wpuserPlain.name;
+            combined["mail"] = wpuserPlain.mail;
+            combined["nextPayment"] = wpuserPlain.nextPayment;
+            combined["cellphone"] = wpuserPlain.cellphone;
             delete combined.external_link_id;
             delete combined.createdAt;
             delete combined.updatedAt;
