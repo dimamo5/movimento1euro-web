@@ -23,14 +23,11 @@
                                     aria-haspopup="true" aria-expanded="false">Filtros <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
+                                <li><a href="#">Mail</a></li>
+                                <li><a href="#">Distrito</a></li>
                             </ul>
                         </div><!-- /btn-group -->
-                        <input v-model="search" v-on:keyup="filter" type="text" class="form-control" aria-label="...">
+                        <input v-model="search" type="text" class="form-control" aria-label="...">
                     </div><!-- /input-group -->
                 </div><!-- /.col-lg-6 -->
                 <div class="col-lg-6 text-right crud">
@@ -48,13 +45,15 @@
                             <label class="col-md-2">
                                 <input v-model="checkAll" type="checkbox" name="check">
                             </label>
+                            \{{numSelected}}
                         </div>
                     </th>
                     <th>Nome</th>
                     <th>Endereço de E-Mail</th>
                     <th>Distrito</th>
                     <th>Telefone</th>
-                    <th>Próximo Pagamento</th>
+                    <th>Ultimo Pagamento</th>
+                    <th>Ultima Atividade</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -69,6 +68,7 @@
                     <td>\{{user.district}}</td>
                     <td>\{{user.cellphone}}</td>
                     <td>\{{user.lastPayment | europeanDate}}</td>
+                    <td>\{{user.lastVisit | europeanDate}}</td>
                 </tr>
                 </tbody>
             </table>
