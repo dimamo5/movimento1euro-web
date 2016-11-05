@@ -21,6 +21,7 @@ var sessionStore = new MySQLStore(options);
 var auth = require('./routes/auth');
 var template = require('./routes/template');
 var api = require('./routes/api');
+var user = require('./routes/user');
 
 var app = express();
 
@@ -59,7 +60,10 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
+
 app.use('/template', template);
+app.use('/user', user);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

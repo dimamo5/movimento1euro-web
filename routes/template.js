@@ -2,13 +2,13 @@
  * Created by diogo on 16/10/2016.
  */
 
-var express = require('express');
-var db = require('../database/database.js')
-var router = express.Router();
+const express = require('express');
+const db = require('../database/database');
+const router = express.Router();
 
 /* GET Template listing. */
-router.get('/', function (req, res, next) {
-    res.render('template', {templatesPage: true});
+router.get('/', (req, res, next) => {
+  res.render('template', { templatesPage: true });
 });
 
 /**
@@ -21,53 +21,53 @@ router.get('/', function (req, res, next) {
  * @apiSuccess {String} content Content of the Template
  * @apiSuccess {Number} id Id of the Template
  */
-router.get('/api', function (req, res) {
-    db.templates.findAll().then(function (allTemplates) {
-        res.json({result: 'success', templates: allTemplates});
-    })
+router.get('/api', (req, res) => {
+  db.templates.findAll().then((allTemplates) => {
+    res.json({ result: 'success', templates: allTemplates });
+  });
 });
 
 
-router.delete('/api/:id', function (req, res) {
-    db.templates.destroy({where: {id: req.params.id}})
-        .then(function (numRows) {
-            if (numRows > 0) {
-                res.status(200);
-                res.json({removed: req.params.id})
-            } else {
-                res.status(500).end();
-            }
-        }).catch(function () {
-        res.status(500).end();
-    })
+router.delete('/api/:id', (req, res) => {
+  db.templates.destroy({ where: { id: req.params.id } })
+        .then((numRows) => {
+          if (numRows > 0) {
+            res.status(200);
+            res.json({ removed: req.params.id });
+          } else {
+            res.status(500).end();
+          }
+        }).catch(() => {
+          res.status(500).end();
+        });
 });
 
 /* CREATE function*/
-router.put('/api/', function (req, res) {
-    db.templates.upsert({name: req.body.name, content: req.body.content})
-        .then(function (sucess) {
-            if (sucess)
-                res.status(200).end();
-            else
-                res.status(500).end();
+router.put('/api/', (req, res) => {
+  db.templates.upsert({ name: req.body.name, content: req.body.content })
+        .then((sucess) => {
+          if (sucess) {
+            res.status(200).end();
+          } else { res.status(500).end(); }
         })
-        .catch(function () {
-            res.status(500).end();
-        })
+        .catch(() => {
+          res.status(500).end();
+        });
 })
 ;
 // CREATE function
-router.put('/api/:id', function (req, res) {
-    db.templates.upsert({name: req.body.name, content: req.body.content})
-        .then(function (sucess) {
-            if (sucess)
-                res.status(200).end();
-            else
-                res.status(500).end();
-        })
-        .catch(function () {
+router.put('/api/:id', (req, res) => {
+  db.templates.upsert({ name: req.body.name, content: req.body.content })
+        .then((sucess) => {
+          if (sucess) {
+            res.status(200).end();
+          } else {
             res.status(500).end();
+          }
         })
+        .catch(() => {
+          res.status(500).end();
+        });
 });
 
 module.exports = router;
