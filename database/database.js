@@ -442,7 +442,7 @@ function clear() {
   return sequelize.sync({ force: true });
 }
 
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV =='staging') {
   clear()
         .then(() => {
           populateDB();

@@ -11,15 +11,34 @@
             <!-- Page Heading -->
             <div class="row header-page">
                 <h1 class="col-lg-6">
-                    Templates de Notificações
+                    Lista de Utilizadores
                 </h1>
-                <div class="col-lg-6 text-right crud">
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Criar</button>
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Editar</button>
-                    <button v-on:click="remove" type="button" class="btn btn-default">Remover</button>
-                </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">Filtros <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                        <input v-model="search" v-on:keyup="filter" type="text" class="form-control" aria-label="...">
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+                <div class="col-lg-6 text-right crud">
+                    <button v-on:click="sendNotification" type="button" class="btn btn-default">Enviar
+                        Notificação
+                    </button>
+                </div>
+            </div>
             <!-- /.row -->
             <table class="table table-hover">
                 <thead>
@@ -32,18 +51,24 @@
                         </div>
                     </th>
                     <th>Nome</th>
-                    <th>Conteúdo</th>
+                    <th>Endereço de E-Mail</th>
+                    <th>Distrito</th>
+                    <th>Telefone</th>
+                    <th>Próximo Pagamento</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="template in templates">
+                <tr v-for="user in users" v-if="user.visible">
                     <td class="checkboxForAll">
                         <label class="col-md-2">
-                            <input type="checkbox" name="check" v-model="template.select">
+                            <input type="checkbox" name="check" v-model="user.select">
                         </label>
                     </td>
-                    <td>\{{template.name}}</td>
-                    <td>\{{template.content}}</td>
+                    <td>\{{user.name}}</td>
+                    <td>\{{user.mail}}</td>
+                    <td>\{{user.district}}</td>
+                    <td>\{{user.cellphone}}</td>
+                    <td>\{{user.lastPayment | europeanDate}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -53,5 +78,4 @@
         <!-- /#page-wrapper -->
 
     </div>
-{{> templateModal}}
 {{> footer }}

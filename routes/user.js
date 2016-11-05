@@ -5,13 +5,13 @@ const router = express.Router();
 
 /* GET Template listing. */
 router.get('/', (req, res) => {
-  res.render('user', { usersPage: true });
+    res.render('user', {usersPage: true});
 });
 
 router.get('/api/users', (req, res) => {
-  api.getUsersInfo()
+    api.getUsersInfo()
         .then((users) => {
-          res.json(users);
+            res.json(users);
         });
 });
 

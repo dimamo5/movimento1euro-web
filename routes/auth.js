@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   if (req.session.id && req.session.username) {
-    res.redirect('/users');
+    res.redirect('/user');
   } else {
     res.redirect('/login');
   }
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 
 router.get('/login', (req, res) => {
   if (req.session.id && req.session.username) {
-    res.redirect('/users');
+    res.redirect('/user');
   } else {
     res.render('login');
   }
@@ -24,7 +24,7 @@ router.get('/login', (req, res) => {
 
 router.post('/process_login', (req, res) => {
   if (req.session.id && req.session.username) {
-    res.redirect('/users');
+    res.redirect('/user');
   } else if (req.body.username && req.body.password) {
     console.log(req.body.username, req.body.password);
     const username = req.body.username;
@@ -40,7 +40,7 @@ router.post('/process_login', (req, res) => {
           if (admin) {
             req.session.id = admin.id;
             req.session.username = admin.username;
-            res.redirect('/users');
+            res.redirect('/user');
           } else {
             res.redirect('/login?error=1');
           }
@@ -59,7 +59,7 @@ router.get('/logout', (req, res) => {
     });
     res.redirect('/login');
   } else {
-    res.redirect('/users');
+    res.redirect('/user');
   }
 });
 
