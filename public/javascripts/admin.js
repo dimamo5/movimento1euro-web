@@ -84,7 +84,7 @@ $(document).ready(function () {
                         } else if (!hasFilter) {
                             console.log("No filter")
                             for (user of this.users) {
-                                user.visible = user.name.includes(this.search);
+                                user.visible = user.name.toLowerCase().includes(this.search.toLowerCase());
                             }
                         } else {
                             for (user of this.users) {
