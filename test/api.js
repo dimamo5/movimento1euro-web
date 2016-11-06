@@ -7,27 +7,27 @@ chai.use(chaiHttp);
 
 
 describe('Authenticate User', function () {
-  this.timeout(25000);
-  let token;
-  before((done) => {
-    const appUser1 = db.AppUser.build({
-      external_link_id: 5,
-      name: 'Diogo',
-      last_visit: new Date(2016, 10, 28, 16, 45, 0, 0),
-    });
-        // d9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9
-    const wpUser10 = db.WpUser.build({
-      name: 'Ana',
-      mail: 'ana@cenas.pt',
-      password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-      lastPayment: new Date(2016, 11, 4, 13, 25, 0, 0),
-    });
-    const wpUser5 = db.WpUser.build({
-      name: 'Diogo',
-      mail: 'diogo@cenas.pt',
-      password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-      lastPayment: new Date(2012, 1, 12, 16, 25, 0, 0),
-    });
+
+    var token;
+    before(function (done) {
+        var appUser1 = db.AppUser.build({
+            external_link_id: 5,
+            name: 'Diogo',
+            last_visit: new Date(2016, 10, 28, 16, 45, 0, 0)
+        });
+        //d9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9
+        var wpUser10 = db.WpUser.build({
+            name: 'Ana',
+            mail: 'ana@cenas.pt',
+            password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+            lastPayment: new Date(2016, 11, 4, 13, 25, 0, 0)
+        });
+        var wpUser5 = db.WpUser.build({
+            name: 'Diogo',
+            mail: 'diogo@cenas.pt',
+            password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+            lastPayment: new Date(2012, 1, 12, 16, 25, 0, 0)
+        });
 
     db.clear()
             .then(() =>
@@ -95,7 +95,6 @@ describe('Authenticate User', function () {
 });
 
 describe('Causes', function () {
-  this.timeout(25000);
 
   const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
 
@@ -219,31 +218,31 @@ describe('Causes', function () {
 });
 
 describe('Notification', function () {
-  this.timeout(25000);
-  const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
-  before((done) => {
-    const appUser1 = db.AppUser.build({
-      external_link_id: 5,
-      name: 'Diogo',
-      last_visit: new Date(2016, 10, 28, 16, 45, 0, 0),
-      token: TOKEN,
+
+    const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
+    before(function (done) {
+        var appUser1 = db.AppUser.build({
+            external_link_id: 5,
+            name: 'Diogo',
+            last_visit: new Date(2016, 10, 28, 16, 45, 0, 0),
+            token: TOKEN
+        });
+        var wpUser5 = db.WpUser.build({
+            name: 'Diogo',
+            mail: 'diogo@cenas.pt',
+            password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+            lastPayment: new Date(2012, 1, 12, 16, 25, 0, 0)
+        });
+        db.clear()
+            .then(function () {
+                return appUser1.save();
+            })
+            .then(function () {
+                return wpUser5.save();
+            })
+            .then(()=>done())
+            .catch((err)=>done(err));
     });
-    const wpUser5 = db.WpUser.build({
-      name: 'Diogo',
-      mail: 'diogo@cenas.pt',
-      password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-      lastPayment: new Date(2012, 1, 12, 16, 25, 0, 0),
-    });
-    db.clear()
-            .then(() =>
-               appUser1.save()
-            )
-            .then(() =>
-               wpUser5.save()
-            )
-            .then(() => done())
-            .catch(err => done(err));
-  });
 
   it('should replace the existing token by a new one', (done) => {
     chai.request(app)
