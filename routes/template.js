@@ -2,49 +2,72 @@
  * Created by diogo on 16/10/2016.
  */
 
-var express = require('express');
-var db = require('../database/database.js')
-var router = express.Router();
+const express = require('express');
+const db = require('../database/database');
+const router = express.Router();
 
-/* GET templates listing. */
-router.get('/', function (req, res, next) {
-    res.render('template', {templatesPage: true});
+/* GET Template listing. */
+router.get('/', (req, res, next) => {
+  res.render('template', { templatesPage: true });
 });
 
-router.get('/all', function (req, res) {
-    db.templates.findAll().then(function (allTemplates) {
-        res.json(allTemplates);
-    })
+/**
+ * @api {get} templates/api/ Gets all templates
+ * @apiName GetAllTemplates
+ * @apiGroup Templates
+ * @apiHeader {Number} cookieId User must login to receive cookieID
+ *
+ * @apiSuccess {String} name Name of the Template
+ * @apiSuccess {String} content Content of the Template
+ * @apiSuccess {Number} id Id of the Template
+ */
+router.get('/api', (req, res) => {
+  db.templates.findAll().then((allTemplates) => {
+    res.json({ result: 'success', templates: allTemplates });
+  });
 });
 
 
-router.delete('/:id', function (req, res) {
-    db.templates.destroy({where: {id: req.params.id}})
-        .then(function (numRows) {
-            if (numRows > 0) {
-                res.status(200);
-                res.json({removed:req.params.id})
-            } else {
-                res.status(500).end();
-            }
-        }).catch(function () {
-        res.status(500).end();
-    })
-});
-
-/* CREATE/UPDATE function*/
-router.put('/', function (req, res) {
-    db.templates.upsert({name: req.body.name, content: req.body.content})
-        .then(function (sucess) {
-            if (sucess)
-                res.status(200).end();
-            else
-                res.status(500).end();
-        })
-        .catch(function () {
+router.delete('/api/:id', (req, res) => {
+  db.templates.destroy({ where: { id: req.params.id } })
+        .then((numRows) => {
+          if (numRows > 0) {
+            res.status(200);
+            res.json({ removed: req.params.id });
+          } else {
             res.status(500).end();
-        })
+          }
+        }).catch(() => {
+          res.status(500).end();
+        });
 });
 
+/* CREATE function*/
+router.put('/api/', (req, res) => {
+  db.templates.upsert({ name: req.body.name, content: req.body.content })
+        .then((sucess) => {
+          if (sucess) {
+            res.status(200).end();
+          } else { res.status(500).end(); }
+        })
+        .catch(() => {
+          res.status(500).end();
+        });
+})
+;
+// CREATE function
+router.put('/api/:id', (req, res) => {
+  db.templates.upsert({ name: req.body.name, content: req.body.content })
+        .then((sucess) => {
+          if (sucess) {
+            res.status(200).end();
+          } else {
+            res.status(500).end();
+          }
+        })
+        .catch(() => {
+          res.status(500).end();
+        });
+});
 
 module.exports = router;

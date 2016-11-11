@@ -1,0 +1,83 @@
+{{> header}}
+
+<body>
+
+<div id="wrapper">
+    {{> navbar usersPage=usersPage }}
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid" id="table">
+            <!-- Page Heading -->
+            <div class="row header-page">
+                <h1 class="col-lg-6">
+                    Lista de Utilizadores
+                </h1>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 crud">
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">Filtros <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a v-on:click="addFilter('mail')">Mail</a></li>
+                                <li><a v-on:click="addFilter('votou')">Votou</a></li>
+                                <li><a v-on:click="addFilter('telemovel')">Telemóvel</a></li>
+                                <li><a v-on:click="addFilter('pagamento_em')">Pagamento</a></li>
+                                <li><a v-on:click="addFilter('ult_actividade_a_mais')">Última Actividade</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                        <input v-model="search" type="text" class="form-control" aria-label="...">
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+                <div class="col-lg-6 text-right crud">
+                    <button v-on:click="sendNotification" type="button" class="btn btn-default">Enviar
+                        Notificação
+                    </button>
+                </div>
+            </div>
+            <!-- /.row -->
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkboxForAll">
+                            <label class="col-md-2">
+                                <input v-model="checkAll" type="checkbox" name="check">
+                            </label>
+                        </div>
+                    </th>
+                    <th>Nome</th>
+                    <th>Endereço de E-Mail</th>
+                    <th>Telefone</th>
+                    <th>Ultimo Pagamento</th>
+                    <th>Ultima Atividade</th>
+                    <th>Votou este Mês</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="user in users" v-if="user.visible">
+                    <td class="checkboxForAll">
+                        <label class="col-md-2">
+                            <input type="checkbox" name="check" v-model="user.select">
+                        </label>
+                    </td>
+                    <td>\{{user.name}}</td>
+                    <td>\{{user.mail}}</td>
+                    <td>\{{user.cellphone}}</td>
+                    <td>\{{user.nextPayment | europeanDate}}</td>
+                    <td>\{{user.lastVisit | europeanDate}}</td>
+                    <td v-html="icon(user.votedMonth)"></td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+{{> footer }}

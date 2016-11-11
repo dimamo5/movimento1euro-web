@@ -6,9 +6,22 @@ var logger = require('morgan');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var MySQLStore = require('express-mysql-session')(session);
+var config = require('config');
+var dbConfig = config.get('dbConfig');
+var options = {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    user: 'ldso',
+    password: 'mypass',
+    database: dbConfig.database
+};
+var sessionStore = new MySQLStore(options);
 
 var auth = require('./routes/auth');
 var template = require('./routes/template');
+var api = require('./routes/api');
+var user = require('./routes/user');
 
 var app = express();
 
@@ -30,6 +43,7 @@ app.set('trust proxy', 1); // trust first proxy
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
+    store: sessionStore,
     saveUninitialized: false,
     cookie: {
         secure: false,
@@ -38,6 +52,7 @@ app.use(session({
 }));
 
 app.use('/', auth);
+app.use('/api', api);
 app.use(function (req, res, next) {
     if (req.session.id && req.session.username) {
         next();
@@ -45,7 +60,10 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
-app.use('/templates', template);
+
+app.use('/template', template);
+app.use('/user', user);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

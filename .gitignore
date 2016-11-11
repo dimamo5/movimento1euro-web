@@ -32,3 +32,6 @@ npm-debug.log
 # IntelliJ Files
 .idea
 *.iml
+
+#API Docs
+apidocs

@@ -1,0 +1,11 @@
+{
+  "dbConfig":{
+    "host":"localhost",
+    "port": 36791,
+    "database":"ldso",
+    "logging":true
+  },
+  "serverConfig":{
+    "port":3000
+  }
+}
