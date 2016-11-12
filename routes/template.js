@@ -44,16 +44,16 @@ router.delete('/api/:id', (req, res) => {
 
 /* CREATE function*/
 router.put('/api/', (req, res) => {
-    db.Template.upsert({name: req.body.name, content: req.body.content})
+    db.Template.create({name: req.body.name, content: req.body.content})
         .then((sucess) => {
             if (sucess) {
-                res.status(200).end();
-            } else {
-                res.status(500).end();
+                res.status(200);
+                res.json({result: 'success', newTemplate: sucess.dataValues});
             }
         })
         .catch(() => {
-            res.status(500).end();
+            res.status(500);
+            res.json({result: 'error'});
         });
 })
 ;

@@ -2,17 +2,22 @@ $(document).ready(function () {
     var table = new Vue({
         el: '#table',
         data: {
-            checkAll:false,
+            checkAll: false,
             templates: []
         },
         created: function () {
             $.get('/template/api', (data)=> {
                 for (var i = 0; i < data.templates.length; i++) {
-                    this.templates.push({select: false, id: data.templates[i].id, name: data.templates[i].name, content: data.templates[i].content});
+                    this.templates.push({
+                        select: false,
+                        id: data.templates[i].id,
+                        name: data.templates[i].name,
+                        content: data.templates[i].content
+                    });
                 }
             })
         },
-        watch:{
+        watch: {
             checkAll: function () {
                 for (var i = 0; i < this.templates.length; i++) {
                     this.templates[i]['select'] = this.checkAll;
@@ -42,4 +47,37 @@ $(document).ready(function () {
         }
     });
 
-});
+    var model = new Vue({
+        el: '.modal',
+        data: {
+            name: '',
+            content: ''
+        },
+        methods: {
+            createTemplate: function () {
+                var url = '/template/api';
+                $.ajax({
+                    url: url,
+                    type: 'PUT',
+                    data: JSON.stringify({name: this.name, content: this.content}),
+                    contentType: 'application/json',
+                    success: (data)=> {
+                        if (data.result == 'success') {
+                            table.templates.push({
+                                select: false,
+                                id: data.newTemplate.id,
+                                name: data.newTemplate.name,
+                                content: data.newTemplate.content
+                            });
+                        }
+                    }
+                })
+                error: {
+                    alert('Error on create');
+                }
+
+            }
+        }
+    })
+})
+;
