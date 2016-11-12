@@ -4,8 +4,11 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
 chai.use(chaiHttp);
+var agent = chai.request.agent(app);
+
 
 describe('Templates', function () {
+
     before((done) => {
         const temp1 = db.Template.build({
             name: 'Pagamento proximo da data',
@@ -17,9 +20,27 @@ describe('Templates', function () {
             content: 'A causa vencedora deste mês é: @nomeCausa, @descrição',
         });
 
-        Promise.all([temp1.save(), temp2.save()])
+        db.clear()
+            .then(()=> {
+                return Promise.all([temp1.save(), temp2.save()])
+            })
+            .then(()=> {
+                return db.Admin.findOrCreate({
+                    where: {username: 'root'},
+                    defaults: {
+                        username: 'root',
+                        name: 'root',
+                        password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+                    },
+                });
+            })
             .then(() => {
-                done();
+                agent
+                    .post('/process_login')
+                    .send({username: 'root', password: 'admin'})
+                    .end(function () {
+                        done();
+                    })
             })
             .catch((err)=> {
                 done(err)
@@ -28,8 +49,8 @@ describe('Templates', function () {
     });
 
     it('should get all templates', (done)=> {
-        chai.request(app)
-            .get('/templates/api/')
+        agent
+            .get('/template/api/')
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body).to.have.property('result');
@@ -44,8 +65,8 @@ describe('Templates', function () {
     });
 
     it('should create new templates', (done)=> {
-        chai.request(app)
-            .put('/templates/api/')
+        agent
+            .put('/template/api/')
             .send({name: 'ola', content: 'ola @nomecausa'})
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -53,7 +74,18 @@ describe('Templates', function () {
                 expect(res.body).to.have.property('id');
                 expect(res.body.result).to.be.equal('success');
                 expect(res.body.id).to.be.instanceof(Number);
-                done();
+                db.Template.findOne({where: {name: 'ola', content: 'ola @nomecausa'}})
+                    .then((row)=> {
+                        if (row > 0) {
+                            done();
+                        } else {
+                            done('Template wasn\'t inserted in db');
+                        }
+                    })
+                    .catch((err)=> {
+                        done(err);
+                    })
+
             });
     });
 });
