@@ -70,12 +70,11 @@ $(document).ready(function () {
                                 content: data.newTemplate.content
                             });
                         }
+                    },
+                    error: (data)=> {
+                        alert('Error on create');
                     }
-                })
-                error: {
-                    alert('Error on create');
-                }
-
+                });
             }
         }
     })
