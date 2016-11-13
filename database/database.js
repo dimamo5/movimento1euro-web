@@ -61,8 +61,20 @@ const AppUser = sequelize.define('AppUser', {
 
 // table template
 const Template = sequelize.define('Template', {
-    name: Sequelize.STRING(45),
-    content: Sequelize.TEXT('medium'),
+    name: {
+        allowNull: false,
+        type: Sequelize.STRING(45),
+        validate: {
+            notEmpty: true
+        }
+    },
+    content: {
+        allowNull: false,
+        type: Sequelize.TEXT('medium'),
+        validate: {
+            notEmpty: true
+        }
+    },
 });
 
 // table alert - yearly paymentt
@@ -183,7 +195,7 @@ function populateDB() {
     const wpUser1 = WpUser.build({
         name: 'João',
         mail: 'joao@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2011, 4, 14, 16, 25, 0, 0),
     });
@@ -191,14 +203,14 @@ function populateDB() {
     const wpUser2 = WpUser.build({
         name: 'Maria',
         mail: 'maria@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2014, 9, 5, 16, 25, 0, 0),
     });
     const wpUser3 = WpUser.build({
         name: 'Ines',
         mail: 'ines@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2013, 9, 23, 16, 25, 0, 0),
     });
@@ -206,7 +218,7 @@ function populateDB() {
     const wpUser4 = WpUser.build({
         name: 'Tomas',
         mail: 'tomas@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2011, 12, 7, 16, 25, 0, 0),
     });
@@ -214,7 +226,7 @@ function populateDB() {
     const wpUser5 = WpUser.build({
         name: 'Diogo',
         mail: 'diogo@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2012, 1, 12, 16, 25, 0, 0),
     });
@@ -222,7 +234,7 @@ function populateDB() {
     const wpUser6 = WpUser.build({
         name: 'Mariana',
         mail: 'mariana@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2014, 3, 18, 16, 25, 0, 0),
     });
@@ -230,7 +242,7 @@ function populateDB() {
     const wpUser7 = WpUser.build({
         name: 'Marina',
         mail: 'Marina@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 12, 27, 18, 25, 0, 0),
     });
@@ -238,7 +250,7 @@ function populateDB() {
     const wpUser8 = WpUser.build({
         name: 'Candido',
         mail: 'candido@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 12, 7, 17, 25, 0, 0),
     });
@@ -246,7 +258,7 @@ function populateDB() {
     const wpUser9 = WpUser.build({
         name: 'Paulo',
         mail: 'paulo@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 12, 23, 10, 25, 0, 0),
     });
@@ -254,7 +266,7 @@ function populateDB() {
     const wpUser10 = WpUser.build({
         name: 'Ana',
         mail: 'ana@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 11, 4, 13, 25, 0, 0),
     });
@@ -409,12 +421,12 @@ function populateDB() {
 
     const temp1 = Template.build({
         name: 'Pagamento proximo da data',
-        content: 'O pagamento da mensalidade encontra-se proximo @lastpayment',
+        content: 'O pagamento da mensalidade encontra-se proximo @proxPagamento',
     });
 
     const temp2 = Template.build({
         name: 'Causa vencedora',
-        content: 'A causa vencedora deste mês é: @nomeCausa, @descrição',
+        content: 'A causa vencedora deste mês é: @nomeCausa, @descricaoCausa',
     });
 
 

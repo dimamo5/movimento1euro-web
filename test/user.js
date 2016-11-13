@@ -7,7 +7,6 @@ const app = require('../app');
 chai.use(chaiHttp);
 
 describe('Users', function () {
-    this.timeout(25000);
     before((done) => {
         const appUser1 = db.AppUser.build({
             external_link_id: 3,
