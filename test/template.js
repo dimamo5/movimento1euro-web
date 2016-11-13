@@ -71,12 +71,12 @@ describe('Templates', function () {
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body).to.have.property('result');
-                expect(res.body).to.have.property('id');
+                expect(res.body).to.have.property('newTemplate');
                 expect(res.body.result).to.be.equal('success');
-                expect(res.body.id).to.be.instanceof(Number);
+                expect(res.body.newTemplate.id).to.be.isNumber;
                 db.Template.findOne({where: {name: 'ola', content: 'ola @nomecausa'}})
                     .then((row)=> {
-                        if (row > 0) {
+                        if (row) {
                             done();
                         } else {
                             done('Template wasn\'t inserted in db');
@@ -88,4 +88,37 @@ describe('Templates', function () {
 
             });
     });
+
+    it('should edit templates', (done)=> {
+        agent
+            .put('/template/api/1')
+            .send({name: 'ola1', content: 'olaX @nomecausa'})
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('result');
+                expect(res.body.result).to.be.equal('success');
+                db.Template.findOne({where: {name: 'ola1'}})
+                    .then((row)=> {
+                        if (row) {
+                            done();
+                        } else {
+                            done('Template wasn\'t edited in db');
+                        }
+                    })
+                    .catch((err)=> {
+                        done(err);
+                    })
+
+            });
+    });
+
+   /* it('should delete templates', (done)=> {
+        agent
+            .put('/template/api/1')
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('removed');
+                expect(res.body.removed.id).to.be.equal(1);
+            });
+    });*/
 });

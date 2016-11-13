@@ -43,7 +43,7 @@ router.delete('/api/:id', (req, res) => {
 });
 
 /* CREATE function*/
-router.put('/api/', (req, res) => {
+router.put('/api', (req, res) => {
     db.Template.create({name: req.body.name, content: req.body.content})
         .then((sucess) => {
             if (sucess) {
@@ -57,18 +57,18 @@ router.put('/api/', (req, res) => {
         });
 })
 ;
-// CREATE function
+// EDIT function
 router.put('/api/:id', (req, res) => {
-    db.Template.upsert({name: req.body.name, content: req.body.content})
+    db.Template.update({name: req.body.name, content: req.body.content}, {where: {id: req.params.id}})
         .then((sucess) => {
-            if (sucess) {
-                res.status(200).end();
-            } else {
-                res.status(500).end();
+            if (sucess[0] > 0) {
+                res.status(200);
+                res.json({result: 'success'});
             }
         })
         .catch(() => {
-            res.status(500).end();
+            res.status(500);
+            res.json({result: 'error'});
         });
 });
 

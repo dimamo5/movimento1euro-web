@@ -421,12 +421,12 @@ function populateDB() {
 
     const temp1 = Template.build({
         name: 'Pagamento proximo da data',
-        content: 'O pagamento da mensalidade encontra-se proximo @lastpayment',
+        content: 'O pagamento da mensalidade encontra-se proximo @proxPagamento',
     });
 
     const temp2 = Template.build({
         name: 'Causa vencedora',
-        content: 'A causa vencedora deste mês é: @nomeCausa, @descrição',
+        content: 'A causa vencedora deste mês é: @nomeCausa, @descricaoCausa',
     });
 
 
