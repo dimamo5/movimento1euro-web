@@ -1,7 +1,7 @@
 $(document).ready(function () {
     var dummy = {
         name: 'Ines',
-        nextPayment: new Date(2013, 9, 23, 16, 25, 0, 0),
+        nextPayment: new Date(2017, 9, 23, 16, 25, 0, 0),
         nameCause: 'Nome previsualização',
         descriptionCause: 'Descrição para previsualização'
     };
@@ -33,6 +33,13 @@ $(document).ready(function () {
             }
         },
         methods: {
+            upDateCounter : function (checked) {
+                if(!checked)
+                    this.counter ++;
+                else
+                    this.counter--;
+                console.log(this.counter);
+            },
             remove: function () {
                 var url = '/template/api/';
                 for (let i = 0; i < this.templates.length; i++) {
@@ -98,7 +105,6 @@ $(document).ready(function () {
                                     table.templates[i].content = this.selectedContent;
                                     table.templates[i].select = false;
                                     table.counter = 0;
-                                    this.templateSelected = table.templates[i];
                                 }
                             },
                             error: ()=> {
@@ -123,7 +129,9 @@ $(document).ready(function () {
                  return mapObj[matched];
                  });*/
 
-                this.previewContent = this.selectedContent.replace('@nome', dummy.name).replace('@proxPagamento', dummy.nextPayment.getDate().toString())
+                let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
+
+                this.previewContent = this.selectedContent.replace('@nome', dummy.name).replace('@proxPagamento', date)
                     .replace('@nomeCausa', dummy.nameCause).replace('@descricaoCausa', dummy.descriptionCause);
             }
         }

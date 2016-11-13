@@ -112,13 +112,14 @@ describe('Templates', function () {
             });
     });
 
-   /* it('should delete templates', (done)=> {
+    it('should delete templates', (done)=> {
         agent
-            .put('/template/api/1')
+            .delete('/template/api/1')
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body).to.have.property('removed');
-                expect(res.body.removed.id).to.be.equal(1);
+                expect(res.body.removed).to.equal('1');
+                done();
             });
-    });*/
+    });
 });
