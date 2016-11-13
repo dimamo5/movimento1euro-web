@@ -92,8 +92,7 @@ $(document).ready(function () {
                             }
                         }
                         t1 = performance.now();
-                        console.log('Time elapsed: ' + (t1 - t));
-                    },
+                        console.log('Time elapsed: ' + (t1 - t));                    },
                     icon: function (value) {
                         if (value) {
                             return '<i class="fa fa-check" aria-hidden="true"></i>'
