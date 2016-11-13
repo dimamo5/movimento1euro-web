@@ -134,7 +134,7 @@ const WpUser = sequelize.define('WpUser', {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
     },
-    facebook: Sequelize.TEXT('medium'),
+    facebook_id: Sequelize.TEXT('tiny'),
 });
 
 const WpCause = sequelize.define('WpCauses', {

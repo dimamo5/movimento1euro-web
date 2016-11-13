@@ -14,6 +14,19 @@ function getUser(mail, password, next) {
     }
 }
 
+function getUserFB(fb_id, next) {
+    if (typeof next == 'function') {
+        db.WpUser.findOne({where: {facebook_id:fb_id}})
+            .then(function(wpUser){
+                return db.AppUser.findOne({where: {external_link_id: wpUser.id}})
+            })
+            .then(next(null,user))
+            .catch(next('User doesnt exists on DB!',null));
+    } else {
+        next(new Error('Next is not a function',null));
+    }
+}
+
 function getUsersInfo() {
     return db.AppUser.findAll()
         .then((users)=> {
