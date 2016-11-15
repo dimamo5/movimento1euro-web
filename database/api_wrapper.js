@@ -14,6 +14,24 @@ function getUser(mail, password, next) {
     }
 }
 
+function getUserFB(fb_id, next) {
+    if (typeof next == 'function') {
+        db.WpUser.findOne({where: {facebookId: fb_id}})
+            .then(function (wpUser) {
+                db.AppUser.findOne({where: {external_link_id: wpUser.id}})
+                    .then(function (appUser) {
+                        var userWithAllInfo = {};
+                        userWithAllInfo["appUser"] = appUser;
+                        userWithAllInfo["wpUser"] = wpUser;
+                        next(null, userWithAllInfo);
+                    })
+                    .catch(next);
+            });
+    } else {
+        next(new Error('Next is not a function', null));
+    }
+}
+
 function getUsersInfo() {
     return db.AppUser.findAll()
         .then((users)=> {
@@ -41,5 +59,6 @@ function getWpUserInfo(user) {
 
 module.exports.getUser = getUser;
 module.exports.getUsersInfo = getUsersInfo;
+module.exports.getUserFB = getUserFB;
 
 

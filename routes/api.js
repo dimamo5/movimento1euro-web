@@ -3,7 +3,7 @@ const db = require('../database/database.js');
 const apiWrapper = require('../database/api_wrapper');
 const crypto = require('crypto');
 const router = express.Router();
-
+const request = require('request');
 
 /**
  * @api {post} /api/login User Login
@@ -49,7 +49,7 @@ router.post('/login', (req, res) => {
                                 crypto.randomBytes(48, (err, buffer) => {
                                     const token = buffer.toString('hex');
                                     result.token = token;
-                                    result.save().then(res.json({
+                                    result.save().then(() => res.json({
                                         result: 'success',
                                         token,
                                         id: result.id,
@@ -69,6 +69,76 @@ router.post('/login', (req, res) => {
         res.json({result: 'wrong params'});
     }
 });
+
+
+/**
+ * @api {get} /api/loginFB Verify FB login
+ * @apiDescription Verify login token/id through facebook API, returns token and user info
+ * @apiName LoginFB
+ * @apiGroup Authentication
+ * @apiVersion 0.1.0
+ * @apiHeader {String} Authorization User token
+ *
+ * @apiParam {String} token User's facebook access token
+ * @apiParam {String} id User's facebook id
+ *
+ * @apiSuccess {String} result Returns 'success'
+ *
+ * @apiError {String} result Returns 'error'
+ */
+router.post('/loginfb', (req, res) => {
+    if (req.body.token && req.body.id) {
+        apiWrapper.getUserFB(req.body.id, function (error, user) {
+            if (error) {
+                res.json({result: error});
+            }
+            else {
+                request.get('https://graph.facebook.com/v2.8/me?fields=id&access_token=' + req.body.token,
+                    function (error, response, body) {
+                        if (!error && response.statusCode == 200) {
+                            var bodyJson = JSON.parse(body);
+                            var idFacebook = parseInt(bodyJson.id);
+                            if (req.body.id == idFacebook) {
+                                if (user.appUser.token) {
+                                    res.json({
+                                        result: 'success',
+                                        token: user.appUser.token,
+                                        id: user.appUser.id,
+                                        name: user.appUser.name,
+                                        expDate: user.wpUser.nextPayment
+                                    });
+                                } else {
+                                    crypto.randomBytes(48, (err, buffer) => {
+                                        const token = buffer.toString('hex');
+                                        user.appUser.token = token;
+                                        user.appUser.save()
+                                            .then(()=>res.json({
+                                                result: 'success',
+                                                token: token,
+                                                id: user.appUser.id,
+                                                name: user.appUser.name,
+                                                expDate: user.wpUser.nextPayment
+                                            }))
+                                            .catch((err)=>{
+                                                res.json({result:err});
+                                            })
+                                    });
+                                }
+                            }
+                            else {
+                                res.json({result: 'IDs dont match.'});
+                            }
+                        }
+                        else {
+                            res.json({result: 'FB API call error'})
+                        }
+                    })
+            }
+        })
+
+    }
+});
+
 
 /**
  * @api {get} /api/logout Logout
