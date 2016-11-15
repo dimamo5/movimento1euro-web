@@ -16,24 +16,34 @@ const options = {
   },
 };
 
-
-function sendToOne(id, title, content, next) {
-  if (!next || typeof next != 'function') {
-    throw new Error('4º argument must be a callback function');
+/* Ids.length >= 1  */
+function sendTemplate(ids, title, content, next) {
+  if (!next || typeof next != 'function' && ids.constructor === Array) {
+    throw new Error('1º argument must be an array function and 4º must be a callback function');
   }
-  options.body.to = id;
-  options.body.notification = { title, body: content };
-  request(options, (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      next(null, true);
-    } else {
-      var error = new Error(`${response.getActual}body`);
-      next(error, false);
-    }
-  });
+
+  //TODO: wait 4 all responses to return a map
+
+  for(id of ids) {
+      options.body.to = id;
+      options.body.notification = {title, body: content};
+
+      //TODO: call replace tags (parser) method
+
+
+      request(options, (error, response, body) => {
+          if (!error && response.statusCode == 200) {
+              next(null, true);
+          } else {
+              var error = new Error(`${response.getActual}body`);
+              next(error, false);
+          }
+      });
+  }
 }
 
-function sendToMany(ids, title, content, next) {
+/* Ids.length >= 1  */
+function sendManual(ids, title, content, next) {
   if (!next || typeof next != 'function' && ids.constructor === Array) {
     throw new Error('1º argument must be an array function and 4º must be a callback function');
   }

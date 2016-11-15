@@ -38,7 +38,6 @@ $(document).ready(function () {
                     this.counter ++;
                 else
                     this.counter--;
-                console.log(this.counter);
             },
             remove: function () {
                 var url = '/template/api/';
