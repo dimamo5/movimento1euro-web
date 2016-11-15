@@ -72,20 +72,17 @@ router.post('/login', (req, res) => {
 
 
 /**
- * @api {post} /api/loginfb Facebook login
- * @apiDescription Verify login token and id through facebook API, returns token and user info
+ * @api {get} /api/loginFB Verify FB login
+ * @apiDescription Verify login token/id through facebook API, returns token and user info
  * @apiName LoginFB
  * @apiGroup Authentication
  * @apiVersion 0.1.0
+ * @apiHeader {String} Authorization User token
  *
  * @apiParam {String} token User's facebook access token
  * @apiParam {String} id User's facebook id
  *
- * @apiSuccess {String} result Returns success
- * @apiSuccess {String} token Token for future calls to the API
- * @apiSuccess {Number} id Id of the logged user
- * @apiSuccess {String} name Name of the logged user
- * @apiSuccess {String} expDate Date of the last payment
+ * @apiSuccess {String} result Returns 'success'
  *
  * @apiError {String} result Returns 'error'
  */
