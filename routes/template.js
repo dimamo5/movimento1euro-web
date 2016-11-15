@@ -22,7 +22,8 @@ router.get('/', (req, res, next) => {
  * @apiSuccess {Number} id Id of the Template
  */
 router.get('/api', (req, res) => {
-    db.Template.findAll().then((allTemplates) => {
+    //TODO: fix bug -> it shows alerts 
+    db.Template.findAll({includes:[{model: db.Alert, required: true}]}).then((allTemplates) => {
         res.json({result: 'success', templates: allTemplates});
     });
 });
