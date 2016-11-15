@@ -25,8 +25,8 @@ function getUserFB(fb_id, next) {
                         userWithAllInfo["wpUser"] = wpUser;
                         next(null, userWithAllInfo);
                     })
-                    .catch(next);
-            });
+                    .catch(next);  //no link between AppUser/WPUser
+            }).catch(next);  //User doesnt exists on db
     } else {
         next(new Error('Next is not a function', null));
     }
