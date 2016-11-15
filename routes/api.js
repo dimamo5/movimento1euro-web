@@ -49,7 +49,7 @@ router.post('/login', (req, res) => {
                                 crypto.randomBytes(48, (err, buffer) => {
                                     const token = buffer.toString('hex');
                                     result.token = token;
-                                    result.save().then(res.json({
+                                    result.save().then(() => res.json({
                                         result: 'success',
                                         token,
                                         id: result.id,
@@ -86,36 +86,58 @@ router.post('/login', (req, res) => {
  *
  * @apiError {String} result Returns 'error'
  */
-router.post('/loginFB', (req, res) => {
+router.post('/loginfb', (req, res) => {
     if (req.body.token && req.body.id) {
-        getUserFB(req.body.id,function (error,user) {
-            if(error){
+        apiWrapper.getUserFB(req.body.id, function (error, user) {
+            if (error) {
                 res.json({result: error});
-                return;
             }
-            request.get('https://graph.facebook.com/v2.8/me?fields=id&access_token='+req.body.token,
-                function(error,response,body){
-                    if (!error && response.statusCode == 200) {
-                        if(req.body.id == body.id){
-                            res.json({result: 'success',
-                                token: user.token,
-                                id: user.id,
-                                name: user.name,
-                                expDate: user.nextPayment});
+            else {
+                request.get('https://graph.facebook.com/v2.8/me?fields=id&access_token=' + req.body.token,
+                    function (error, response, body) {
+                        if (!error && response.statusCode == 200) {
+                            var bodyJson = JSON.parse(body);
+                            var idFacebook = parseInt(bodyJson.id);
+                            if (req.body.id == idFacebook) {
+                                if (user.appUser.token) {
+                                    res.json({
+                                        result: 'success',
+                                        token: user.appUser.token,
+                                        id: user.appUser.id,
+                                        name: user.appUser.name,
+                                        expDate: user.wpUser.nextPayment
+                                    });
+                                } else {
+                                    crypto.randomBytes(48, (err, buffer) => {
+                                        const token = buffer.toString('hex');
+                                        user.appUser.token = token;
+                                        user.appUser.save()
+                                            .then(()=>res.json({
+                                                result: 'success',
+                                                token: token,
+                                                id: user.appUser.id,
+                                                name: user.appUser.name,
+                                                expDate: user.wpUser.nextPayment
+                                            }))
+                                            .catch((err)=>{
+                                                res.json({result:err});
+                                            })
+                                    });
+                                }
+                            }
+                            else {
+                                res.json({result: 'IDs dont match.'});
+                            }
                         }
-                        else{
-                            res.json({result: 'IDs dont match.'});
+                        else {
+                            res.json({result: 'FB API call error'})
                         }
-                    }
-                    else{
-                        res.json({result: 'FB API call error'})
-                    }
-                })
+                    })
+            }
         })
+
     }
 });
-
-
 
 
 /**

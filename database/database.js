@@ -134,7 +134,7 @@ const WpUser = sequelize.define('WpUser', {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
     },
-    facebook_id: Sequelize.TEXT('tiny'),
+    facebookId: Sequelize.TEXT('tiny'),
 });
 
 const WpCause = sequelize.define('WpCauses', {
@@ -186,6 +186,7 @@ function populateDB() {
         cellphone:'987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2011, 4, 14, 16, 25, 0, 0),
+        facebookId: 1319444014767273
     });
 
     const wpUser2 = WpUser.build({
