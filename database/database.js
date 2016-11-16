@@ -55,7 +55,7 @@ const AppUser = sequelize.define('AppUser', {
         defaultValue: null,
         type: Sequelize.STRING(96),
     },
-    firebase_token: Sequelize.TEXT('tiny'),
+    firebase_token: Sequelize.TEXT('medium'),
 });
 
 
@@ -104,21 +104,27 @@ const Message = sequelize.define('Message', {
     },
     // may have content if it's manual (without template)
     content: Sequelize.TEXT('medium'),
+    title: Sequelize.TEXT('tiny'),
     date: Sequelize.DATE,
 });
 
 // association between users/Msgs
-const SeenMessage = sequelize.define('SeenMsg', {
+
+const UserMsg = sequelize.define('UserMsg', {
     seen: {
         allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true,
     },
+    firebaseMsgID : {
+        allowNull: true,
+        type: Sequelize.STRING
+    }
 });
 
 /* Relation specification */
-Message.belongsToMany(AppUser, {through: SeenMessage});
-AppUser.belongsToMany(Message, {through: SeenMessage});
+Message.belongsToMany(AppUser, {through: UserMsg});
+AppUser.belongsToMany(Message, {through: UserMsg});
 Template.hasMany(Message);
 Template.hasMany(Alert);
 
@@ -341,35 +347,41 @@ function populateDB() {
         msg_type: 'Manual',
         content: 'Exemplo de mensagem manual',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
 
     const msg2 = Message.build({
         msg_type: 'Template',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg3 = Message.build({
         msg_type: 'Alert',
         content: 'Exemplo de mensagem alerta',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg4 = Message.build({
         msg_type: 'Manual',
         content: 'Segunda mensagem manual...',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg5 = Message.build({
         msg_type: 'Template',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg6 = Message.build({
         msg_type: 'Manual',
         content: 'Terceira mensagem manual',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const appUser1 = AppUser.build({
@@ -474,4 +486,4 @@ if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'staging') 
 }
 
 
-module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, clear};
+module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, UserMsg, clear};

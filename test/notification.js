@@ -12,7 +12,6 @@ var agent = chai.request.agent(app);
 describe('Notifications', function () {
 
     const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
-
     before((done) => {
 
         const appUser1 = db.AppUser.build({
@@ -20,6 +19,7 @@ describe('Notifications', function () {
             name: 'Diogo',
             last_visit: new Date(2016, 10, 28, 16, 45, 0, 0),
             token: TOKEN,
+            firebase_token: 'cUZt03yRUqw:APA91bGUTD0ICI8QZCOLmc8ZnNZfJLS0qO-FOivMxq1apbf4XuagLGbLLVM3f_faVTbmc8E9oiWzGEFUlT2bwM9Dii-lV8Kzod9IC1IGO4z5klnz3uQBJk22dUkYdjreavCqWAFL1hXo',
         });
         const wpUser1 = db.WpUser.build({
             name: 'Diogo',
@@ -35,15 +35,19 @@ describe('Notifications', function () {
         });
 
         db.clear()
-            .then(() =>
-                appUser1.save()
-            )
-            .then(() =>
-                wpUser1.save()
-            )
-            .then(() =>
-                notification1.save()
-            )
+            .then(() => {
+                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save()])
+            })
+            .then(()=> {
+                return db.Admin.findOrCreate({
+                    where: {username: 'root'},
+                    defaults: {
+                        username: 'root',
+                        name: 'root',
+                        password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+                    },
+                });
+            })
             .then(() => {
                 agent
                     .post('/process_login')
@@ -57,9 +61,10 @@ describe('Notifications', function () {
 
     it('should send a message notification to a unique user', (done) => {
         agent
-            .post('/notifications/sendManual')
+            .post('/notification/sendManual')
             .send({
                 msg_type: 'Manual',
+                title: 'generico o bananana, CC',
                 content: 'Exemplo de mensagem manual',
                 ids: [1],
             })
@@ -67,11 +72,21 @@ describe('Notifications', function () {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
-                expect(res.body).to.have.property('map_response');
-            }) //TODO:  keep doing this
+                expect(res.body).to.have.property('result');
+                expect(res.body.result).to.equal('success');
+                expect(res.body).to.have.property('users');
+                expect(res.body).to.have.property('msg_id');
+                expect(res.body).to.have.property('notificationStates');
 
-m
+                console.log(res.body.users[0], res.body.notificationStates[0]);
+
+                db.UserMsg.findOne({where: {AppUserId: res.body.users[0], messageId: res.body.msg_id}})
+                    .then((message)=> {
+                        expect(message).to.not.be.null;
+                        done();
+                    })
+            });
+
     });
-
 
 });
