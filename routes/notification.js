@@ -39,6 +39,8 @@ function parseTemplate(message, user) {
     message.replace('@nome', users.name).replace('@proxPagamento', user.nextPayment)
         .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO');
 
+    //acesso à base de dados das causas
+
     return message;
 }
 

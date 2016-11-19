@@ -34,6 +34,12 @@ describe('Notifications', function () {
             date: new Date(2016, 10, 1, 16, 45, 0, 0),
         });
 
+        const notification2 = db.Message.build({
+            msg_type: 'Template',
+            content: 'Exemplo de mensagem template',
+            date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        });
+
         db.clear()
             .then(() => {
                 return Promise.all([appUser1.save(), wpUser1.save(), notification1.save()])
@@ -89,4 +95,42 @@ describe('Notifications', function () {
 
     });
 
+    /*
+     it('should send a manual msg to multiple users' , (done) => {
+     .post('/notification/sendManual')
+     .send({
+     msg_type: 'Manual',
+     title: 'Duarte',
+     content: 'Exemplo de mensagem manual',
+     ids: [1],
+     })
+     }*/
+
+    /* it('should send a template msg to multiple users', (done) => {
+     agent
+
+     .post('/notification/sendTemplate')
+     .send({
+     msg_type: 'Manual',
+     title: 'Duarte',
+     content: 'Exemplo de mensagem manual',
+     ids: [1],
+     })
+     .end((err, res) => {
+     expect(err).to.be.null;
+     expect(res).to.have.status(200);
+     expect(res).to.be.json;
+     expect(res.body).to.have.property('result');
+     expect(res.body.result).to.equal('success');
+     expect(res.body).to.have.property('users');
+     expect(res.body).to.have.property('msg_id');
+     expect(res.body).to.have.property('notificationStates');
+
+     db.UserMsg.findOne({where: {AppUserId: res.body.users[0], messageId: res.body.msg_id}})
+     .then((message)=> {
+     expect(message).to.not.be.null;
+     done();
+     })
+     });
+     });*/
 });
