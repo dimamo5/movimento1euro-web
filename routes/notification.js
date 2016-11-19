@@ -21,59 +21,85 @@ const options = {
     },
 };
 
-function parseTemplate(message, users) {
-    let messages = [];
-    for (let i = 0; i < users.length; i++) {
-        messages.push(message.replace('@nome', users.name).replace('@proxPagamento', users.nextPayment)
-            .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO'));
-    }
-    return messages;
+
+/*
+ function parseTemplate(message, users) {
+ let messages = [];
+ for (let i = 0; i < users.length; i++) {
+ messages.push(message.replace('@nome', users[i].name).replace('@proxPagamento', users[i].nextPayment)
+ .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO'));
+ }
+ return messages;
+ }*/
+
+//TODO finish this method - replace "TODO" fields
+function parseTemplate(message, user) {
+    let message;
+
+    message.replace('@nome', users.name).replace('@proxPagamento', user.nextPayment)
+        .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO');
+
+    return message;
 }
 
+
 /* Ids.length >= 1  */
-function sendTemplate(ids, title, content, next) {
-    if (!next || typeof next != 'function' && ids.constructor === Array) {
-        throw new Error('1º argument must be an array function and 4º must be a callback function');
+router.post('/sendTemplate', (req, res) => {
+    if (!(req.body.ids && req.body.title && req.body.content && req.body.msg_type)) {
+        res.json({error: 'Wrong params'});
+        return;
     }
 
-    //SEE sendManual to example
+    var title = req.body.title;
+    var content = req.body.content;
+    var msg_type = req.body.msg_type;
+    var ids = req.body.ids;
 
     async.each(ids, function (id, callback) {
 
-        // Perform operation on file here.
-        console.log('Processing file ' + file);
+        console.log('Processing notification to user #' + id);
 
-        db.WpUser.findAll({
-            where: {id: ids}
-        }).then(function (users) {
+        db.WpUser.findOne({
+            where: {id: id},
+            attributes: ['firebase_token']
+        }).then(function (reg_id) {
 
+            let firebase_id = reg_id.firebase_token;
+            let parsed_content = parseTemplate(content, id);
 
             options.body.to = id;
-            options.body.notification = {title, body: content};
+            options.body.notification = {title, body: parsed_content};
 
+            db.Message.create({
+                msg_type: msg_type,
+                content: parsed_content,
+                title: title,
+                date: new Date(),
+            }).then(function () {
+                request(options, (error, response, body) => {
+                    if (!error && response.statusCode == 200 && body.failure == 0) {
 
-            parseTemplate(message, users)
+                        if (!body.results.error) {
+                            message.addAppUser(id, {firebaseMsgID: body.results[0].message_id});
+                        }
+                        else { //erro na msg
+                            console.log(body.results[0].error);
+                        }
 
-            request(options, (error, response, body) => {
-                if (!error && response.statusCode == 200) {
-                    callback(null, true);
-                } else {
-                    var error = new Error(`${response.getActual}body`);
-                    callback(error, false);
-                }
+                        res.json({
+                            result: 'success',
+                            user: id,
+                            msg_id: message.id,
+                            notificationStates: body.results[0],
+                        });
+                    } else {
+                        res.json({result: 'Error processing notification'});
+                    }
+                });
             });
-        }, function (err) {
-            // if any of the notification processing produced an error, err would equal that error
-            if (err) {
-                // One of the iterations produced an error.
-                // All processing will now stop.
-                console.log('A notification failed to process');
-            } else {
-                console.log('All notifications have been processed successfully');
-            }
         });
-    })
-}
+    });
+});
 
 /* Ids.length >= 1  */
 router.post('/sendManual', (req, res) => {
