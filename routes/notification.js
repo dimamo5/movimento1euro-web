@@ -21,6 +21,15 @@ const options = {
     },
 };
 
+function parseTemplate(message, users) {
+    let messages = [];
+    for (let i = 0; i < users.length; i++) {
+        messages.push(message.replace('@nome', users.name).replace('@proxPagamento', users.nextPayment)
+            .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO'));
+    }
+    return messages;
+}
+
 /* Ids.length >= 1  */
 function sendTemplate(ids, title, content, next) {
     if (!next || typeof next != 'function' && ids.constructor === Array) {
@@ -34,29 +43,36 @@ function sendTemplate(ids, title, content, next) {
         // Perform operation on file here.
         console.log('Processing file ' + file);
 
-        options.body.to = id;
-        options.body.notification = {title, body: content};
+        db.WpUser.findAll({
+            where: {id: ids}
+        }).then(function (users) {
 
-        //TODO: call replace tags (parser) method
 
-        request(options, (error, response, body) => {
-            if (!error && response.statusCode == 200) {
-                callback(null, true);
+            options.body.to = id;
+            options.body.notification = {title, body: content};
+
+
+            parseTemplate(message, users)
+
+            request(options, (error, response, body) => {
+                if (!error && response.statusCode == 200) {
+                    callback(null, true);
+                } else {
+                    var error = new Error(`${response.getActual}body`);
+                    callback(error, false);
+                }
+            });
+        }, function (err) {
+            // if any of the notification processing produced an error, err would equal that error
+            if (err) {
+                // One of the iterations produced an error.
+                // All processing will now stop.
+                console.log('A notification failed to process');
             } else {
-                var error = new Error(`${response.getActual}body`);
-                callback(error, false);
+                console.log('All notifications have been processed successfully');
             }
         });
-    }, function (err) {
-        // if any of the notification processing produced an error, err would equal that error
-        if (err) {
-            // One of the iterations produced an error.
-            // All processing will now stop.
-            console.log('A notification failed to process');
-        } else {
-            console.log('All notifications have been processed successfully');
-        }
-    });
+    })
 }
 
 /* Ids.length >= 1  */
