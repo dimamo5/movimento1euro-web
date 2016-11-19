@@ -6,26 +6,35 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Criar Template</h4>
             </div>
-            <div class="form-group">
-                <label for="nameTemplate">Nome do template:</label>
-                <input v-model="name" type="text" class="form-control" id="nameTemplate" required="required">
-            </div>
-            <div class="form-group">
-                <label for="contentTemplate">Conteúdo do template:</label>
-                <textarea v-model="content" rows="4" cols="50" id="content" name="content"
-                          class="form-control"></textarea>
 
-            </div>
-            <div class="form-group">
-                <label class="col-lg-12">@Tags</label>
-                <button v-on:click="addText('@proxPagamento')" type="button" class="btn btn-default">@proxPagamento</button>
-                <button v-on:click="addText('@nomeCausa')"  type="button" class="btn btn-default">@nomeCausa</button>
-                <button v-on:click="addText('@descricaoCausa')"  type="button" class="btn btn-default">@descricaoCausa</button>
-                <button v-on:click="addText('@nome')"  type="button" class="btn btn-default">@nome</button>
-                </textarea>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nameTemplate">Nome do template:</label>
+                    <input v-model="name" type="text" class="form-control" id="nameTemplate" required="required">
+                </div>
+                <div class="form-group">
+                    <label for="contentTemplate">Conteúdo do template:</label>
+                    <textarea v-model="content" rows="4" cols="50" id="content" name="content"
+                              class="form-control"></textarea>
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-12">@Tags</label>
+                    <button v-on:click="addText('@proxPagamento')" type="button" class="btn btn-default">
+                        @proxPagamento
+                    </button>
+                    <button v-on:click="addText('@nomeCausa')" type="button" class="btn btn-default">@nomeCausa</button>
+                    <button v-on:click="addText('@descricaoCausa')" type="button" class="btn btn-default">
+                        @descricaoCausa
+                    </button>
+                    <button v-on:click="addText('@nome')" type="button" class="btn btn-default">@nome</button>
+                    </textarea>
+                </div>
             </div>
             <div class="modal-footer">
-                <button v-on:click="reviewContent" type="button" class="btn btn-default"  data-toggle="collapse" data-target="#preview">Pré-visualização</button>
+                <button v-on:click="reviewContent" type="button" class="btn btn-default" data-toggle="collapse"
+                        data-target="#preview">Pré-visualização
+                </button>
                 <button v-on:click.self="createTemplate" type="button" class="btn btn-default" data-dismiss="modal">
                     Criar
                 </button>
@@ -50,27 +59,35 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Editor de Templates</h4>
             </div>
-            <div class="form-group">
-                <label for="nameTemplate">Nome do template:</label>
-                <input v-model="selectedName" v-bind:value=selectedName type="text" class="form-control" id="nameTemplate"
-                       required="required">
-            </div>
-            <div class="form-group">
-                <label for="contentTemplate">Conteúdo do template:</label>
-                <textarea v-model="selectedContent" rows="4" cols="50" name="content" class="form-control">
-                </textarea>
-            </div>
 
-            <div class="form-group">
-                <label class="col-lg-12">@Tags</label>
-                <button v-on:click="addText('@proxPagamento')" type="button" class="btn btn-default">@proxPagamento</button>
-                <button v-on:click="addText('@nomeCausa')"  type="button" class="btn btn-default">@nomeCausa</button>
-                <button v-on:click="addText('@descricaoCausa')"  type="button" class="btn btn-default">@descricaoCausa</button>
-                <button v-on:click="addText('@nome')"  type="button" class="btn btn-default">@nome</button>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nameTemplate">Nome do template:</label>
+                    <input v-model="selectedName" v-bind:value=selectedName type="text" class="form-control"
+                           id="nameTemplate"
+                           required="required">
+                </div>
+                <div class="form-group">
+                    <label for="contentTemplate">Conteúdo do template:</label>
+                    <textarea v-model="selectedContent" rows="4" cols="50" name="content" class="form-control">
                 </textarea>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-12">@Tags</label>
+                    <button v-on:click="addText('@proxPagamento')" type="button" class="btn btn-default">@proxPagamento
+                    </button>
+                    <button v-on:click="addText('@nomeCausa')" type="button" class="btn btn-default">@nomeCausa</button>
+                    <button v-on:click="addText('@descricaoCausa')" type="button" class="btn btn-default">
+                        @descricaoCausa
+                    </button>
+                    <button v-on:click="addText('@nome')" type="button" class="btn btn-default">@nome</button>
+                    </textarea>
+                </div>
             </div>
             <div class="modal-footer">
-                <button v-on:click="reviewContent"  type="button" class="btn btn-default" data-toggle="collapse" data-target="#preview">Pré-visualização</button>
+                <button v-on:click="reviewContent" type="button" class="btn btn-default" data-toggle="collapse"
+                        data-target="#preview">Pré-visualização
+                </button>
                 <button v-on:click="editTemplate" type="button" class="btn btn-default" data-dismiss="modal">Guardar
                 </button>
 
