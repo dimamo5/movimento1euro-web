@@ -140,7 +140,8 @@ $(document).ready(function () {
         el: '#templateCreateModal',
         data: {
             name: '',
-            content: ''
+            content: '',
+            previewContent: ''
         },
         methods: {
             createTemplate: function () {
@@ -164,6 +165,25 @@ $(document).ready(function () {
                         alert('Error on create');
                     }
                 });
+            },
+            addText: function (tag) {
+                this.content += ' ' + tag;
+            },
+            reviewContent: function () {
+                /* var mapObj = {
+                 '@nome':dummy.name,
+                 '@proxPagamento':dummy.nextPayment,
+                 '@nomeCausa':dummy.nameCause,
+                 '@descricaoCausa': dummy.descriptionCause
+                 };
+                 this.previewContent = this.selectedContent.replace('/@nome|@proxPagamento|@nomeCausa|@descricaoCausa/gi', function(matched){
+                 return mapObj[matched];
+                 });*/
+
+                let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
+
+                this.previewContent = this.content.replace('@nome', dummy.name).replace('@proxPagamento', date)
+                    .replace('@nomeCausa', dummy.nameCause).replace('@descricaoCausa', dummy.descriptionCause);
             }
         }
     })
