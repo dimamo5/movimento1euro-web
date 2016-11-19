@@ -33,9 +33,9 @@ $(document).ready(function () {
             }
         },
         methods: {
-            upDateCounter : function (checked) {
-                if(!checked)
-                    this.counter ++;
+            upDateCounter: function (checked) {
+                if (!checked)
+                    this.counter++;
                 else
                     this.counter--;
             },
@@ -76,6 +76,15 @@ $(document).ready(function () {
                     }
                     this.counter = 0;
                 }
+            },
+            openCreateTemplate: function () {
+                for (let i = 0; i < table.templates.length; i++) {
+                    if (table.templates[i].select) {
+                        table.templates[i].select = false;
+                    }
+                }
+
+                $('#templateCreateModal').modal('show')
             }
         }
     });

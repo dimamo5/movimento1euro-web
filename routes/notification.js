@@ -95,7 +95,7 @@ router.post('/sendManual', (req, res) => {
                 request(options, (error, response, body) => {
                     if (!error && response.statusCode == 200 && body.failure == 0) {
 
-                        for (var i = 0; i < body.results.length; i++) {
+                        for (let i = 0; i < body.results.length; i++) {
                             if (!body.results[i].error) {
                                 message.addAppUser(ids[i], {firebaseMsgID: body.results[i].message_id});
                             } else {   //erro na msg

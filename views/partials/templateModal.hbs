@@ -33,18 +33,16 @@
             </div>
             <div class="modal-footer">
                 <button v-on:click="reviewContent" type="button" class="btn btn-default" data-toggle="collapse"
-                        data-target="#preview">Pré-visualização
+                        data-target="#previewCreate">Pré-visualização
                 </button>
                 <button v-on:click.self="createTemplate" type="button" class="btn btn-default" data-dismiss="modal">
                     Criar
                 </button>
-            </div>
-
-
-            <div id="preview" class="collapse">
-                <label>Conteúdo do template:</label>
-                <textarea v-model="previewContent" rows="4" cols="50" name="content" class="form-control">
+                <div id="previewCreate" class="collapse" style="text-align: left">
+                    <label>Conteúdo do template:</label>
+                    <textarea v-model="previewContent" rows="4" cols="50" name="content" class="form-control">
                 </textarea>
+                </div>
             </div>
         </div>
 
@@ -86,12 +84,12 @@
             </div>
             <div class="modal-footer">
                 <button v-on:click="reviewContent" type="button" class="btn btn-default" data-toggle="collapse"
-                        data-target="#preview">Pré-visualização
+                        data-target="#previewEdit">Pré-visualização
                 </button>
                 <button v-on:click="editTemplate" type="button" class="btn btn-default" data-dismiss="modal">Guardar
                 </button>
 
-                <div id="preview" class="collapse">
+                <div id="previewEdit" class="collapse" style="text-align: left">
                     <label>Conteúdo do template:</label>
                     <textarea v-model="previewContent" rows="4" cols="50" name="content" class="form-control">
                 </textarea>
