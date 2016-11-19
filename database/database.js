@@ -475,7 +475,10 @@ function populateDB() {
 
 // sincrioniza todas as tabelas
 function clear() {
-    return sequelize.sync({force: true});
+    return sequelize.sync({force:true})
+        .catch(()=>{
+            return Promise.all([WpCause.truncate(),WpUser.truncate(),UserMsg.truncate()])
+        });
 }
 
 if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'staging') {
