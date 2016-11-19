@@ -64,7 +64,7 @@ describe('Notifications', function () {
             .post('/notification/sendManual')
             .send({
                 msg_type: 'Manual',
-                title: 'generico o bananana, CC',
+                title: 'Duarte',
                 content: 'Exemplo de mensagem manual',
                 ids: [1],
             })

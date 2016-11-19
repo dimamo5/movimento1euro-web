@@ -3,5 +3,6 @@
 <script src="https://unpkg.com/vue@next/dist/vue.js"></script>
 
 
-<script src="../javascripts/template.js"></script>
+{{#with templatesPage}}<script src="../javascripts/template.js"></script>{{/with}}
+{{#with usersPage}}<script src="../javascripts/user.js"></script>{{/with}}
 </body></html>

@@ -215,7 +215,7 @@ router.get('/winnerCauses', (req, res) => {
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {String} token New Firebase token
+ * @apiParam {String} firebaseToken New Firebase token
  *
  * @apiSuccess {String} result Returns 'success'
  *
