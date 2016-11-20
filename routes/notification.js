@@ -69,7 +69,7 @@ router.post('/sendTemplate', (req, res) => {
             let firebase_id = reg_id.firebase_token;
             let parsed_content = parseTemplate(content, id);
 
-            options.body.to = id;
+            options.body.to = firebase_id;
             options.body.notification = {title, body: parsed_content};
 
             db.Message.create({
@@ -94,12 +94,23 @@ router.post('/sendTemplate', (req, res) => {
                             msg_id: message.id,
                             notificationStates: body.results[0],
                         });
+
+                        callback();
+
                     } else {
                         res.json({result: 'Error processing notification'});
                     }
                 });
             });
         });
+    }, function (err) {
+        // if any of the notification processing produced an error, err would equal that error
+        if (err) {
+            // One of the iterations produced an error.
+            console.log('Failed to async process. Erro:' + err);
+        } else {
+            console.log('All notifications have been processed successfully');
+        }
     });
 });
 
@@ -142,6 +153,7 @@ router.post('/sendManual', (req, res) => {
                         for (let i = 0; i < body.results.length; i++) {
                             if (!body.results[i].error) {
                                 message.addAppUser(ids[i], {firebaseMsgID: body.results[i].message_id});
+                                //TODO verificar se query não dá erro. Usar 'async.each' para isso
                             } else {   //erro na msg
                                 console.log(body.results[i].error);
                             }
