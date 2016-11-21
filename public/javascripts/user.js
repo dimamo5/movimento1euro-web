@@ -12,19 +12,17 @@ $(document).ready(function () {
                 created: function () {
                     $.get('/user/api/users', (data)=> {
                         for (var i = 0; i < data.length; i++) {
-                            for (var j = 0; j < 20; j++) {
-                                this.users.push({
-                                    select: false,
-                                    id: data[i].id,
-                                    name: data[i].name,
-                                    mail: data[i].mail,
-                                    nextPayment: data[i].nextPayment,
-                                    cellphone: data[i].cellphone,
-                                    lastVisit: data[i].last_visit,
-                                    votedMonth: data[i].month || Math.random() >= 0.5 ? true : false,
-                                    visible: true
-                                });
-                            }
+                            this.users.push({
+                                select: false,
+                                id: data[i].id,
+                                name: data[i].name,
+                                mail: data[i].mail,
+                                nextPayment: data[i].nextPayment,
+                                cellphone: data[i].cellphone,
+                                lastVisit: data[i].last_visit,
+                                votedMonth: data[i].month || Math.random() >= 0.5 ? true : false,
+                                visible: true
+                            });
                         }
                     })
                 },
@@ -92,7 +90,8 @@ $(document).ready(function () {
                             }
                         }
                         t1 = performance.now();
-                        console.log('Time elapsed: ' + (t1 - t));                    },
+                        console.log('Time elapsed: ' + (t1 - t));
+                    },
                     icon: function (value) {
                         if (value) {
                             return '<i class="fa fa-check" aria-hidden="true"></i>'
