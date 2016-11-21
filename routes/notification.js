@@ -34,7 +34,6 @@ const options = {
 
 //TODO finish this method - replace "TODO" fields
 function parseTemplate(message, user) {
-    //let message;
 
     message.replace('@nome', users.name).replace('@proxPagamento', user.nextPayment)
         .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO');
@@ -47,83 +46,91 @@ function parseTemplate(message, user) {
 
 /* Ids.length >= 1  */
 router.post('/sendTemplate', (req, res) => {
-    if (!(req.body.ids && req.body.title && req.body.content && req.body.msg_type)) {
+    if (!(req.body.ids && req.body.templateId)) {
         res.json({error: 'Wrong params'});
         return;
     }
 
-    var title = req.body.title;
-    var content = req.body.content;
-    var msg_type = req.body.msg_type;
+    var template_id = req.body.templateId;
+    var template_content, template_title;
+    var msg_type = 'Template';
     var ids = req.body.ids;
 
-    async.each(ids, function (id, callback) {
+    //get template from template_id of the post request
+    var content = db.Template.findOne({
+        where: {id: template_id},
+        attributes: ['name', 'content'],
+    }).then(function (template) {
+        template_content = template.content;
+        template_title = template.name;
 
-        console.log('Processing notification to user #' + id);
+        async.each(ids, function (id, callback) {
+            console.log('Processing notification to user #' + id);
 
-        db.WpUser.findOne({
-            where: {id: id},
-            attributes: ['firebase_token']
-        }).then(function (reg_id) {
+            db.WpUser.findOne({
+                where: {id: id},
+                attributes: ['firebase_token']
+            }).then(function (reg_id) {
 
-            let firebase_id = reg_id.firebase_token;
-            let parsed_content = parseTemplate(content, id);
+                let firebase_id = reg_id.firebase_token;
+                let parsed_content = parseTemplate(template_content, id);
 
-            options.body.to = firebase_id;
-            options.body.notification = {title, body: parsed_content};
+                options.body.to = firebase_id;
+                options.body.notification = {template_title, body: parsed_content};
 
-            db.Message.create({
-                msg_type: msg_type,
-                content: parsed_content,
-                title: title,
-                date: new Date(),
-            }).then(function () {
-                request(options, (error, response, body) => {
-                    if (!error && response.statusCode == 200 && body.failure == 0) {
+                db.Message.create({
+                    msg_type: msg_type,
+                    content: parsed_content,
+                    title: title,
+                    date: new Date(),
+                }).then(function () {
+                    request(options, (error, response, body) => {
+                        if (!error && response.statusCode == 200 && body.failure == 0) {
 
-                        if (!body.results.error) {
-                            message.addAppUser(id, {firebaseMsgID: body.results[0].message_id});
+                            if (!body.results.error) {
+                                message.addAppUser(id, {firebaseMsgID: body.results[0].message_id});
+                            }
+                            else { //erro na msg
+                                console.log(body.results[0].error);
+                            }
+
+                            res.json({
+                                result: 'success',
+                                user: id,
+                                msg_id: message.id,
+                                notificationStates: body.results[0],
+                            });
+
+                            callback();
+
+                        } else {
+                            res.json({result: 'Error processing notification'});
                         }
-                        else { //erro na msg
-                            console.log(body.results[0].error);
-                        }
-
-                        res.json({
-                            result: 'success',
-                            user: id,
-                            msg_id: message.id,
-                            notificationStates: body.results[0],
-                        });
-
-                        callback();
-
-                    } else {
-                        res.json({result: 'Error processing notification'});
-                    }
+                    });
                 });
             });
+        }, function (err) {
+            // if any of the notification processing produced an error, err would equal that error
+            if (err) {
+                // One of the iterations produced an error.
+                console.log('Failed to async process. Erro:' + err);
+            } else {
+                console.log('All notifications have been processed successfully');
+            }
         });
-    }, function (err) {
-        // if any of the notification processing produced an error, err would equal that error
-        if (err) {
-            // One of the iterations produced an error.
-            console.log('Failed to async process. Erro:' + err);
-        } else {
-            console.log('All notifications have been processed successfully');
-        }
     });
 });
 
 /* Ids.length >= 1  */
 router.post('/sendManual', (req, res) => {
-    if (!(req.body.ids && req.body.title && req.body.content && req.body.msg_type)) {
+    if (!(req.body.ids && req.body.title && req.body.content)) {
         res.json({error: 'Wrong params'});
         return;
     }
 
     var title = req.body.title;
     var content = req.body.content;
-    var msg_type = req.body.msg_type;
+    var msg_type = 'Manual';
     var ids = req.body.ids;
 
     db.AppUser.findAll({

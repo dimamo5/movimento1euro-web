@@ -3,16 +3,15 @@ $(document).ready(function () {
     let location = locationSplited[locationSplited.length - 1];
     if (location !== 'template' && location === 'user') {
         var user = new Vue({
-                el: '#table',
+                el: '#wrapper',
                 data: {
                     search: '',
                     checkAll: false,
                     users: [],
                     templates: [],
+                    manualMsg: '',
                     counter: 0,
-                    showMsgSetup: '',
-                    pickedTemplate: false,
-                    pickedManual: false,
+                    picked: ''
                 },
                 created: function () {
                     $.get('/user/api/users', (data)=> {
@@ -42,24 +41,28 @@ $(document).ready(function () {
                     search: function () {
                         this.filter();
                     },
-                    cenas: function () {
-                        console.log("cenas");
-                    }
+                    picked: function () {
+                        if (this.picked === 'Manual') {
+                            this.showTextArea();
+                        } else if (this.picked === 'Template') {
+                            this.getTemplatesForModal();
+                        } else {
+                            console.log('Error: radio= ' + this.picked);
+                        }
+                    },
                 }
                 ,
                 methods: {
-                    cenas : function (){
-                        console.log("cenas")
-                    },
                     upDateCounter: function (checked) {
                         if (!checked)
                             this.counter++;
                         else
                             this.counter--;
                     },
-                    sendNotification: function () {
-                        this.pickedManual = false;
-                        this.pickedTemplate = false;
+                    openSendNotificationForm: function () {
+                        this.picked = '';
+                        $('#templateList').hide();
+                        $('#contentManualMsg').hide();
 
                         if (this.counter >= 1) {
                             $('#notificationSendModal').modal('show')
@@ -70,25 +73,57 @@ $(document).ready(function () {
                             this.counter = 0;
                         }
                     },
-                    getTemplatesForModal: function() {
-                        console.log("entrou");
+                    getTemplatesForModal: function () {
+                        $('#templateList').hide();
+                        $('#contentManualMsg').hide();
+                        //======
                         $.get('/template/api', (data)=> {
                             for (let i = 0; i < data.templates.length; i++) {
                                 this.templates.push({
-                                    select: false,
                                     id: data.templates[i].id,
                                     name: data.templates[i].name,
                                     content: data.templates[i].content
                                 });
                             }
                         });
-                        this.pickedTemplate = true;
-                    },
-                    showTextArea: function() {
-                        console.log("entrou");
-                        this.pickedManual = true;
+                        $('#templateList').show();
                     }
                     ,
+                    showTextArea: function () {
+                        $('#templateList').hide();
+                        $('#contentManualMsg').hide();
+                        //=====
+                        $('#contentManualMsg').show();
+                    },
+                    sendNotification: function () {
+                        if (this.picked === '') {
+                            alert("Escolha um tipo de mensagem!");
+                            return;
+                        }
+
+                        let selected_users = [];
+                        for (user in this.users) {
+                            if (user['select']) {
+                                selected_users.push(user.id);
+                            }
+                        }
+
+                        if (this.picked === 'Manual') {
+
+                            $.post('/notifications/sendManual', {
+                                title: this.msgTitle,
+                                content: this.msgContent,
+                                ids: selected_users
+                            });
+                        } else if (this.picked === '') {
+                            $.post('/notifications/sendTemplate', {
+                                ids: selected_users,
+                                templateId: this.select
+                            });
+                        } else {
+                            console.log("Error on this.picked value. Not recognized.")
+                        }
+                    },
                     filter: function () {
                         t = performance.now();
                         let hasFilter = this.search.indexOf(':') !== -1;
