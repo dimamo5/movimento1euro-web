@@ -34,7 +34,7 @@ const options = {
 
 //TODO finish this method - replace "TODO" fields
 function parseTemplate(message, user) {
-    let message;
+    //let message;
 
     message.replace('@nome', users.name).replace('@proxPagamento', user.nextPayment)
         .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO');

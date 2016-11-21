@@ -8,6 +8,11 @@ $(document).ready(function () {
                     search: '',
                     checkAll: false,
                     users: [],
+                    templates: [],
+                    counter: 0,
+                    showMsgSetup: '',
+                    pickedTemplate: false,
+                    pickedManual: false,
                 },
                 created: function () {
                     $.get('/user/api/users', (data)=> {
@@ -36,12 +41,52 @@ $(document).ready(function () {
                     },
                     search: function () {
                         this.filter();
+                    },
+                    cenas: function () {
+                        console.log("cenas");
                     }
                 }
                 ,
                 methods: {
+                    cenas : function (){
+                        console.log("cenas")
+                    },
+                    upDateCounter: function (checked) {
+                        if (!checked)
+                            this.counter++;
+                        else
+                            this.counter--;
+                    },
                     sendNotification: function () {
-                        console.log('Function not yet implemented');
+                        this.pickedManual = false;
+                        this.pickedTemplate = false;
+
+                        if (this.counter >= 1) {
+                            $('#notificationSendModal').modal('show')
+                        }
+                        else {
+                            alert(this.counter);
+                            //alert('Seleccione pelo menos 1 utilizador!');
+                            this.counter = 0;
+                        }
+                    },
+                    getTemplatesForModal: function() {
+                        console.log("entrou");
+                        $.get('/template/api', (data)=> {
+                            for (let i = 0; i < data.templates.length; i++) {
+                                this.templates.push({
+                                    select: false,
+                                    id: data.templates[i].id,
+                                    name: data.templates[i].name,
+                                    content: data.templates[i].content
+                                });
+                            }
+                        });
+                        this.pickedTemplate = true;
+                    },
+                    showTextArea: function() {
+                        console.log("entrou");
+                        this.pickedManual = true;
                     }
                     ,
                     filter: function () {
@@ -92,7 +137,8 @@ $(document).ready(function () {
                             }
                         }
                         t1 = performance.now();
-                        console.log('Time elapsed: ' + (t1 - t));                    },
+                        console.log('Time elapsed: ' + (t1 - t));
+                    },
                     icon: function (value) {
                         if (value) {
                             return '<i class="fa fa-check" aria-hidden="true"></i>'

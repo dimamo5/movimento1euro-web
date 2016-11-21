@@ -34,7 +34,7 @@
                     </div><!-- /input-group -->
                 </div><!-- /.col-lg-6 -->
                 <div class="col-lg-6 text-right crud">
-                    <button v-on:click="sendNotification" type="button" class="btn btn-default">Enviar
+                    <button v-on:click="sendNotification" type="button" class="btn btn-default" data-target="#notificationSendModal">Enviar
                         Notificação
                     </button>
                 </div>
@@ -62,7 +62,7 @@
                 <tr v-for="user in users" v-if="user.visible">
                     <td class="checkboxForAll">
                         <label class="col-md-2">
-                            <input type="checkbox" name="check" v-model="user.select">
+                            <input type="checkbox" name="check" v-on:click="upDateCounter(user.select)" v-model="user.select">
                         </label>
                     </td>
                     <td>\{{user.name}}</td>
@@ -80,4 +80,5 @@
         <!-- /#page-wrapper -->
 
     </div>
+{{> sendMessageModal}}
 {{> footer usersPage=usersPage}}
