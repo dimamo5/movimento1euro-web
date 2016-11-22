@@ -55,7 +55,7 @@ const AppUser = sequelize.define('AppUser', {
         defaultValue: null,
         type: Sequelize.STRING(96),
     },
-    firebase_token: Sequelize.TEXT('tiny'),
+    firebase_token: Sequelize.TEXT('medium'),
 });
 
 
@@ -104,21 +104,27 @@ const Message = sequelize.define('Message', {
     },
     // may have content if it's manual (without template)
     content: Sequelize.TEXT('medium'),
+    title: Sequelize.TEXT('tiny'),
     date: Sequelize.DATE,
 });
 
 // association between users/Msgs
-const SeenMessage = sequelize.define('SeenMsg', {
+
+const UserMsg = sequelize.define('UserMsg', {
     seen: {
         allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true,
     },
+    firebaseMsgID : {
+        allowNull: true,
+        type: Sequelize.STRING
+    }
 });
 
 /* Relation specification */
-Message.belongsToMany(AppUser, {through: SeenMessage});
-AppUser.belongsToMany(Message, {through: SeenMessage});
+Message.belongsToMany(AppUser, {through: UserMsg});
+AppUser.belongsToMany(Message, {through: UserMsg});
 Template.hasMany(Message);
 Template.hasMany(Alert);
 
@@ -341,41 +347,48 @@ function populateDB() {
         msg_type: 'Manual',
         content: 'Exemplo de mensagem manual',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
 
     const msg2 = Message.build({
         msg_type: 'Template',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg3 = Message.build({
         msg_type: 'Alert',
         content: 'Exemplo de mensagem alerta',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg4 = Message.build({
         msg_type: 'Manual',
         content: 'Segunda mensagem manual...',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg5 = Message.build({
         msg_type: 'Template',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg6 = Message.build({
         msg_type: 'Manual',
         content: 'Terceira mensagem manual',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const appUser1 = AppUser.build({
         external_link_id: 5,
         name: 'Diogo',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'deaQQnWEj5k:APA91bEi1vSZQjd-tAA9bsL6MfOLdWqmGftDWYN5couP3xc6lRcttH5-e0tL_1Hp0IVey1KD_pbHmNsb6Pq_pODqDxBKlbK3hEMkz3tTsQ0fkfuPgVQ5PnX-b0o4nfQ9RNqBLL8hmmyi'
     });
 
     const appUser2 = AppUser.build({
@@ -388,12 +401,14 @@ function populateDB() {
         external_link_id: 3,
         name: 'Ines',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'ckV2oHB7J7o:APA91bGyTiXaK-f2HJyrUY9c-SEWmp03Aox5hTeBxuK2KEzkT-U_vH2CVwPTH3Wv_NbzOjFscrFnpvkqxD8t-9yn6pGClrp7fmah-9PGXwV8knjHC1ZWAqUj1NVmmqejFiJHd6iDtkut'
     });
 
     const appUser4 = AppUser.build({
         external_link_id: 6,
         name: 'Mariana',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'fHDQxS-6Jek:APA91bFlmQ1dsC5Ouqf7yJaqswvjR9aLQY4tyI5g-dOpo3Kor4v45VjraVuRbrlXpxf3eK9H0iT-0r3OHmlMYqg0jxHjIVndoJ7ilvO9oE5TGm8Yl4Yh-mzVIBJWS642AkHlBmRgaIQa'
     });
 
     const appUser5 = AppUser.build({
@@ -463,7 +478,10 @@ function populateDB() {
 
 // sincrioniza todas as tabelas
 function clear() {
-    return sequelize.sync({force: true});
+    return sequelize.sync({force:true})
+        .catch(()=>{
+            return Promise.all([WpCause.truncate(),WpUser.truncate(),UserMsg.truncate()])
+        });
 }
 
 if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'staging') {
@@ -474,4 +492,4 @@ if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'staging') 
 }
 
 
-module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, clear};
+module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, UserMsg, clear};
