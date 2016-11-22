@@ -55,14 +55,26 @@ const AppUser = sequelize.define('AppUser', {
         defaultValue: null,
         type: Sequelize.STRING(96),
     },
-    firebase_token: Sequelize.TEXT('tiny'),
+    firebase_token: Sequelize.TEXT('medium'),
 });
 
 
 // table template
 const Template = sequelize.define('Template', {
-    name: Sequelize.STRING(45),
-    content: Sequelize.TEXT('medium'),
+    name: {
+        allowNull: false,
+        type: Sequelize.STRING(45),
+        validate: {
+            notEmpty: true
+        }
+    },
+    content: {
+        allowNull: false,
+        type: Sequelize.TEXT('medium'),
+        validate: {
+            notEmpty: true
+        }
+    },
 });
 
 // table alert - yearly paymentt
@@ -92,21 +104,27 @@ const Message = sequelize.define('Message', {
     },
     // may have content if it's manual (without template)
     content: Sequelize.TEXT('medium'),
+    title: Sequelize.TEXT('tiny'),
     date: Sequelize.DATE,
 });
 
 // association between users/Msgs
-const SeenMessage = sequelize.define('SeenMsg', {
+
+const UserMsg = sequelize.define('UserMsg', {
     seen: {
         allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true,
     },
+    firebaseMsgID : {
+        allowNull: true,
+        type: Sequelize.STRING
+    }
 });
 
 /* Relation specification */
-Message.belongsToMany(AppUser, {through: SeenMessage});
-AppUser.belongsToMany(Message, {through: SeenMessage});
+Message.belongsToMany(AppUser, {through: UserMsg});
+AppUser.belongsToMany(Message, {through: UserMsg});
 Template.hasMany(Message);
 Template.hasMany(Alert);
 
@@ -134,7 +152,7 @@ const WpUser = sequelize.define('WpUser', {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
     },
-    facebook: Sequelize.TEXT('medium'),
+    facebookId: Sequelize.TEXT('tiny'),
 });
 
 const WpCause = sequelize.define('WpCauses', {
@@ -183,22 +201,23 @@ function populateDB() {
     const wpUser1 = WpUser.build({
         name: 'João',
         mail: 'joao@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2011, 4, 14, 16, 25, 0, 0),
+        facebookId: 1319444014767273
     });
 
     const wpUser2 = WpUser.build({
         name: 'Maria',
         mail: 'maria@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2014, 9, 5, 16, 25, 0, 0),
     });
     const wpUser3 = WpUser.build({
         name: 'Ines',
         mail: 'ines@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2013, 9, 23, 16, 25, 0, 0),
     });
@@ -206,7 +225,7 @@ function populateDB() {
     const wpUser4 = WpUser.build({
         name: 'Tomas',
         mail: 'tomas@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2011, 12, 7, 16, 25, 0, 0),
     });
@@ -214,7 +233,7 @@ function populateDB() {
     const wpUser5 = WpUser.build({
         name: 'Diogo',
         mail: 'diogo@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2012, 1, 12, 16, 25, 0, 0),
     });
@@ -222,7 +241,7 @@ function populateDB() {
     const wpUser6 = WpUser.build({
         name: 'Mariana',
         mail: 'mariana@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2014, 3, 18, 16, 25, 0, 0),
     });
@@ -230,7 +249,7 @@ function populateDB() {
     const wpUser7 = WpUser.build({
         name: 'Marina',
         mail: 'Marina@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 12, 27, 18, 25, 0, 0),
     });
@@ -238,7 +257,7 @@ function populateDB() {
     const wpUser8 = WpUser.build({
         name: 'Candido',
         mail: 'candido@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 12, 7, 17, 25, 0, 0),
     });
@@ -246,7 +265,7 @@ function populateDB() {
     const wpUser9 = WpUser.build({
         name: 'Paulo',
         mail: 'paulo@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 12, 23, 10, 25, 0, 0),
     });
@@ -254,7 +273,7 @@ function populateDB() {
     const wpUser10 = WpUser.build({
         name: 'Ana',
         mail: 'ana@cenas.pt',
-        cellphone:'987654321',
+        cellphone: '987654321',
         password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         nextPayment: new Date(2016, 11, 4, 13, 25, 0, 0),
     });
@@ -328,41 +347,48 @@ function populateDB() {
         msg_type: 'Manual',
         content: 'Exemplo de mensagem manual',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
 
     const msg2 = Message.build({
         msg_type: 'Template',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg3 = Message.build({
         msg_type: 'Alert',
         content: 'Exemplo de mensagem alerta',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg4 = Message.build({
         msg_type: 'Manual',
         content: 'Segunda mensagem manual...',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg5 = Message.build({
         msg_type: 'Template',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const msg6 = Message.build({
         msg_type: 'Manual',
         content: 'Terceira mensagem manual',
         date: new Date(2016, 10, 1, 16, 45, 0, 0),
+        title: 'titulo generico',
     });
 
     const appUser1 = AppUser.build({
         external_link_id: 5,
         name: 'Diogo',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'deaQQnWEj5k:APA91bEi1vSZQjd-tAA9bsL6MfOLdWqmGftDWYN5couP3xc6lRcttH5-e0tL_1Hp0IVey1KD_pbHmNsb6Pq_pODqDxBKlbK3hEMkz3tTsQ0fkfuPgVQ5PnX-b0o4nfQ9RNqBLL8hmmyi'
     });
 
     const appUser2 = AppUser.build({
@@ -375,12 +401,14 @@ function populateDB() {
         external_link_id: 3,
         name: 'Ines',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'ckV2oHB7J7o:APA91bGyTiXaK-f2HJyrUY9c-SEWmp03Aox5hTeBxuK2KEzkT-U_vH2CVwPTH3Wv_NbzOjFscrFnpvkqxD8t-9yn6pGClrp7fmah-9PGXwV8knjHC1ZWAqUj1NVmmqejFiJHd6iDtkut'
     });
 
     const appUser4 = AppUser.build({
         external_link_id: 6,
         name: 'Mariana',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'fHDQxS-6Jek:APA91bFlmQ1dsC5Ouqf7yJaqswvjR9aLQY4tyI5g-dOpo3Kor4v45VjraVuRbrlXpxf3eK9H0iT-0r3OHmlMYqg0jxHjIVndoJ7ilvO9oE5TGm8Yl4Yh-mzVIBJWS642AkHlBmRgaIQa'
     });
 
     const appUser5 = AppUser.build({
@@ -409,12 +437,12 @@ function populateDB() {
 
     const temp1 = Template.build({
         name: 'Pagamento proximo da data',
-        content: 'O pagamento da mensalidade encontra-se proximo @lastpayment',
+        content: 'O pagamento da mensalidade encontra-se proximo @proxPagamento',
     });
 
     const temp2 = Template.build({
         name: 'Causa vencedora',
-        content: 'A causa vencedora deste mês é: @nomeCausa, @descrição',
+        content: 'A causa vencedora deste mês é: @nomeCausa, @descricaoCausa',
     });
 
 
@@ -450,7 +478,10 @@ function populateDB() {
 
 // sincrioniza todas as tabelas
 function clear() {
-    return sequelize.sync({force: true});
+    return sequelize.sync({force:true})
+        .catch(()=>{
+            return Promise.all([WpCause.truncate(),WpUser.truncate(),UserMsg.truncate()])
+        });
 }
 
 if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'staging') {
@@ -461,4 +492,4 @@ if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'staging') 
 }
 
 
-module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, clear};
+module.exports = {Admin, AppUser, Template, Alert, Message, WpUser, WpCause, UserMsg, clear};
