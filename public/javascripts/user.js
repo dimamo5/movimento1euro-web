@@ -96,7 +96,7 @@ $(document).ready(function () {
                         $('#contentManualMsg').show();
                     },
                     sendNotification: function () {
-                        console.log("entrou")
+
                         if (this.picked === '') {
                             alert("Escolha um tipo de mensagem!");
                             return;
@@ -124,10 +124,19 @@ $(document).ready(function () {
                                     console.log(data)
                                 }
                             });
-                        } else if (this.picked === '') {
-                            $.post('/notification/sendTemplate', {
-                                ids: selected_users,
-                                templateId: this.select
+                        } else if (this.picked === 'Template') {
+                            $.ajax({
+                                type: "POST",
+                                url: "/notification/sendTemplate",
+                                data: JSON.stringify({
+                                    ids: selected_users,
+                                    templateId: this.select
+                                }),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function (data, textStatus, jqXHR) {
+                                    console.log(data)
+                                }
                             });
                         } else {
                             console.log("Error on this.picked value. Not recognized.")

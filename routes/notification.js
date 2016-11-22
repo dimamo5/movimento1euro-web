@@ -1,6 +1,8 @@
 const request = require('request');
 const express = require('express');
+const async = require('async');
 const db = require('../database/database');
+
 const router = express.Router();
 
 
@@ -35,7 +37,7 @@ const options = {
 //TODO finish this method - replace "TODO" fields
 function parseTemplate(message, user) {
 
-    message.replace('@nome', users.name).replace('@proxPagamento', user.nextPayment)
+    message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment)
         .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO');
 
     //acesso à base de dados das causas
@@ -55,6 +57,7 @@ router.post('/sendTemplate', (req, res) => {
     var template_content, template_title;
     var msg_type = 'Template';
     var ids = req.body.ids;
+    var results = [];
 
     //get template from template_id of the post request
     var content = db.Template.findOne({
@@ -67,44 +70,45 @@ router.post('/sendTemplate', (req, res) => {
         async.each(ids, function (id, callback) {
             console.log('Processing notification to user #' + id);
 
-            db.WpUser.findOne({
+
+
+            db.AppUser.findOne({
                 where: {id: id},
                 attributes: ['firebase_token']
             }).then(function (reg_id) {
 
-                let firebase_id = reg_id.firebase_token;
-                let parsed_content = parseTemplate(template_content, id);
+                var firebase_id = reg_id.firebase_token;
+                var parsed_content = parseTemplate(template_content, id);
 
-                options.body.to = firebase_id;
-                options.body.notification = {template_title, body: parsed_content};
+                //clone object because async is the thing
+                let options_request=JSON.parse(JSON.stringify(options));
+
+                console.log("firebase id: " + firebase_id);
+
+                options_request.body.to = firebase_id;
+                options_request.body.notification = {template_title, body: parsed_content};
 
                 db.Message.create({
                     msg_type: msg_type,
                     content: parsed_content,
-                    title: title,
+                    title: template_title,
                     date: new Date(),
-                }).then(function () {
-                    request(options, (error, response, body) => {
+                }).then(function (message) {
+                    request(options_request, (error, response, body) => {
                         if (!error && response.statusCode == 200 && body.failure == 0) {
 
                             if (!body.results.error) {
+                                results.push( body.results[0] );
                                 message.addAppUser(id, {firebaseMsgID: body.results[0].message_id});
                             }
                             else { //erro na msg
                                 console.log(body.results[0].error);
                             }
 
-                            res.json({
-                                result: 'success',
-                                user: id,
-                                msg_id: message.id,
-                                notificationStates: body.results[0],
-                            });
-
                             callback();
 
                         } else {
-                            res.json({result: 'Error processing notification'});
+                           callback(error);
                         }
                     });
                 });
@@ -115,6 +119,11 @@ router.post('/sendTemplate', (req, res) => {
                 // One of the iterations produced an error.
                 console.log('Failed to async process. Erro:' + err);
             } else {
+                res.json({
+                    result: 'success',
+                    notificationStates: results,
+                });
+
                 console.log('All notifications have been processed successfully');
             }
         });

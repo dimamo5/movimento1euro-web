@@ -388,6 +388,7 @@ function populateDB() {
         external_link_id: 5,
         name: 'Diogo',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'deaQQnWEj5k:APA91bEi1vSZQjd-tAA9bsL6MfOLdWqmGftDWYN5couP3xc6lRcttH5-e0tL_1Hp0IVey1KD_pbHmNsb6Pq_pODqDxBKlbK3hEMkz3tTsQ0fkfuPgVQ5PnX-b0o4nfQ9RNqBLL8hmmyi'
     });
 
     const appUser2 = AppUser.build({
