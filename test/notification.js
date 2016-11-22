@@ -7,6 +7,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
 chai.use(chaiHttp);
+chai.use(require('chai-datetime'));
 var agent = chai.request.agent(app);
 
 describe('Notifications', function () {
@@ -86,9 +87,10 @@ describe('Notifications', function () {
 
                 console.log(res.body.users[0], res.body.notificationStates[0]);
 
-                db.UserMsg.findOne({where: {AppUserId: res.body.users[0], messageId: res.body.msg_id}})
+                db.UserMsg.finUserIddOne({where: {App: res.body.users[0], messageId: res.body.msg_id}})
                     .then((message)=> {
                         expect(message).to.not.be.null;
+                        expect(message.dataValues.createdAt).to.equalDate( new Date());
                         done();
                     })
             });
