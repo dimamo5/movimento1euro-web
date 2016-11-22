@@ -86,7 +86,7 @@ router.post('/sendTemplate', (req, res) => {
                 console.log("firebase id: " + firebase_id);
 
                 options_request.body.to = firebase_id;
-                options_request.body.notification = {template_title, body: parsed_content};
+                options_request.body.notification = {title:template_title, body: parsed_content};
 
                 db.Message.create({
                     msg_type: msg_type,

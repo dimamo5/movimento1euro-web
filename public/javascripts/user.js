@@ -96,6 +96,7 @@ $(document).ready(function () {
                         $('#contentManualMsg').show();
                     },
                     sendNotification: function () {
+                        $('#notificationSendModal').modal('hide');
 
                         if (this.picked === '') {
                             alert("Escolha um tipo de mensagem!");
