@@ -173,11 +173,15 @@ router.post('/sendManual', (req, res) => {
                         });
                     } else {
                         res.json({result: 'Error processing notifications'});
+                        console.log(error, response);
                     }
                 });
             });
 
-    });
+    }).catch(function (err) {
+            console.log("Não encontrou utilizador na base de dados", err);
+        }
+    );
 
 });
 

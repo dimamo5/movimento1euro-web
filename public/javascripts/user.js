@@ -9,9 +9,11 @@ $(document).ready(function () {
                     checkAll: false,
                     users: [],
                     templates: [],
-                    manualMsg: '',
                     counter: 0,
-                    picked: ''
+                    picked: '',
+                    select: '',
+                    msgTitle: '',
+                    msgContent: ''
                 },
                 created: function () {
                     $.get('/user/api/users', (data)=> {
@@ -94,27 +96,36 @@ $(document).ready(function () {
                         $('#contentManualMsg').show();
                     },
                     sendNotification: function () {
+                        console.log("entrou")
                         if (this.picked === '') {
                             alert("Escolha um tipo de mensagem!");
                             return;
                         }
 
-                        let selected_users = [];
-                        for (user in this.users) {
+                        var selected_users = [];
+                        for (user of this.users) {
                             if (user['select']) {
                                 selected_users.push(user.id);
                             }
                         }
 
                         if (this.picked === 'Manual') {
-
-                            $.post('/notifications/sendManual', {
-                                title: this.msgTitle,
-                                content: this.msgContent,
-                                ids: selected_users
+                            $.ajax({
+                                type: "POST",
+                                url: "/notification/sendManual",
+                                data: JSON.stringify({
+                                    title: this.msgTitle,
+                                    content: this.msgContent,
+                                    ids: selected_users
+                                }),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function (data, textStatus, jqXHR) {
+                                    console.log(data)
+                                }
                             });
                         } else if (this.picked === '') {
-                            $.post('/notifications/sendTemplate', {
+                            $.post('/notification/sendTemplate', {
                                 ids: selected_users,
                                 templateId: this.select
                             });

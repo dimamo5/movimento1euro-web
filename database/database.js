@@ -400,12 +400,14 @@ function populateDB() {
         external_link_id: 3,
         name: 'Ines',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'ckV2oHB7J7o:APA91bGyTiXaK-f2HJyrUY9c-SEWmp03Aox5hTeBxuK2KEzkT-U_vH2CVwPTH3Wv_NbzOjFscrFnpvkqxD8t-9yn6pGClrp7fmah-9PGXwV8knjHC1ZWAqUj1NVmmqejFiJHd6iDtkut'
     });
 
     const appUser4 = AppUser.build({
         external_link_id: 6,
         name: 'Mariana',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
+        firebase_token: 'fHDQxS-6Jek:APA91bFlmQ1dsC5Ouqf7yJaqswvjR9aLQY4tyI5g-dOpo3Kor4v45VjraVuRbrlXpxf3eK9H0iT-0r3OHmlMYqg0jxHjIVndoJ7ilvO9oE5TGm8Yl4Yh-mzVIBJWS642AkHlBmRgaIQa'
     });
 
     const appUser5 = AppUser.build({
