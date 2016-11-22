@@ -19,7 +19,7 @@ describe('Notifications', function () {
             name: 'Diogo',
             last_visit: new Date(2016, 10, 28, 16, 45, 0, 0),
             token: TOKEN,
-            firebase_token: 'cUZt03yRUqw:APA91bGUTD0ICI8QZCOLmc8ZnNZfJLS0qO-FOivMxq1apbf4XuagLGbLLVM3f_faVTbmc8E9oiWzGEFUlT2bwM9Dii-lV8Kzod9IC1IGO4z5klnz3uQBJk22dUkYdjreavCqWAFL1hXo',
+            firebase_token: 'fHDQxS-6Jek:APA91bFlmQ1dsC5Ouqf7yJaqswvjR9aLQY4tyI5g-dOpo3Kor4v45VjraVuRbrlXpxf3eK9H0iT-0r3OHmlMYqg0jxHjIVndoJ7ilvO9oE5TGm8Yl4Yh-mzVIBJWS642AkHlBmRgaIQa',
         });
         const wpUser1 = db.WpUser.build({
             name: 'Diogo',
