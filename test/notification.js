@@ -87,7 +87,7 @@ describe('Notifications', function () {
 
                 console.log(res.body.users[0], res.body.notificationStates[0]);
 
-                db.UserMsg.finUserIddOne({where: {App: res.body.users[0], messageId: res.body.msg_id}})
+                db.UserMsg.findOne({where: {App: res.body.users[0], messageId: res.body.msg_id}})
                     .then((message)=> {
                         expect(message).to.not.be.null;
                         expect(message.dataValues.createdAt).to.equalDate( new Date());
