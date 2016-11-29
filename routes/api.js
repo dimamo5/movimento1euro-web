@@ -4,6 +4,10 @@ const apiWrapper = require('../database/api_wrapper');
 const crypto = require('crypto');
 const router = express.Router();
 const request = require('request');
+const async = require('async');
+
+const M1E_URL = 'https://movimento1euro.pdmfc.com/wp-admin/admin-ajax.php';
+
 
 /**
  * @api {post} /api/login User Login
@@ -112,15 +116,15 @@ router.post('/loginfb', (req, res) => {
                                         const token = buffer.toString('hex');
                                         user.appUser.token = token;
                                         user.appUser.save()
-                                            .then(()=>res.json({
+                                            .then(() => res.json({
                                                 result: 'success',
                                                 token: token,
                                                 id: user.appUser.id,
                                                 name: user.appUser.name,
                                                 expDate: user.wpUser.nextPayment
                                             }))
-                                            .catch((err)=>{
-                                                res.json({result:err});
+                                            .catch((err) => {
+                                                res.json({result: err});
                                             })
                                     });
                                 }
@@ -177,12 +181,46 @@ router.get('/logout', (req, res) => {
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
+ * @apiParam {String} ano Causas do Ano especifico / Caso não seja enviado retorna todas as causas passadas
+ *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Object[]} causes Array with all the causes
- * @apiSuccess {Number} causes.year Year of the cause
- * @apiSuccess {String} causes.name Name of the cause
- * @apiSuccess {String} causes.description Description of the cause
- * @apiSuccess {String} causes.month Month of the winning cause
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {"id": 129,
+      "titulo": "Setembro 2016",
+      "data_de_inicio": "21-08-2016 00:00:00",
+      "data_de_fim": "20-09-2016 23:59:59",
+      "montante_disponivel": "700",
+      "total_votos": null,
+      "causas": [
+        {
+          "id": 119,
+          "nome": "Causa de teste",
+          "descricao_breve": "Causa de teste",
+          "descricao": "Uma causa de teste",
+          "verba": "250",
+          "votos": null,
+          "associacao": {
+            "nome": "Nome da Associação",
+            "apresentacao": null,
+            "morada": "Morada da Associação\n", //Isto retorna HTML!!! Cuidado
+            "telefone": "210000000",
+            "telemovel": "920000000",
+            "website": "http://www.nomedaassociacao.tld",
+            "email": "email@nomedaassociacao.tld",
+            "facebook": "",
+            "youtube": ""
+          },
+          "documentos": [
+            {
+              "url": null,
+              "descricao": null
+            }
+          ],
+          "videos": []
+        }
+ *     }
  *
  * @apiError {String} result Returns the description of the error
  */
@@ -192,17 +230,30 @@ router.get('/winnerCauses', (req, res) => {
         res.json({result: 'Authorization required'});
         return;
     }
-    db.WpCause.findAll({
-        where: {
-            winner: true,
-        },
-    })
-        .then((result) => {
-            res.json({result: 'success', causes: result});
-        })
-        .catch(() => {
-            res.json({result: 'error'});
-        });
+
+    const formData = {action: 'm1e_votacoes_vencedores'};
+    const causes = [];
+    if (req.body.ano) {
+        formData.ano = req.body.ano
+    }
+
+    request.post({
+        url: M1E_URL,
+        form: formData
+    }, function (err, response, body) {
+        if (!err && response.statusCode == 200) {
+            if(body.estado !=="NOK"){
+                res.status(400);
+                res.result=body.mensagem;
+            }else if(body['numero_total_de_paginas']>1){
+                //TODO for async com todos os resultados
+            }else if(body['numero_total_de_paginas']===1){
+                res.result='success';
+                res.result=causes;
+            }
+        }
+    });
+
 });
 
 /**
@@ -296,7 +347,7 @@ router.post('/voteCause/:id', (req, res) => {
 );
 
 /**
- * @api {get} /api/votingCauses Causes to vo\
+ * @api {get} /api/votingCauses Causes to vote
  * @apiDescription Obtains the causes that an user can vote in the current month
  * @apiName Voting Causes
  * @apiGroup Causes
@@ -305,13 +356,82 @@ router.post('/voteCause/:id', (req, res) => {
  *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Object[]} causes Array with all the causes
- * @apiSuccess {Number} causes.id Id of the cause
- * @apiSuccess {Number} causes.year Year of the cause
- * @apiSuccess {String} causes.month Month of the winning cause
- * @apiSuccess {String} causes.name Name of the cause
- * @apiSuccess {String} causes.description Description of the cause
- * @apiSuccess {String} causes.image Link to main image of the cause
- *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *    {
+      "id": 125,
+      "titulo": "Outubro 2016",
+      "data_de_inicio": "20-09-2016 00:00:00",
+      "data_de_fim": "21-11-2016 23:59:59",
+      "montante_disponivel": "797",
+      "total_votos": "1",
+      "utilizador_ja_votou": false,
+      "causas": [
+        {
+          "id": 130,
+          "titulo": "Higiene para todos",
+          "descricao": "A Comunidade Vida e Paz tem como missão ir ao encontro e acolher pessoas sem-abrigo, ou em situação de vulnerabilidade social, ajudando-as a recuperar a sua dignidade e a (re)construir o seu projeto de vida, através de uma ação integrada de prevenção, reabilitação e reinserção.\r\n\r\nPara podermos oferecer os cuidados básicos de higiene às pessoas sem-abrigo e aos utentes em programa de reabilitação e reinserção necessitamos de produtos básicos de higiene: gel de banho, champô, e pasta de dentes.\r\n\r\nEm 2015, apoiámos diariamente cerca de 500 pessoas através das Equipas de Rua e acolhemos aproximadamente 300  situações nas respostas residenciais da Comunidade: Comunidades Terapêuticas, Comunidades de Inserção, Apartamentos de Reinserção e partilhados e Unidade de Vida Autónoma.\r\n\r\nCom esta simbólica ajuda é abrigo para quem o perdeu!",
+          "verba": "750",
+          "votos": "0",
+          "voto_utilizador": false,
+          "associacao": {
+            "nome": "Comunidade Vida e Paz",
+            "apresentacao": null,
+            "morada": "<p>Rua Domingos Bomtempo, nº 7<br />\n1700-142 Lisboa</p>\n",
+            "telefone": "218460165",
+            "telemovel": "",
+            "website": "",
+            "email": "testes@movimento1euro.com",
+            "facebook": "",
+            "youtube": ""
+          },
+          "documentos": [],
+          "videos": []
+        },
+        {
+          "id": 132,
+          "titulo": "EM’LAÇANDO ALEGRIAS!",
+          "descricao": "Estávamos sózinhos em casa!\r\n\r\nAliás, não estávamos sózinhos. A solidão e a<strong> EM </strong>mais conhecida por<strong> Esclerose Múltipla</strong> estavam connosco...........\r\n\r\nSomos milhares, mas delegámos na Helena, na Ana, no Rui e na Luisa  a apresentação  de um anjo da guarda que a <strong>SPEM</strong> “arranjou”  e que  começou a visitar-nos e a modificar os nossos dias.\r\n\r\nAgora esperamos pela sua visita e semana a semana a expectativa renasce.\r\n\r\nPassámos a ter um objetivo! A ter companhia.\r\n\r\nJuntos pintamos, trabalhamos no computador, fazemos cem número de trabalhos no tablet que desenvolvem as nossas criatividades, a imaginação e que avivam na nossa memória. Rimos e conversamos. Estamos a adorar!\r\n\r\nO anjo da guarda é o projeto <strong>EM’Laço, </strong>totalmente inovador, concebido pela  <strong>SPEM - Sociedade Portuguesa de Esclerose Múltipla IPSS</strong>  para prestar apoio aos utentes, que na sua grande maioria se encontram numa situação de extremo isolamento nos seus domicilios, sem condições fisicas ou económicas para sair de casa ou contratar ajudas exteriores.\r\n\r\nO <strong>EM’Laço,</strong> com deslocações semanais que incluem uma educadora social e voluntários formados, proporciona a estes utentes gratuitamente  o acompanhamento que necessitam para desenvolver as suas capacidades cognitivas, de concentração de coordenação motora e para melhorar a comunicação (verbal e não verbal) e a expressão corporal.\r\n\r\nO <strong>EM’Laço </strong> combate assim a solidão, levando de forma informal mas profissional, afeto, conversa e ocupações dinâmicas que por sua vez agilizam a inserção na sociedade e na própria familia, aumentando a auto estima e a indepêndencia de cada utente.\r\n\r\nA outra componente  do projecto <strong>EM’Laço</strong>, e por isso a<strong> SPEM</strong> considera que é um projeto inovador,  é a formação paralela de voluntários  por forma a que os serviços sejam prestados de forma coesa, uniforme, cheia de afetos, carinho e profissional.\r\n\r\nO objetivo é que possa expandir não só em número de pessoas servidas mas a diferentes faixas etárias, uma vez que cada vez mais aparecem jovens com <strong>EM.</strong>\r\n\r\nO <strong>EM’Laço</strong> é um bom exemplo de um 3 em 1: para os utentes combate a solidão, o abandono a que muitas vezes são votados e devolve-lhes expectativas e renova objetivos; para os familiares garante-lhes o bem estar dos seus doentes e permite-lhes os tempos livres que também necessitam; e para todos, dá formação a voluntários para poder chegar a mais doentes.\r\n\r\n<strong>Contribua para a nossa causa</strong> e ajude o <strong> EM’Laço</strong> a levar mais longe os afetos e a servir cada vez  mais e melhor quem precisa de si.",
+          "verba": "768.61",
+          "votos": "0",
+          "voto_utilizador": false,
+          "associacao": {
+            "nome": "SPEM",
+            "apresentacao": null,
+            "morada": "<p>Rua Zófimo Pedroso 66<br />\n1950-291 Lisboa</p>\n",
+            "telefone": "218650480",
+            "telemovel": "",
+            "website": "",
+            "email": "testes@movimento1euro.com",
+            "facebook": "",
+            "youtube": ""
+          },
+          "documentos": [],
+          "videos": []
+        },
+        {
+          "id": 133,
+          "titulo": "O BEM EM MOVIMENTO",
+          "descricao": "Num vai e vem circula a nossa carrinha para o Bem transportar.\r\n\r\nEm movimento estamos e precisamos continuar.\r\n\r\nAo movimento 1 euro pedimos ajuda para a carrinha abastecer\r\n\r\ne os laços de solidariedade fortalecer.",
+          "verba": "760",
+          "votos": "1",
+          "voto_utilizador": false,
+          "associacao": {
+            "nome": "Casa do Gaiato de Lisboa",
+            "apresentacao": null,
+            "morada": "<p>Rua Padre Adriano nº 40<br />\n2660-119 Santo Antão do Tojal</p>\n",
+            "telefone": "219749974",
+            "telemovel": "",
+            "website": "",
+            "email": "testes@movimento1euro.com",
+            "facebook": "",
+            "youtube": ""
+          },
+          "documentos": [],
+          "videos": []
+        }
+      ]
+    }
  * @apiError {String} result Returns the description of the error
  */
 router.get('/votingCauses', (req, res) => {
