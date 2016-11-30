@@ -174,7 +174,7 @@ router.get('/logout', (req, res) => {
 });
 
 /**
- * @api {get} /api/winnerCauses Past Winner Causes
+ * @api {get} /api/winnerCauses Past Winners
  * @apiDescription Returns a string with the past winner causes
  * @apiName Past Winner Causes
  * @apiGroup Causes
@@ -317,7 +317,7 @@ router.put('/firebaseToken', (req, res) => {
 });
 
 /**
- * @api {post} /api/voteCause/:id Votes in Cause
+ * @api {post} /api/voteCause/:idVote/:idCause Vote
  * @apiDescription Votes in a specific cause in the current month. The request must have the id of the vote because
  * it's possible to have multiple votes at the same time(rare)
  * @apiName VoteCause
@@ -325,8 +325,8 @@ router.put('/firebaseToken', (req, res) => {
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {Number} idVotacao Id of the vote the user wishes to vote
- * @apiParam {Number} idCausa Id of the cause of that vote the user wishes to vote
+ * @apiParam {Number} idVote Id of the vote the user wishes to vote
+ * @apiParam {Number} idCause Id of the cause of that vote the user wishes to vote
  *
  * @apiSuccess {String} result Returns 'success'
  *
