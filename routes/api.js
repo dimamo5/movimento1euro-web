@@ -224,7 +224,7 @@ router.get('/logout', (req, res) => {
  *
  * @apiError {String} result Returns the description of the error
  */
-router.get('/winnerCauses', (req, res) => {
+router.get('/winnerCauses', (req, res) => {                     //TODO testar
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
@@ -232,7 +232,7 @@ router.get('/winnerCauses', (req, res) => {
     }
 
     const formData = {action: 'm1e_votacoes_vencedores'};
-    const causes = [];
+    let causes = [];
     if (req.body.ano) {
         formData.ano = req.body.ano
     }
@@ -242,14 +242,35 @@ router.get('/winnerCauses', (req, res) => {
         form: formData
     }, function (err, response, body) {
         if (!err && response.statusCode == 200) {
-            if(body.estado !=="NOK"){
+            if (body.estado !== "NOK") {            //Caso retorne logo erro
                 res.status(400);
-                res.result=body.mensagem;
-            }else if(body['numero_total_de_paginas']>1){
-                //TODO for async com todos os resultados
-            }else if(body['numero_total_de_paginas']===1){
-                res.result='success';
-                res.result=causes;
+                res.json({result: body['mensagem']})
+            } else if (body['numero_total_de_paginas'] > 1) {   //Caso tenho mais que 1 página
+                async.times(body['numero_total_de_paginas'] - 1, function (n, next) {
+                    formData.pagina = n;
+                    request.post({
+                        url: M1E_URL,
+                        form: formData
+                    }, function (err, response, body) {
+                        if (!err && response.statusCode == 200) {
+                            causes = causes.concat(response.body['resultados']);
+                            next(null, body);
+                        } else {
+                            next(true, null);
+                        }
+                    })
+                }, function (err, ect) {
+                    if (err) {
+                        res.status(404).json({result: 'Erro'})
+                    } else {
+                        causes = res.body['resultados'];
+                        res.json({result: 'success', causes: causes});
+                    }
+                });
+            } else if (body['numero_total_de_paginas'] === 1) {
+                causes = res.body['resultados'];
+                res.json({result: 'success', causes: causes});
+
             }
         }
     });
@@ -297,54 +318,50 @@ router.put('/firebaseToken', (req, res) => {
 
 /**
  * @api {post} /api/voteCause/:id Votes in Cause
- * @apiDescription Votes in a specific cause in the current month
+ * @apiDescription Votes in a specific cause in the current month. The request must have the id of the vote because
+ * it's possible to have multiple votes at the same time(rare)
  * @apiName VoteCause
  * @apiGroup Causes
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {Number} id Id of the cause the user wishes to vote
+ * @apiParam {Number} idVotacao Id of the vote the user wishes to vote
+ * @apiParam {Number} idCausa Id of the cause of that vote the user wishes to vote
  *
  * @apiSuccess {String} result Returns 'success'
  *
  * @apiError {String} result Returns 'error'
  */
-router.post('/voteCause/:id', (req, res) => {
-        let user;
-        const auth = req.get('Authorization');
-        if (!auth) {
-            res.json({result: 'Authorization required'});
-        } else {
-            db.AppUser.findOne({
-                where: {
-                    token: auth,
-                },
-            }).then(user =>
-                db.WpUser.findOne({
-                    where: {
-                        id: user.external_link_id,
-                    },
-                })
-            )
-                .then((wpUser) => {
-                    user = wpUser;
-                    return db.WpCause.findOne({
-                        where: {
-                            id: req.params.id,
-                        },
-                    });
-                })
-                .then((cause) => {
-                    user.setWpCauses(cause);
-                    res.json({result: 'success'});
-                })
-
-                .catch(() => {
-                    res.json({result: 'error'});
-                });
-        }
+router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+        return;
     }
-);
+    const formData = {
+        action: 'm1e_adicionar_voto',
+        votacao: req.params.idVotacao,
+        causa: req.params.idCausa
+    };
+
+    request.post({
+            url: M1E_URL,
+            form: formData
+        }, function (err, response, body) {
+            if (!err && response.statusCode == 200) {
+                if (body.estado !== "NOK") {            //Caso retorne logo erro
+                    res.status(400);
+                    res.json({result: body['mensagem']})
+                } else if (body.estado !== "OK") {      //Caso tenha sucesso
+                    res.json({result: 'success'});
+                } else {
+                    res.status(500);
+                    res.json({result: 'Erro desconhecido'})
+                }
+            }
+        }
+    );
+});
 
 /**
  * @api {get} /api/votingCauses Causes to vote
@@ -377,7 +394,7 @@ router.post('/voteCause/:id', (req, res) => {
           "associacao": {
             "nome": "Comunidade Vida e Paz",
             "apresentacao": null,
-            "morada": "<p>Rua Domingos Bomtempo, nº 7<br />\n1700-142 Lisboa</p>\n",
+            "morada": "<p>Rua Domingos Bomtempo, nº 7<br />\n1700-142 Lisboa</p>\n",    //CUIDADO QUE ISTO RETORNA HTML
             "telefone": "218460165",
             "telemovel": "",
             "website": "",
@@ -438,21 +455,29 @@ router.get('/votingCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
-    } else {
-        db.WpCause.findAll({
-                where: {
-                    month: new Date().getMonth() + 1,
-                },
-            }
-        )
-            .then((causes) => {
-                res.json({result: 'success', causes});
-            })
-            .catch(() => {
-                    res.json({result: 'error'});
-                }
-            );
+        return;
     }
+    const formData = {action: 'm1e_votacoes_ativas'};
+    let causes = [];
+
+    request.post({
+            url: M1E_URL,
+            form: formData
+        }, function (err, response, body) {
+            if (!err && response.statusCode == 200) {
+                if (body.estado !== "NOK") {            //Caso retorne logo erro
+                    res.status(400);
+                    res.json({result: body['mensagem']})
+                } else if (body.estado !== "OK") {    //Caso tenha sucesso
+                    causes = res.body['resultados'];
+                    res.json({result: 'success', causes: causes});
+                } else {
+                    res.status(500);
+                    res.json({result: 'Erro desconhecido'})
+                }
+            }
+        }
+    );
 });
 
 /**
