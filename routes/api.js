@@ -233,9 +233,8 @@ router.get('/winnerCauses', (req, res) => {
 
     const formData = {action: 'm1e_votacoes_vencedores'};
     let causes = [];
-    if (req.url.includes('?ano=')) {
-        let strSplit = req.url.split('?ano=');
-        let year = strSplit[strSplit.length-1];
+    if (req.query.ano) {
+        let year = req.query.ano
         if(year.length == 4)
             formData.ano = year
     }
