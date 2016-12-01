@@ -12,7 +12,14 @@ router.get('/', (req, res) => {
 });
 
 router.get('/api/messages', (req, res) => {
-
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+    } else {
+        db.Message.findAll({where : msg_type != 'Alert' }).then((messages) => {
+            res.json({result: 'success', messages: messages});
+        })
+    }
 });
 
 module.exports = router;
