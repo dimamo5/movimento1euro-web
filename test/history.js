@@ -1,5 +1,5 @@
 /**
- * Created by inesa on 15/11/2016.
+ * Created by inesa on 01/12/2016.
  */
 const expect = require('chai').expect;
 const db = require('../database/database.js');
@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 chai.use(require('chai-datetime'));
 var agent = chai.request.agent(app);
 
-describe('Notifications', function () {
+describe('History', function () {
 
     const TOKEN = 'd9804993f7721f6534380715902e51edce121982c61d6eb939fa94b5ffe33fa476862ce70ae3825b3ff19e12ef61eec9';
     before((done) => {
@@ -60,9 +60,9 @@ describe('Notifications', function () {
 
         db.clear()
             .then(() => {
-                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save(),notification2.save(),notification3.save(),notification4.save()])
+                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save(), notification2.save(), notification3.save(), notification4.save()])
             })
-            .then(()=> {
+            .then(() => {
                 return db.Admin.findOrCreate({
                     where: {username: 'root'},
                     defaults: {
@@ -83,37 +83,6 @@ describe('Notifications', function () {
             .catch(err => done(err));
     });
 
-    it('should send a message notification to a unique user', (done) => {
-        agent
-            .post('/notification/sendManual')
-            .send({
-                msg_type: 'Manual',
-                title: 'Duarte',
-                content: 'Exemplo de mensagem manual',
-                ids: [1],
-            })
-            .end((err, res) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(200);
-                expect(res).to.be.json;
-                expect(res.body).to.have.property('result');
-                expect(res.body.result).to.equal('success');
-                expect(res.body).to.have.property('users');
-                expect(res.body).to.have.property('msg_id');
-                expect(res.body).to.have.property('notificationStates');
-
-                console.log(res.body.users[0], res.body.notificationStates[0]);
-
-                db.UserMsg.findOne({where: {App: res.body.users[0], messageId: res.body.msg_id}})
-                    .then((message)=> {
-                        expect(message).to.not.be.null;
-                        expect(message.dataValues.createdAt).to.equalDate( new Date());
-                        done();
-                    })
-            });
-
-    });
-
     it('should return all notifications sent to users', (done) => {
         agent
             .get('/api/messages')
@@ -129,43 +98,4 @@ describe('Notifications', function () {
                 done();
             })
     });
-
-    /*
-     it('should send a manual msg to multiple users' , (done) => {
-     .post('/notification/sendManual')
-     .send({
-     msg_type: 'Manual',
-     title: 'Duarte',
-     content: 'Exemplo de mensagem manual',
-     ids: [1],
-     })
-     }*/
-
-    /* it('should send a template msg to multiple users', (done) => {
-     agent
-
-     .post('/notification/sendTemplate')
-     .send({
-     msg_type: 'Manual',
-     title: 'Duarte',
-     content: 'Exemplo de mensagem manual',
-     ids: [1],
-     })
-     .end((err, res) => {
-     expect(err).to.be.null;
-     expect(res).to.have.status(200);
-     expect(res).to.be.json;
-     expect(res.body).to.have.property('result');
-     expect(res.body.result).to.equal('success');
-     expect(res.body).to.have.property('users');
-     expect(res.body).to.have.property('msg_id');
-     expect(res.body).to.have.property('notificationStates');
-
-     db.UserMsg.findOne({where: {AppUserId: res.body.users[0], messageId: res.body.msg_id}})
-     .then((message)=> {
-     expect(message).to.not.be.null;
-     done();
-     })
-     });
-     });*/
 });
