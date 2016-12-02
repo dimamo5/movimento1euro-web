@@ -251,7 +251,7 @@ describe('Causes', function () {
                 done();
             });
     });
-
+/*
     it('should set a vote from user in a specific cause', (done) => {
         chai.request(app)
             .post('/api/voteCause/125/130')
@@ -262,6 +262,8 @@ describe('Causes', function () {
                 done();
             });
     });
+    */
+
 });
 
 describe('Notification', function () {

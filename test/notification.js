@@ -43,7 +43,7 @@ describe('Notifications', function () {
 
         db.clear()
             .then(() => {
-                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save()])
+                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save(), notification2.save()])
             })
             .then(()=> {
                 return db.Admin.findOrCreate({
@@ -87,7 +87,7 @@ describe('Notifications', function () {
 
                 console.log(res.body.users[0], res.body.notificationStates[0]);
 
-                db.UserMsg.findOne({where: {App: res.body.users[0], messageId: res.body.msg_id}})
+                db.UserMsg.findOne({where: {appUserId: res.body.users[0], messageId: res.body.msg_id}})
                     .then((message)=> {
                         expect(message).to.not.be.null;
                         expect(message.dataValues.createdAt).to.equalDate( new Date());
