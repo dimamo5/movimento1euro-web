@@ -111,11 +111,3 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
-.img-logo {
-    background: url(../images/MOV1EUROLOGO.png);
-    display: inline-block;
-    height: 200px;
-    vertical-align: top;
-    background-position: -171px -200px;
-}

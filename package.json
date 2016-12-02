@@ -6,16 +6,20 @@
     "start": "node ./bin/www",
     "docs": "apidoc -i routes/ -o apidocs/",
     "test": "mocha --reporter spec --bail --check-leaks test/",
-    "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
+    "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
+    "submitDocs": "scp -r apidocs/ root@ldso.diogomoura.me:/var"
   },
   "dependencies": {
+    "async": "^2.1.4",
     "body-parser": "^1.15.2",
+    "chai-datetime": "^1.4.1",
     "config": "^1.21.0",
     "cookie-parser": "^1.4.3",
     "debug": "^2.2.0",
     "express": "^4.14.0",
     "express-mysql-session": "^1.2.0",
     "express-session": "^1.14.1",
+    "flow-bin": "^0.35.0",
     "hbs": "^4.0.1",
     "morgan": "^1.7.0",
     "mysql": "^2.11.1",
