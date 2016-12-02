@@ -474,7 +474,7 @@ router.get('/votingCauses', (req, res) => {
                     res.status(400);
                     res.json({result: bodyJSON.mensagem})
                 } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
-                    votacao = bodyJSON.resultados;
+                   let votacao = bodyJSON.resultados;
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
