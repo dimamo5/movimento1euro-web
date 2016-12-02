@@ -38,15 +38,24 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
+                    <th></th>
                     <th>Data</th>
+                    <th>Título</th>
                     <th>Conteúdo</th>
                     <th>Tipo</th>
-                    <th>Estado</th>
                 </tr>
                 </thead>
                 <tbody>
-                <!--<tr v-for="user in users" v-if="user.visible">
-                </tr>-->
+                <tr v-for="message in messages">
+                    <td v-if="message.open"><i class="fa fa-arrow-down" aria-hidden="true"></i>
+                    </td>
+                    <td v-else><i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </td>
+                    <td>\{{message.date}}</td>
+                    <td>\{{message.title}}</td>
+                    <td>\{{message.content}}</td>
+                    <td>\{{message.type}}</td>
+                </tr>
                 </tbody>
             </table>
             <!-- /.container-fluid -->
