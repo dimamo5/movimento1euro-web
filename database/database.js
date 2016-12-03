@@ -119,6 +119,14 @@ const UserMsg = sequelize.define('UserMsg', {
     firebaseMsgID : {
         allowNull: true,
         type: Sequelize.STRING
+    },
+    sent : {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+    },
+    content : {
+        allowNull: true,
+        type: Sequelize.STRING
     }
 });
 

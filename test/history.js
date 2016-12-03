@@ -91,10 +91,7 @@ describe('History', function () {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
-                expect(res.body).to.have.property('result');
-                expect(res.body.result).to.equal('success');
-                expect(res.body).to.have.property('messages');
-                expect(res.body.messages).to.have.lengthOf(4);
+                expect(res.body).to.have.lengthOf(4);
                 done();
             })
     });

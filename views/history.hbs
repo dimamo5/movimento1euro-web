@@ -46,14 +46,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="message in messages" style="cursor:pointer" v-on:click="getInfoMessage(message)">
-                        <td v-if="message.open"><i class="fa fa-arrow-down" aria-hidden="true"></i></td>
-                        <td v-else><i class="fa fa-arrow-right" aria-hidden="true"></i></td>
-                        <td>\{{message.date}}</td>
-                        <td>\{{message.title}}</td>
-                        <td>\{{message.content}}</td>
-                        <td>\{{message.type}}</td>
-                    </tr>
+                    <tbody is="messages" v-for="message in messages" v-bind:msg="message">
+                    </tbody>
 
                 </tbody>
             </table>

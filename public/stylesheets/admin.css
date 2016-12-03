@@ -238,3 +238,10 @@ ul.alert-dropdown {
 .hiddenRow {
     padding: 0 !important;
 }
+.bk-red{
+    background-color: red;
+}
+
+.bk-green{
+    background-color: darkgreen;
+}
