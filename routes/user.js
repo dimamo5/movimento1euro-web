@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 
 router.get('/api/users', (req, res) => {
     api.getUsersInfo()
-        .then(() => {
+        .then((users) => {
             res.json(users);
         });
 });

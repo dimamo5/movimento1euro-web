@@ -18,4 +18,11 @@ router.get('/api/messages', (req, res) => {
         })
 });
 
+router.get('/api/messages/:id',(req,res)=>{
+    db.Message.findOne({where:{id:req.param.id}}).getAppUsers()
+        .then((users)=>{
+            console.log(users);
+        })
+});
+
 module.exports = router;
