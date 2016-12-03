@@ -21,8 +21,12 @@ $(document).ready(function () {
             })
         },
         methods:{
-            getMessageInfo:function () {
-
+            getInfoMessage:function (message) {
+                message.open=!message.open;
+                if(!message.info)
+                $.get('/history/api/messages/'+message.id, (data) => {
+                    message.info=data
+                })
             }
         }
     });

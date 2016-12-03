@@ -19,9 +19,15 @@ router.get('/api/messages', (req, res) => {
 });
 
 router.get('/api/messages/:id',(req,res)=>{
-    db.Message.findOne({where:{id:req.param.id}}).getAppUsers()
+    db.Message.findOne({where:{id:req.params.id}})
+        .then((message)=>{
+            return message.getAppUsers();
+        })
         .then((users)=>{
-            console.log(users);
+            res.json(users)
+        })
+        .catch(()=>{
+            res.status(400).end()
         })
 });
 

@@ -46,7 +46,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="message in messages" style="cursor:pointer" v-on:click="message.open=!message.open">
+                    <tr v-for="message in messages" style="cursor:pointer" v-on:click="getInfoMessage(message)">
                         <td v-if="message.open"><i class="fa fa-arrow-down" aria-hidden="true"></i></td>
                         <td v-else><i class="fa fa-arrow-right" aria-hidden="true"></i></td>
                         <td>\{{message.date}}</td>
