@@ -1,0 +1,47 @@
+{{> header}}
+
+<body>
+
+<div id="wrapper">
+    {{> navbar templatesPage=templatesPage }}
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid" id="table">
+            <!-- Page Heading -->
+            <div class="row header-page">
+                <h1 class="col-lg-6">
+                    Gestão de Alertas
+                </h1>
+            </div>
+
+            <!-- /.row -->
+            <div class="row greyArea">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3 class="col-lg-6">
+                            Alertas Automáticos
+                        </h3>
+                        <div style="margin-top: 20px;">
+                            <input type="checkbox" checked data-toggle="toggle">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3 class="col-lg-6">
+                            Periodicidade
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+
+
+{{> templateModal}}
+{{> footer }}

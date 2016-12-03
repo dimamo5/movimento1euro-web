@@ -22,6 +22,7 @@ var auth = require('./routes/auth');
 var template = require('./routes/template');
 var api = require('./routes/api');
 var user = require('./routes/user');
+var alert = require('./routes/alert');
 
 var app = express();
 
@@ -61,6 +62,7 @@ app.use(function (req, res, next) {
     }
 });
 
+app.use('/alert', alert);
 app.use('/template', template);
 app.use('/user', user);
 
