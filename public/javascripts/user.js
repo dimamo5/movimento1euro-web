@@ -144,9 +144,9 @@ $(document).ready(function () {
                         }
                     },
                     filter: function () {
-                        t = performance.now();
-                        let hasFilter = this.search.indexOf(':') !== -1;
-                        let filter = this.search.split(':');
+                        let search = this.search.toLowerCase();
+                        let hasFilter = search.indexOf(':') !== -1;
+                        let filter = search.split(':');
                         if (filter.length === 2) {
                             content = filter[1].trim();
                             filter = filter[0];
@@ -154,7 +154,7 @@ $(document).ready(function () {
 
                         if (filter === 'mail' && hasFilter) {
                             for (user of this.users) {
-                                user.visible = user.mail.includes(content);
+                                user.visible = user.mail.toLowerCase().includes(content);
                             }
                         } else if (filter === 'votou' && hasFilter) {
                             for (user of this.users) {
@@ -181,7 +181,6 @@ $(document).ready(function () {
                                 user.visible = content < diff;
                             }
                         } else if (!hasFilter) {
-                            console.log("No filter")
                             for (user of this.users) {
                                 user.visible = user.name.toLowerCase().includes(this.search.toLowerCase());
                             }
@@ -190,8 +189,6 @@ $(document).ready(function () {
                                 user.visible = true;
                             }
                         }
-                        t1 = performance.now();
-                        console.log('Time elapsed: ' + (t1 - t));
                     },
                     icon: function (value) {
                         if (value) {

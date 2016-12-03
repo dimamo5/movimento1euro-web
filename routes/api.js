@@ -224,7 +224,7 @@ router.get('/logout', (req, res) => {
  *
  * @apiError {String} result Returns the description of the error
  */
-router.get('/winnerCauses', (req, res) => {                     //TODO testar
+router.get('/winnerCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
@@ -233,8 +233,10 @@ router.get('/winnerCauses', (req, res) => {                     //TODO testar
 
     const formData = {action: 'm1e_votacoes_vencedores'};
     let causes = [];
-    if (req.body.ano) {
-        formData.ano = req.body.ano
+    if (req.query.ano) {
+        let year = req.query.ano
+        if(year.length == 4)
+            formData.ano = year
     }
 
     request.post({
@@ -242,18 +244,19 @@ router.get('/winnerCauses', (req, res) => {                     //TODO testar
         form: formData
     }, function (err, response, body) {
         if (!err && response.statusCode == 200) {
-            if (body.estado !== "NOK") {            //Caso retorne logo erro
+            let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+            if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
                 res.status(400);
-                res.json({result: body['mensagem']})
-            } else if (body['numero_total_de_paginas'] > 1) {   //Caso tenho mais que 1 página
-                async.times(body['numero_total_de_paginas'] - 1, function (n, next) {
+                res.json({result: bodyJSON.mensagem})
+            } else if (bodyJSON.numero_total_de_paginas > 1) {   //Caso tenho mais que 1 página
+                async.times(bodyJSON.numero_total_de_paginas - 1, function (n, next) {
                     formData.pagina = n;
                     request.post({
                         url: M1E_URL,
                         form: formData
                     }, function (err, response, body) {
                         if (!err && response.statusCode == 200) {
-                            causes = causes.concat(response.body['resultados']);
+                            causes = causes.concat(bodyJSON.resultados);
                             next(null, body);
                         } else {
                             next(true, null);
@@ -263,12 +266,12 @@ router.get('/winnerCauses', (req, res) => {                     //TODO testar
                     if (err) {
                         res.status(404).json({result: 'Erro'})
                     } else {
-                        causes = res.body['resultados'];
+                        causes = bodyJSON.resultados;
                         res.json({result: 'success', causes: causes});
                     }
                 });
-            } else if (body['numero_total_de_paginas'] === 1) {
-                causes = res.body['resultados'];
+            } else{
+                causes = bodyJSON.resultados;
                 res.json({result: 'success', causes: causes});
 
             }
@@ -349,10 +352,11 @@ router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
             form: formData
         }, function (err, response, body) {
             if (!err && response.statusCode == 200) {
-                if (body.estado !== "NOK") {            //Caso retorne logo erro
+                let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+                if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
                     res.status(400);
-                    res.json({result: body['mensagem']})
-                } else if (body.estado !== "OK") {      //Caso tenha sucesso
+                    res.json({result: bodyJSON.mensagem})
+                } else if (body.estado == "OK") {      //Caso tenha sucesso
                     res.json({result: 'success'});
                 } else {
                     res.status(500);
@@ -464,13 +468,14 @@ router.get('/votingCauses', (req, res) => {
             url: M1E_URL,
             form: formData
         }, function (err, response, body) {
+        let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
             if (!err && response.statusCode == 200) {
-                if (body.estado !== "NOK") {            //Caso retorne logo erro
+                if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
                     res.status(400);
-                    res.json({result: body['mensagem']})
-                } else if (body.estado !== "OK") {    //Caso tenha sucesso
-                    causes = res.body['resultados'];
-                    res.json({result: 'success', causes: causes});
+                    res.json({result: bodyJSON.mensagem})
+                } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
+                   let votacao = bodyJSON.resultados;
+                    res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
                     res.json({result: 'Erro desconhecido'})

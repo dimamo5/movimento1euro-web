@@ -149,7 +149,7 @@ router.post('/sendManual', (req, res) => {
 
         var firebase_ids = [];
 
-        for (reg_id of reg_ids) {
+        for (let reg_id of reg_ids) {
             firebase_ids.push(reg_id.firebase_token);
         }
 
