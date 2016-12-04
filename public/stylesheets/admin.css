@@ -245,3 +245,6 @@ ul.alert-dropdown {
 .bk-green{
     background-color: darkgreen;
 }
+.clicable{
+    cursor: pointer;
+}

@@ -50,17 +50,24 @@ describe('History', function () {
             title: 'titulo generico',
         });
 
-        const notification4 = db.Message.build({
-            msg_type: 'Manual',
-            content: 'Segunda mensagem manual...',
-            date: new Date(2016, 10, 1, 16, 45, 0, 0),
-            title: 'titulo generico',
+        const temp1 = db.Template.build({
+            name: 'Pagamento proximo da data',
+            content: 'O pagamento da mensalidade encontra-se proximo @proxPagamento',
         });
 
 
         db.clear()
             .then(() => {
-                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save(), notification2.save(), notification3.save(), notification4.save()])
+                return Promise.all([appUser1.save(), wpUser1.save(),
+                    notification1.save(), notification2.save(),
+                    notification3.save(), temp1.save()])
+            })
+            .then(()=>{
+                temp1.setMessages([notification2]);
+            })
+            .then(()=>{
+                temp1.save();
+                notification2.save();
             })
             .then(() => {
                 return db.Admin.findOrCreate({
@@ -85,13 +92,13 @@ describe('History', function () {
 
     it('should return all notifications sent to users', (done) => {
         agent
-            .get('/api/messages')
+            .get('/history/api/messages')
             .set('Authorization', TOKEN)
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
-                expect(res.body).to.have.lengthOf(4);
+                expect(res.body).to.have.lengthOf(3);
                 done();
             })
     });

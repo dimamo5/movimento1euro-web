@@ -122,7 +122,8 @@ const UserMsg = sequelize.define('UserMsg', {
     },
     sent : {
         allowNull: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue:false
     },
     content : {
         allowNull: true,
@@ -135,6 +136,8 @@ Message.belongsToMany(AppUser, {through: UserMsg});
 AppUser.belongsToMany(Message, {through: UserMsg});
 Template.hasMany(Message);
 Template.hasMany(Alert);
+Message.belongsTo(Template,{foreignKey:'TemplateId'});
+Alert.belongsTo(Template,{foreignKey:'TemplateId'});
 
 //= =========== WP Database Simulation ================
 

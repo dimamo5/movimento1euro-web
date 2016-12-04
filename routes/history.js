@@ -9,24 +9,25 @@ router.get('/', (req, res) => {
 });
 
 router.get('/api/messages', (req, res) => {
-    db.Message.findAll()
+    db.Message.findAll({include: {model: db.Template, attributes: ['content', 'name']}})
         .then((messages) => {
             res.json(messages);
         })
-        .catch(() => {
+        .catch((err) => {
+            console.log(err);
             res.status(404).end();
         })
 });
 
-router.get('/api/messages/:id',(req,res)=>{
-    db.Message.findOne({where:{id:req.params.id}})
-        .then((message)=>{
+router.get('/api/messages/:id', (req, res) => {
+    db.Message.findOne({where: {id: req.params.id}})
+        .then((message) => {
             return message.getAppUsers();
         })
-        .then((users)=>{
+        .then((users) => {
             res.json(users)
         })
-        .catch(()=>{
+        .catch(() => {
             res.status(400).end()
         })
 });

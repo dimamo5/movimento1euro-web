@@ -10,7 +10,6 @@ $(document).ready(function () {
         '<td>{{msg.title}}</td>' +
         '<td>{{msg.content}}</td>' +
         '<td>{{msg.type}}</td>' +
-        //'<div> {{msg.info[0}} </div>'+
         '</tr>' +
         '<tr v-if="msg.open" v-for="user in msg.info" :class="[user.sent ? \'bk-green\' : \'bk-red\']">' +
         '<td v-if="msg.sent"><i class="fa fa-check" aria-hidden="true"></i></td>' +
@@ -37,7 +36,7 @@ $(document).ready(function () {
             europeanDate: function (value) {
                 let date = new Date(value);
                 return date.getDate() +
-                    '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' +  date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+                    '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
             }
 
         }
@@ -62,10 +61,69 @@ $(document).ready(function () {
                         title: data[i].title,
                         content: data[i].content,
                         date: data[i].date,
-                        info: []
+                        info: [],
+                        visible: true
                     });
                 }
             })
+        },
+        methods: {
+            addFilter: function (filter) {
+                this.search = filter + ': ';
+            },
+            filter: function () {
+                let search = this.search.toLowerCase();
+                let hasFilter = search.indexOf(':') !== -1;
+                let filter = search.split(':');
+                if (filter.length === 2) {
+                    content = filter[1].trim();
+                    filter = filter[0];
+                }
+
+                if (filter === 'enviada_para' && hasFilter) {
+                    for (msg of this.messages) {
+                        for (user of msg.info) {
+                            var contem = user.name.toLowerCase().includes(content);
+                            if (contem) {
+                                msg.visible = true;
+                            } else {
+                                msg.visible = false;
+                            }
+                        }
+                    }
+                } else if (filter === 'na_data' && hasFilter) {
+                    for (user of this.users) {
+                        if (content === 's' || content === 'sim') {
+                            user.visible = user.votedMonth;
+                        }
+                        else if (content === 'n' || content === 'nao')
+                            user.visible = !user.votedMonth;
+                    }
+                } else if (filter === 'com_erros' && hasFilter) {
+                    for (user of this.users) {
+                        user.visible = user.cellphone.startsWith(content);
+                    }
+                } else if (!hasFilter) {
+                    for (msg of this.messages) {
+                        var contem = msg.content.toLowerCase().includes(this.search);
+                        if (contem) {
+                            msg.visible = true;
+                        }
+                        else {
+                            msg.visible = false;
+                        }
+                    }
+                } else {
+                    for (msg of this.messages) {
+                        msg.visible = true;
+                    }
+                }
+            }
+        },
+        watch: {
+            search: function () {
+                this.filter();
+            }
         }
     });
 
