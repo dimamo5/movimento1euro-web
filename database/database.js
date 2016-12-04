@@ -77,12 +77,7 @@ const Alert = sequelize.define('Alert', {
     type: Sequelize.INTEGER,
     max: 28,                  // only allow values
     min: 1,
-  },
-    // notification alert repetition periodicity till the due date
-  repetition_periodicity: {
-    allowNull: false,
-    type: Sequelize.STRING(24),
-  },
+  }
 });
 
 const Message = sequelize.define('Message', {
@@ -391,9 +386,8 @@ function populateDB() {
   });
 
   const alert1 = Alert.build({
-    active: true,
-    start_alert: 1,
-    repetition_periodicity: 'semanal',
+    active: false,
+    start_alert: 1
   });
 
   const temp1 = Template.build({

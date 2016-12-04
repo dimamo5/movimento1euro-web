@@ -38,6 +38,7 @@ function getWpUserInfo(user) {
         })
 }
 
+
 module.exports.getUser = getUser;
 module.exports.getUsersInfo = getUsersInfo;
 
