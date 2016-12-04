@@ -89,12 +89,7 @@ const Alert = sequelize.define('Alert', {
         type: Sequelize.INTEGER,
         max: 1,                  // only allow values
         min: 1,
-    },
-    // notification alert repetition periodicity till the due date
-    repetition_periodicity: {
-        allowNull: false,
-        type: Sequelize.STRING(24),
-    },
+    }
 });
 
 const Message = sequelize.define('Message', {
