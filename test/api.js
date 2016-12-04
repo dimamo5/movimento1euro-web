@@ -251,18 +251,18 @@ describe('Causes', function () {
                 done();
             });
     });
-    /*
-     it('should set a vote from user in a specific cause', (done) => {
-     chai.request(app)
-     .post('/api/voteCause/125/130')
-     .set('Authorization', TOKEN)
-     .end((err, res) => {
-     expect(err).to.be.null;
-     expect(res).to.have.status(200);
-     done();
-     });
-     });
-     */
+/*
+    it('should set a vote from user in a specific cause', (done) => {
+        chai.request(app)
+            .post('/api/voteCause/125/130')
+            .set('Authorization', TOKEN)
+            .end((err, res) => {
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                done();
+            });
+    });
+    */
 
 });
 

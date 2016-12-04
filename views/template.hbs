@@ -14,8 +14,8 @@
                     Templates de Notificações
                 </h1>
                 <div class="col-lg-6 text-right crud">
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Criar</button>
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateModal">Editar</button>
+                    <button v-on:click="openCreateTemplate" type="button" class="btn btn-default" data-target="#templateCreateModal">Criar</button>
+                    <button v-on:click="openEditTemplate" type="button" class="btn btn-default" data-target="#templateEditModal">Editar</button>
                     <button v-on:click="remove" type="button" class="btn btn-default">Remover</button>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <tr v-for="template in templates">
                         <td class="checkboxForAll">
                             <label class="col-md-2">
-                                <input type="checkbox" name="check" v-model="template.select">
+                                <input type="checkbox" name="check" v-on:click="upDateCounter(template.select)" v-model="template.select">
                             </label>
                         </td>
                         <td>\{{template.name}}</td>
@@ -54,6 +54,6 @@
 
     </div>
 
-
 {{> templateModal}}
+
 {{> footer }}

@@ -14,6 +14,24 @@ function getUser(mail, password, next) {
     }
 }
 
+function getUserFB(fb_id, next) {
+    if (typeof next == 'function') {
+        db.WpUser.findOne({where: {facebookId: fb_id}})
+            .then(function (wpUser) {
+                db.AppUser.findOne({where: {external_link_id: wpUser.id}})
+                    .then(function (appUser) {
+                        var userWithAllInfo = {};
+                        userWithAllInfo["appUser"] = appUser;
+                        userWithAllInfo["wpUser"] = wpUser;
+                        next(null, userWithAllInfo);
+                    })
+                    .catch(next);  //no link between AppUser/WPUser
+            }).catch(next);  //User doesnt exists on db
+    } else {
+        next(new Error('Next is not a function', null));
+    }
+}
+
 function getUsersInfo() {
     return db.AppUser.findAll()
         .then((users)=> {
@@ -25,12 +43,13 @@ function getUsersInfo() {
 function getWpUserInfo(user) {
     return db.WpUser.findById(user.external_link_id)
         .then((wpuser)=> {
-            let userPlain= user.toJSON();
-            let wpuserPlain= wpuser.toJSON();
-            let combined=userPlain;
-            combined["name"]=wpuserPlain.name;
-            combined["mail"]=wpuserPlain.mail;
-            combined["lastPayment"]=wpuserPlain.lastPayment;
+            let userPlain = user.toJSON();
+            let wpuserPlain = wpuser.toJSON();
+            let combined = userPlain;
+            combined["name"] = wpuserPlain.name;
+            combined["mail"] = wpuserPlain.mail;
+            combined["nextPayment"] = wpuserPlain.nextPayment;
+            combined["cellphone"] = wpuserPlain.cellphone;
             delete combined.external_link_id;
             delete combined.createdAt;
             delete combined.updatedAt;
@@ -41,5 +60,6 @@ function getWpUserInfo(user) {
 
 module.exports.getUser = getUser;
 module.exports.getUsersInfo = getUsersInfo;
+module.exports.getUserFB = getUserFB;
 
 

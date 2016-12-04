@@ -8,7 +8,7 @@ const router = express.Router();
 
 /* GET Template listing. */
 router.get('/', (req, res, next) => {
-  res.render('template', { templatesPage: true });
+    res.render('template', {templatesPage: true});
 });
 
 /**
@@ -22,51 +22,54 @@ router.get('/', (req, res, next) => {
  * @apiSuccess {Number} id Id of the Template
  */
 router.get('/api', (req, res) => {
-  db.templates.findAll().then((allTemplates) => {
-    res.json({ result: 'success', templates: allTemplates });
-  });
+    //TODO: fix bug -> it shows alerts 
+    db.Template.findAll({includes:[{model: db.Alert, required: true}]}).then((allTemplates) => {
+        res.json({result: 'success', templates: allTemplates});
+    });
 });
 
 
 router.delete('/api/:id', (req, res) => {
-  db.templates.destroy({ where: { id: req.params.id } })
+    db.Template.destroy({where: {id: req.params.id}})
         .then((numRows) => {
-          if (numRows > 0) {
-            res.status(200);
-            res.json({ removed: req.params.id });
-          } else {
-            res.status(500).end();
-          }
+            if (numRows > 0) {
+                res.status(200);
+                res.json({removed: req.params.id});
+            } else {
+                res.status(500).end();
+            }
         }).catch(() => {
-          res.status(500).end();
-        });
+        res.status(500).end();
+    });
 });
 
 /* CREATE function*/
-router.put('/api/', (req, res) => {
-  db.templates.upsert({ name: req.body.name, content: req.body.content })
+router.put('/api', (req, res) => {
+    db.Template.create({name: req.body.name, content: req.body.content})
         .then((sucess) => {
-          if (sucess) {
-            res.status(200).end();
-          } else { res.status(500).end(); }
+            if (sucess) {
+                res.status(200);
+                res.json({result: 'success', newTemplate: sucess.dataValues});
+            }
         })
         .catch(() => {
-          res.status(500).end();
+            res.status(500);
+            res.json({result: 'error'});
         });
 })
 ;
-// CREATE function
+// EDIT function
 router.put('/api/:id', (req, res) => {
-  db.templates.upsert({ name: req.body.name, content: req.body.content })
+    db.Template.update({name: req.body.name, content: req.body.content}, {where: {id: req.params.id}})
         .then((sucess) => {
-          if (sucess) {
-            res.status(200).end();
-          } else {
-            res.status(500).end();
-          }
+            if (sucess[0] > 0) {
+                res.status(200);
+                res.json({result: 'success'});
+            }
         })
         .catch(() => {
-          res.status(500).end();
+            res.status(500);
+            res.json({result: 'error'});
         });
 });
 

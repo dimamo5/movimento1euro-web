@@ -23,6 +23,7 @@ var template = require('./routes/template');
 var api = require('./routes/api');
 var user = require('./routes/user');
 var alert = require('./routes/alert');
+var notification = require('./routes/notification');
 
 var app = express();
 
@@ -65,7 +66,7 @@ app.use(function (req, res, next) {
 app.use('/alert', alert);
 app.use('/template', template);
 app.use('/user', user);
-
+app.use('/notification', notification);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

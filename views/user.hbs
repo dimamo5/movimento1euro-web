@@ -16,22 +16,26 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-6 crud">
                     <div class="input-group">
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">Filtros <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Mail</a></li>
-                                <li><a href="#">Distrito</a></li>
+                                <li><a v-on:click="addFilter('mail')">Mail</a></li>
+                                <li><a v-on:click="addFilter('votou')">Votou</a></li>
+                                <li><a v-on:click="addFilter('telemovel')">Telemóvel</a></li>
+                                <li><a v-on:click="addFilter('pagamento_em')">Pagamento</a></li>
+                                <li><a v-on:click="addFilter('ult_actividade_a_mais')">Última Actividade</a></li>
                             </ul>
                         </div><!-- /btn-group -->
                         <input v-model="search" type="text" class="form-control" aria-label="...">
                     </div><!-- /input-group -->
                 </div><!-- /.col-lg-6 -->
                 <div class="col-lg-6 text-right crud">
-                    <button v-on:click="sendNotification" type="button" class="btn btn-default">Enviar
+                    <button v-on:click="openSendNotificationForm" type="button" class="btn btn-default"
+                            data-target="#notificationSendModal">Enviar
                         Notificação
                     </button>
                 </div>
@@ -45,30 +49,30 @@
                             <label class="col-md-2">
                                 <input v-model="checkAll" type="checkbox" name="check">
                             </label>
-                            \{{numSelected}}
                         </div>
                     </th>
                     <th>Nome</th>
                     <th>Endereço de E-Mail</th>
-                    <th>Distrito</th>
                     <th>Telefone</th>
                     <th>Ultimo Pagamento</th>
                     <th>Ultima Atividade</th>
+                    <th>Votou este Mês</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="user in users" v-if="user.visible">
                     <td class="checkboxForAll">
                         <label class="col-md-2">
-                            <input type="checkbox" name="check" v-model="user.select">
+                            <input type="checkbox" name="check" v-on:click="upDateCounter(user.select)"
+                                   v-model="user.select">
                         </label>
                     </td>
                     <td>\{{user.name}}</td>
                     <td>\{{user.mail}}</td>
-                    <td>\{{user.district}}</td>
                     <td>\{{user.cellphone}}</td>
-                    <td>\{{user.lastPayment | europeanDate}}</td>
+                    <td>\{{user.nextPayment | europeanDate}}</td>
                     <td>\{{user.lastVisit | europeanDate}}</td>
+                    <td v-html="icon(user.votedMonth)"></td>
                 </tr>
                 </tbody>
             </table>
@@ -78,4 +82,6 @@
         <!-- /#page-wrapper -->
 
     </div>
-{{> footer }}
+    {{> sendMessageModal}}
+</div>
+{{> footer usersPage=usersPage}}
