@@ -52,14 +52,20 @@ $(document).ready(function () {
             'messages': messages
         },
         mounted: function () {
+            let content;
             $.get('/history/api/messages', (data) => {
                 for (let i = 0; i < data.length; i++) {
+                    if (data[i].msg_type === 'Template') {
+                        content = data[i].Template.content;
+                    } else {
+                        content = data[i].content;
+                    }
                     this.messages.push({
                         open: false,
                         id: data[i].id,
                         type: data[i].msg_type,
                         title: data[i].title,
-                        content: data[i].content,
+                        content: content,
                         date: data[i].date,
                         info: [],
                         visible: true
