@@ -234,3 +234,17 @@ ul.alert-dropdown {
     margin-top: 20px;
     margin-bottom: 10px;
 }
+
+.hiddenRow {
+    padding: 0 !important;
+}
+.bk-red{
+    background-color: red;
+}
+
+.bk-green{
+    background-color: darkgreen;
+}
+.clicable{
+    cursor: pointer;
+}

@@ -33,17 +33,34 @@ describe('Notifications', function () {
             msg_type: 'Manual',
             content: 'Exemplo de mensagem manual',
             date: new Date(2016, 10, 1, 16, 45, 0, 0),
+            title: 'titulo generico',
         });
 
         const notification2 = db.Message.build({
             msg_type: 'Template',
             content: 'Exemplo de mensagem template',
             date: new Date(2016, 10, 1, 16, 45, 0, 0),
+            title: 'titulo generico',
         });
+
+        const notification3 = db.Message.build({
+            msg_type: 'Alert',
+            content: 'Exemplo de mensagem alerta',
+            date: new Date(2016, 10, 1, 16, 45, 0, 0),
+            title: 'titulo generico',
+        });
+
+        const notification4 = db.Message.build({
+            msg_type: 'Manual',
+            content: 'Segunda mensagem manual...',
+            date: new Date(2016, 10, 1, 16, 45, 0, 0),
+            title: 'titulo generico',
+        });
+
 
         db.clear()
             .then(() => {
-                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save(), notification2.save()])
+                return Promise.all([appUser1.save(), wpUser1.save(), notification1.save(),notification2.save(),notification3.save(),notification4.save()])
             })
             .then(()=> {
                 return db.Admin.findOrCreate({
@@ -95,6 +112,22 @@ describe('Notifications', function () {
                     })
             });
 
+    });
+
+    it('should return all notifications sent to users', (done) => {
+        agent
+            .get('/api/messages')
+            .set('Authorization', TOKEN)
+            .end((err, res) => {
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                expect(res).to.be.json;
+                expect(res.body).to.have.property('result');
+                expect(res.body.result).to.equal('success');
+                expect(res.body).to.have.property('messages');
+                expect(res.body.messages).to.have.lengthOf(4);
+                done();
+            })
     });
 
     /*

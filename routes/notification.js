@@ -99,7 +99,7 @@ router.post('/sendTemplate', (req, res) => {
 
                             if (!body.results.error) {
                                 results.push( body.results[0] );
-                                message.addAppUser(id, {firebaseMsgID: body.results[0].message_id});
+                                message.addAppUser(id, {firebaseMsgID: body.results[0].message_id,sent:true});
                             }
                             else { //erro na msg
                                 console.log(body.results[0].error);
@@ -168,7 +168,7 @@ router.post('/sendManual', (req, res) => {
 
                         for (let i = 0; i < body.results.length; i++) {
                             if (!body.results[i].error) {
-                                message.addAppUser(ids[i], {firebaseMsgID: body.results[i].message_id});
+                                message.addAppUser(ids[i], {firebaseMsgID: body.results[i].message_id,sent:true});
                                 //TODO verificar se query não dá erro. Usar 'async.each' para isso
                             } else {   //erro na msg
                                 console.log(body.results[i].error);

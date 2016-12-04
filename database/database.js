@@ -119,6 +119,15 @@ const UserMsg = sequelize.define('UserMsg', {
     firebaseMsgID : {
         allowNull: true,
         type: Sequelize.STRING
+    },
+    sent : {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue:false
+    },
+    content : {
+        allowNull: true,
+        type: Sequelize.STRING
     }
 });
 
@@ -127,6 +136,8 @@ Message.belongsToMany(AppUser, {through: UserMsg});
 AppUser.belongsToMany(Message, {through: UserMsg});
 Template.hasMany(Message);
 Template.hasMany(Alert);
+Message.belongsTo(Template,{foreignKey:'TemplateId'});
+Alert.belongsTo(Template,{foreignKey:'TemplateId'});
 
 //= =========== WP Database Simulation ================
 
