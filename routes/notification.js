@@ -23,25 +23,8 @@ const options = {
     },
 };
 
-
-/*
- function parseTemplate(message, users) {
- let messages = [];
- for (let i = 0; i < users.length; i++) {
- messages.push(message.replace('@nome', users[i].name).replace('@proxPagamento', users[i].nextPayment)
- .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO'));
- }
- return messages;
- }*/
-
-//TODO finish this method - replace "TODO" fields
 function parseTemplate(message, user) {
-
-    message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment)
-        .replace('@nomeCausa', 'TODO').replace('@descricaoCausa', 'TODO');
-
-    //acesso à base de dados das causas
-
+    message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment);
     return message;
 }
 

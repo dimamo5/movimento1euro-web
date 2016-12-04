@@ -3,6 +3,7 @@
  */
 const expect = require('chai').expect;
 const db = require('../database/database.js');
+const autoAlerts = require('../database/autoAlerts.js');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
@@ -26,11 +27,24 @@ describe('Alert', function () {
             name: 'Diogo',
             mail: 'diogo@cenas.pt',
             password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-            lastPayment: new Date(2012, 1, 12, 16, 25, 0, 0),
+            nextPayment: new Date(2012, 1, 12, 16, 25, 0, 0),
+        });
+
+        const appUser2 = db.AppUser.build({
+            external_link_id: 2,
+            name: 'Maria',
+            last_visit: Date.now(),
+            firebase_token: 'fHDQxS-6Jek:APA91bFlmQ1dsC5Ouqf7yJaqswvjR9aLQY4tyI5g-dOpo3Kor4v45VjraVuRbrlXpxf3eK9H0iT-0r3OHmlMYqg0jxHjIVndoJ7ilvO9oE5TGm8Yl4Yh-mzVIBJWS642AkHlBmRgaIQa'
+        });
+        const wpUser2 = db.WpUser.build({
+            name: 'Maria',
+            mail: 'maria@cenas.pt',
+            password: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+            nextPayment: new Date(2018, 1, 12, 16, 25, 0, 0),
         });
 
         const alert1 = db.Alert.build({
-            id:1,
+            id: 1,
             active: false,
             start_alert: 1
         });
@@ -38,7 +52,7 @@ describe('Alert', function () {
 
         db.clear()
             .then(() => {
-                return Promise.all([appUser1.save(), wpUser1.save(), alert1.save()])
+                return Promise.all([appUser1.save(), appUser2.save(), wpUser1.save(), wpUser2.save(), alert1.save()])
             })
             .then(() => {
                 return db.Admin.findOrCreate({
@@ -86,17 +100,23 @@ describe('Alert', function () {
                 expect(res.body).to.have.property('result');
                 expect(res.body.result).to.be.equal('success');
                 db.Alert.findOne({where: {start_alert: '3', active: true}})
-                    .then((row)=> {
+                    .then((row) => {
                         if (row) {
                             done();
                         } else {
                             done('Template wasn\'t edited in db');
                         }
                     })
-                    .catch((err)=> {
+                    .catch((err) => {
                         done(err);
                     })
             });
     });
+
+    it('should get all users to notify', (done) => {
+        autoAlerts.users2alert(done)
+
+
+    })
 
 });
