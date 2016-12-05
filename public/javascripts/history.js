@@ -53,6 +53,7 @@ $(document).ready(function () {
         },
         mounted: function () {
             let content;
+            let info;
             $.get('/history/api/messages', (data) => {
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].msg_type === 'Template') {
@@ -60,6 +61,7 @@ $(document).ready(function () {
                     } else {
                         content = data[i].content;
                     }
+
                     this.messages.push({
                         open: false,
                         id: data[i].id,
@@ -67,9 +69,15 @@ $(document).ready(function () {
                         title: data[i].title,
                         content: content,
                         date: data[i].date,
-                        info: [],
+                        info: info,
                         visible: true
                     });
+
+                    $.get('/history/api/messages/' + data[i].id, (res) => {
+                        this.messages[i].info = res;
+                    })
+
+                    console.log(this.messages);
                 }
             })
         },
@@ -79,8 +87,8 @@ $(document).ready(function () {
             },
             filter: function () {
                 let search = this.search.toLowerCase();
-                let hasFilter = search.indexOf(':') !== -1;
-                let filter = search.split(':');
+                let hasFilter = search.indexOf(': ') !== -1;
+                let filter = search.split(': ');
                 if (filter.length === 2) {
                     content = filter[1].trim();
                     filter = filter[0];
@@ -89,12 +97,7 @@ $(document).ready(function () {
                 if (filter === 'enviada_para' && hasFilter) {
                     for (msg of this.messages) {
                         for (user of msg.info) {
-                            var contem = user.name.toLowerCase().includes(content);
-                            if (contem) {
-                                msg.visible = true;
-                            } else {
-                                msg.visible = false;
-                            }
+                            msg.visible = user.name.toLowerCase().includes(content);
                         }
                     }
                 } else if (filter === 'na_data' && hasFilter) {
