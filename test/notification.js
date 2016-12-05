@@ -114,22 +114,6 @@ describe('Notifications', function () {
 
     });
 
-    it('should return all notifications sent to users', (done) => {
-        agent
-            .get('/api/messages')
-            .set('Authorization', TOKEN)
-            .end((err, res) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(200);
-                expect(res).to.be.json;
-                expect(res.body).to.have.property('result');
-                expect(res.body.result).to.equal('success');
-                expect(res.body).to.have.property('messages');
-                expect(res.body.messages).to.have.lengthOf(4);
-                done();
-            })
-    });
-
     /*
      it('should send a manual msg to multiple users' , (done) => {
      .post('/notification/sendManual')

@@ -11,12 +11,12 @@ $(document).ready(function () {
         '<td>{{msg.content}}</td>' +
         '<td>{{msg.type}}</td>' +
         '</tr>' +
-        '<tr v-if="msg.open" v-for="user in msg.info" :class="[user.sent ? \'bk-green\' : \'bk-red\']">' +
-        '<td v-if="msg.sent"><i class="fa fa-check" aria-hidden="true"></i></td>' +
+        '<tr v-if="msg.open" v-for="user in msg.info" :class="[user.UserMsg.sent ? \'bk-green\' : \'bk-red\']">' +
+        '<td v-if="user.UserMsg.sent"><i class="fa fa-check" aria-hidden="true"></i></td>' +
         '<td v-else ><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></td>' +
         '<td>{{user.name}}</td>' +
-        '<td>{{user.seen ? \'Vista\' : \'Não Vista\' }}</td>' +
-        '<td>{{user.content}}</td>' +
+        '<td>{{user.UserMsg.seen ? \'Vista\' : \'Não Vista\' }}</td>' +
+        '<td>{{user.UserMsg.content}}</td>' +
         '<td></td>' +
         '</tr>' +
         '</tbody>',

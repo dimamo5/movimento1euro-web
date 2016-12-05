@@ -1,0 +1,51 @@
+{{> header}}
+
+<body>
+
+<div id="wrapper">
+    {{> navbar templatesPage=templatesPage }}
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid" id="table">
+            <!-- Page Heading -->
+            <div class="row header-page">
+                <h1 class="col-lg-6">
+                    Gestão de Alertas
+                </h1>
+            </div>
+
+            <!-- /.row -->
+            <div id="alertInfo" class="row col-lg-8 col-lg-offset-2 text-center greyArea">
+                <div class="row" style="margin-bottom: 15px;">
+                    <h3 class="col-lg-6">
+                        Alertas Automáticos
+                    </h3>
+
+                    <label class="switch" style="margin-top: 20px">
+                        <input type="checkbox" v-model="alert.active" v-on:change="editAlert">
+                        <div class="slider round"></div>
+                    </label>
+
+                </div>
+                <div class="row">
+                    <h3 class="col-lg-6">
+                        Dias anteriores ao envio
+                    </h3>
+                    <div class="col-lg-6" style="margin-top: 20px;">
+                        <input type="range" min="1" max="28" v-model="alert.start_alert"
+                               v-on:mouseup="editAlert">
+                        <p>\{{alert.start_alert}}</p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+
+
+{{> templateModal}}
+{{> footer }}
