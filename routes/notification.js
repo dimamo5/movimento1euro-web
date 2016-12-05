@@ -77,11 +77,16 @@ router.post('/sendTemplate', (req, res) => {
                         results.push(body.results[0]);
                         messageGlobal.setAppUsers([user], {
                             firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
                             sent: true
                         });
                     }
                     else { //erro na msg
-                        console.log(body.results[0].error);
+                        messageGlobal.setAppUsers([user], {
+                            firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
+                            sent: false
+                        });
                     }
                     callback();
                 } else {

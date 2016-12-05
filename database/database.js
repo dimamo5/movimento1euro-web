@@ -112,7 +112,7 @@ const Message = sequelize.define('Message', {
 
 const UserMsg = sequelize.define('UserMsg', {
     seen: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.BOOLEAN,
         defaultValue: true,
     },
