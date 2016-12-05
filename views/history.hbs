@@ -44,7 +44,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tbody is="messages" v-for="message in messages" v-bind:msg="message" v-if="message.visible"></tbody>
+                    <tbody is="messages" v-for="message in messages" v-bind:msg="message" v-if="message.visible">
+                </tbody>
                 </tbody>
             </table>
             <!-- /.container-fluid -->

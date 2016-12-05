@@ -69,15 +69,12 @@ $(document).ready(function () {
                         title: data[i].title,
                         content: content,
                         date: data[i].date,
-                        info: info,
+                        info: data[i].AppUsers,
                         visible: true
                     });
 
-                    $.get('/history/api/messages/' + data[i].id, (res) => {
-                        this.messages[i].info = res;
-                    })
-
-                    console.log(this.messages);
+                    // console.log('messages ');
+                    // console.log(this.messages);
                 }
             })
         },
@@ -94,13 +91,21 @@ $(document).ready(function () {
                     filter = filter[0];
                 }
 
-                if (filter === 'enviada_para' && hasFilter) {
+                if (filter === 'enviada_para' && hasFilter && content != "") {
                     for (msg of this.messages) {
-                        for (user of msg.info) {
-                            msg.visible = user.name.toLowerCase().includes(content);
+                        if (msg.info.length == 0) {
+                            msg.visible = false;
+                        }
+                        else {
+                            for (user of msg.info) {
+                                msg.visible = user.name.toLowerCase().includes(content);
+                                console.log('result: ' + user.name.toLowerCase().includes(content))
+                                console.log(msg.type)
+                                //console.log('name: ' + user.name)
+                            }
                         }
                     }
-                } else if (filter === 'na_data' && hasFilter) {
+                } else if (filter === 'na_data' && hasFilter && content != "") {
                     for (user of this.users) {
                         if (content === 's' || content === 'sim') {
                             user.visible = user.votedMonth;
@@ -108,7 +113,7 @@ $(document).ready(function () {
                         else if (content === 'n' || content === 'nao')
                             user.visible = !user.votedMonth;
                     }
-                } else if (filter === 'com_erros' && hasFilter) {
+                } else if (filter === 'com_erros' && hasFilter && content != "") {
                     for (user of this.users) {
                         user.visible = user.cellphone.startsWith(content);
                     }
