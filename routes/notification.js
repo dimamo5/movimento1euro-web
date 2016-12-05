@@ -27,14 +27,8 @@ function parseTemplate(message, user) {
     return message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment.toLocaleString())
 }
 
-
 /* Ids.length >= 1  */
-router.post('/sendTemplate', (req, res) => {
-    if (!(req.body.ids && req.body.templateId)) {
-        res.json({error: 'Wrong params'});
-        return;
-    }
-
+function sendTemplateMessage(req, res) {
     let template_id = req.body.templateId;
     let template_content, template_title;
     let msg_type = 'Template';
@@ -107,6 +101,13 @@ router.post('/sendTemplate', (req, res) => {
             console.log('All notifications have been processed successfully');
         }
     });
+}
+router.post('/sendTemplate', (req, res) => {
+    if (!(req.body.ids && req.body.templateId)) {
+        res.json({error: 'Wrong params'});
+        return;
+    }
+    sendTemplateMessage(req, res);
 });
 
 /* Ids.length >= 1  */

@@ -12,7 +12,7 @@ $(document).ready(function () {
         '<td>{{msg.type}}</td>' +
         '</tr>' +
         '<tr v-if="msg.open" v-for="user in msg.info" :class="[user.UserMsg.sent ? \'bk-green\' : \'bk-red\']">' +
-        '<td v-if="msg.sent"><i class="fa fa-check" aria-hidden="true"></i></td>' +
+        '<td v-if="user.UserMsg.sent"><i class="fa fa-check" aria-hidden="true"></i></td>' +
         '<td v-else ><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></td>' +
         '<td>{{user.name}}</td>' +
         '<td>{{user.UserMsg.seen ? \'Vista\' : \'Não Vista\' }}</td>' +

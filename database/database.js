@@ -114,7 +114,7 @@ const UserMsg = sequelize.define('UserMsg', {
     seen: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
     },
     firebaseMsgID : {
         allowNull: true,
