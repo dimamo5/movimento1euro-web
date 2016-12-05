@@ -4,10 +4,11 @@
 const api = require('./api_wrapper');
 const db = require('./database');
 const request = require('request');
+const notifications = require('../routes/notification');
 
 let dayBefore, alertGlobal;
 
-let users2alert = function (next) {
+let users2alert = function () {
     db.Alert.findOne()
         .then((alert) => {
             dayBefore = alert.start_alert;
@@ -31,13 +32,10 @@ let users2alert = function (next) {
             let usersId = users2warn.map((user) => {
                 return user.id
             });
+            notifications.sendTemplateMessage(alertGlobal.TemplateId, usersId, function (results) {
+                console.log(results);
+            })
 
-            /*request({
-                method: "POST",
-                uri: "https://localhost:3000/notification/sendTemplate",
-                json: true,
-                body: {ids: usersId, templateId: alertGlobal.templateId}
-            })*/
         })
 };
 

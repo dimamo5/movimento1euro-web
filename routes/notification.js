@@ -27,48 +27,11 @@ function parseTemplate(message, user) {
     return message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment.toLocaleString())
 }
 
-/* Ids.length >= 1  */
-function sendTemplateMessageUser(user, template_content, template_title, results, messageGlobal, callback) {
-    console.log('Processing notification to user #' + user.id);
-
-    let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
-
-    //clone object because async is the thing
-    let options_request = JSON.parse(JSON.stringify(options));
-
-    console.log("firebase id: " + user.firebase_token);
-
-    options_request.body.to = user.firebase_token;
-    options_request.body.notification = {title: template_title, body: parsed_content};
-
-    request(options_request, (error, response, body) => {
-        if (!error && response.statusCode == 200 && body.failure == 0) {
-            if (!body.results.error) {
-                results.push(body.results[0]);
-                messageGlobal.setAppUsers([user], {
-                    firebaseMsgID: body.results[0].message_id,
-                    content: parsed_content,
-                    sent: true
-                });
-            }
-            else { //erro na msg
-                messageGlobal.setAppUsers([user], {
-                    firebaseMsgID: body.results[0].message_id,
-                    content: parsed_content,
-                    sent: false
-                });
-            }
-            callback();
-        } else {
-            callback(error);
-        }
-    });
-}
-function sendTemplateMessage(req, res) {
-    let template_id = req.body.templateId;
+function sendTemplateMessage(templateId, usersIds, success) {
+    let template_id = templateId;
     let template_content, template_title;
     let msg_type = 'Template';
-    let ids = req.body.ids;
+    let ids = usersIds;
     let results = [];
     let messageGlobal;
 
@@ -89,7 +52,41 @@ function sendTemplateMessage(req, res) {
         return api.getUsersInfoIds(ids)
     }).then((users) => {
         async.each(users, function (user, callback) {
-            sendTemplateMessageUser(user, template_content, template_title, results, messageGlobal, callback);
+            console.log('Processing notification to user #' + user.id);
+
+            let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
+
+            //clone object because async is the thing
+            let options_request = JSON.parse(JSON.stringify(options));
+
+            console.log("firebase id: " + user.firebase_token);
+
+            options_request.body.to = user.firebase_token;
+            options_request.body.notification = {title: template_title, body: parsed_content};
+
+            request(options_request, (error, response, body) => {
+                if (!error && response.statusCode == 200 && body.failure == 0) {
+                    if (!body.results.error) {
+                        results.push(body.results[0]);
+                        messageGlobal.setAppUsers([user], {
+                            firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
+                            sent: true
+                        });
+                    }
+                    else { //erro na msg
+                        messageGlobal.setAppUsers([user], {
+                            firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
+                            sent: false
+                        });
+                    }
+                    callback();
+                } else {
+                    callback(error);
+                }
+            });
+
         });
     }, function (err) {
         // if any of the notification processing produced an error, err would equal that error
@@ -97,23 +94,25 @@ function sendTemplateMessage(req, res) {
             // One of the iterations produced an error.
             console.log('Failed to async process. Erro:' + err);
         } else {
-            res.json({
-                result: 'success',
-                notificationStates: results,
-            });
+            success(results);
             console.log('All notifications have been processed successfully');
         }
     });
 }
+
 router.post('/sendTemplate', (req, res) => {
     if (!(req.body.ids && req.body.templateId)) {
         res.json({error: 'Wrong params'});
         return;
     }
-    sendTemplateMessage(req, res);
+    sendTemplateMessage(req.body.templateId, req.body.ids, function (results) {
+        res.json({
+            result: 'success',
+            notificationStates: results,
+        });
+    });
 });
 
-/* Ids.length >= 1  */
 router.post('/sendManual', (req, res) => {
     if (!(req.body.ids && req.body.title && req.body.content)) {
         res.json({error: 'Wrong params'});
@@ -177,4 +176,4 @@ router.post('/sendManual', (req, res) => {
 
 
 module.exports = router;
-module.exports.sendTemplateMessageUser = sendTemplateMessageUser;
+module.exports.sendTemplateMessage=sendTemplateMessage;

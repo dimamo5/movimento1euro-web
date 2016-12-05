@@ -49,21 +49,26 @@ describe('Alert', function () {
             start_alert: 1
         });
 
+        const temp = db.Template.build({
+            name: 'Pagamento proximo da data',
+            content: 'O pagamento da mensalidade encontra-se proximo @proxPagamento',
+        });
 
         db.clear()
             .then(() => {
-                return Promise.all([appUser1.save(), appUser2.save(), wpUser1.save(), wpUser2.save(), alert1.save()])
-            })
-            .then(() => {
-                return db.Admin.findOrCreate({
-                    where: {username: 'root'},
-                    defaults: {
-                        username: 'root',
-                        name: 'root',
-                        password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
-                    },
-                });
-            })
+                return Promise.all([appUser1.save(), appUser2.save(), wpUser1.save(), wpUser2.save(), alert1.save(), temp.save()])
+            }).then(() => {
+            temp.setAlerts([alert1]);
+        }).then(() => {
+            return db.Admin.findOrCreate({
+                where: {username: 'root'},
+                defaults: {
+                    username: 'root',
+                    name: 'root',
+                    password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+                },
+            });
+        })
             .then(() => {
                 agent
                     .post('/process_login')
@@ -115,7 +120,6 @@ describe('Alert', function () {
 
     it('should get all users to notify', (done) => {
         autoAlerts.users2alert(done)
-
 
     })
 
