@@ -32,24 +32,38 @@ function getUserFB(fb_id, next) {
     }
 }
 
-function getUsersInfo(ids) {
-    if (ids) {
-        return db.AppUser.findAll({
-            where: {
-                id: ids
-            }
+function getUsersInfo() {
+    return db.AppUser.findAll()
+        .then((users) => {
+            const usersAsync = users.map(getWpUserInfo);
+            return Promise.all(usersAsync)
         })
-            .then((users) => {
-                const usersAsync = users.map(getWpUserInfo);
-                return Promise.all(usersAsync)
-            })
-    } else {
-        return db.AppUser.findAll()
-            .then((users) => {
-                const usersAsync = users.map(getWpUserInfo);
-                return Promise.all(usersAsync)
-            })
-    }
+}
+
+function getUsersInfoIds(ids) {
+    return db.AppUser.findAll({where: {id: ids}})
+        .then((users) => {
+            const usersAsync = users.map(getWpUserInfoIds);
+            return Promise.all(usersAsync)
+        })
+}
+
+function getWpUserInfoIds(user) {
+    return db.WpUser.findById(user.external_link_id)
+        .then((wpuser) => {
+            let userPlain = user.toJSON();
+            let wpuserPlain = wpuser.toJSON();
+            let combined = userPlain;
+            combined["name"] = wpuserPlain.name;
+            combined["mail"] = wpuserPlain.mail;
+            combined["nextPayment"] = wpuserPlain.nextPayment;
+            combined["cellphone"] = wpuserPlain.cellphone;
+            delete combined.external_link_id;
+            delete combined.createdAt;
+            delete combined.updatedAt;
+            user['wpUser'] = combined;
+            return Promise.resolve(user);
+        })
 }
 
 function getWpUserInfo(user) {
@@ -72,5 +86,6 @@ function getWpUserInfo(user) {
 module.exports.getUser = getUser;
 module.exports.getUsersInfo = getUsersInfo;
 module.exports.getUserFB = getUserFB;
+module.exports.getUsersInfoIds = getUsersInfoIds;
 
 

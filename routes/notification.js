@@ -40,6 +40,7 @@ router.post('/sendTemplate', (req, res) => {
     let msg_type = 'Template';
     let ids = req.body.ids;
     let results = [];
+    let messageGlobal;
 
     //get template from template_id of the post request
     db.Template.findOne({
@@ -55,12 +56,12 @@ router.post('/sendTemplate', (req, res) => {
             return template.setMessages([message]);
         })
     }).then(() => {
-        return api.getUsersInfo(ids)
+        return api.getUsersInfoIds(ids)
     }).then((users) => {
         async.each(users, function (user, callback) {
             console.log('Processing notification to user #' + user.id);
 
-            let parsed_content = parseTemplate(template_content, user); // parse i
+            let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
 
             //clone object because async is the thing
             let options_request = JSON.parse(JSON.stringify(options));
