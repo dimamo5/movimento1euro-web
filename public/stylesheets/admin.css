@@ -239,11 +239,11 @@ ul.alert-dropdown {
     padding: 0 !important;
 }
 .bk-red{
-    background-color: red;
+    background-color: rgba(255,0,0,0.5);
 }
 
 .bk-green{
-    background-color: darkgreen;
+    background-color: rgba(0,100,0,0.5);
 }
 .clicable{
     cursor: pointer;

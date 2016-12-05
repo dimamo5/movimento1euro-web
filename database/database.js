@@ -89,12 +89,7 @@ const Alert = sequelize.define('Alert', {
         type: Sequelize.INTEGER,
         max: 1,                  // only allow values
         min: 1,
-    },
-    // notification alert repetition periodicity till the due date
-    repetition_periodicity: {
-        allowNull: false,
-        type: Sequelize.STRING(24),
-    },
+    }
 });
 
 const Message = sequelize.define('Message', {
@@ -112,9 +107,9 @@ const Message = sequelize.define('Message', {
 
 const UserMsg = sequelize.define('UserMsg', {
     seen: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
     },
     firebaseMsgID : {
         allowNull: true,
@@ -399,7 +394,7 @@ function populateDB() {
         external_link_id: 5,
         name: 'Diogo',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
-        firebase_token: 'deaQQnWEj5k:APA91bEi1vSZQjd-tAA9bsL6MfOLdWqmGftDWYN5couP3xc6lRcttH5-e0tL_1Hp0IVey1KD_pbHmNsb6Pq_pODqDxBKlbK3hEMkz3tTsQ0fkfuPgVQ5PnX-b0o4nfQ9RNqBLL8hmmyi'
+        firebase_token: 'fHDQxS-6Jek:APA91bFlmQ1dsC5Ouqf7yJaqswvjR9aLQY4tyI5g-dOpo3Kor4v45VjraVuRbrlXpxf3eK9H0iT-0r3OHmlMYqg0jxHjIVndoJ7ilvO9oE5TGm8Yl4Yh-mzVIBJWS642AkHlBmRgaIQa'
     });
 
     const appUser2 = AppUser.build({
@@ -440,11 +435,10 @@ function populateDB() {
         last_visit: new Date(2016, 10, 3, 16, 45, 0, 0),
     });
 
-    const alert1 = Alert.build({
-        active: true,
-        start_alert: 1,
-        repetition_periodicity: 'semanal',
-    });
+  const alert1 = Alert.build({
+    active: false,
+    start_alert: 1
+  });
 
     const temp1 = Template.build({
         name: 'Pagamento proximo da data',
