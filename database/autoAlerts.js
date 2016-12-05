@@ -37,7 +37,7 @@ let users2alert = function (next) {
             });
             notifications.sendTemplateMessage(alertGlobal.TemplateId, usersId, function (results) {
                 console.log(results);
-                next(results)
+                next()
             })
 
         })
