@@ -1,0 +1,57 @@
+{{> header}}
+
+<body>
+
+<div id="wrapper">
+    {{> navbar historyPage=historyPage }}
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid" id="table">
+            <!-- Page Heading -->
+            <div class="row header-page">
+                <h1 class="col-lg-6">
+                    Histórico de Mensagens
+                </h1>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 crud">
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">Filtros <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu clicable">
+                                <li><a v-on:click="addFilter('enviada_para')">Enviada Para</a></li>
+                                <li><a v-on:click="addFilter('na_data')">Na Data</a></li>
+                                <li><a v-on:click="addFilter('com_erros')">Com Erros</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                        <input v-model="search" type="text" class="form-control" aria-label="...">
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            </div>
+            <!-- /.row -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Data</th>
+                    <th>Título</th>
+                    <th>Conteúdo</th>
+                    <th>Tipo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tbody is="messages" v-for="message in messages" v-bind:msg="message" v-if="message.visible"></tbody>
+                </tbody>
+            </table>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+</div>
+{{> footer historyPage=historyPage}}

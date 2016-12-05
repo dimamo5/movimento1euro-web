@@ -24,6 +24,8 @@ var api = require('./routes/api');
 var user = require('./routes/user');
 var alert = require('./routes/alert');
 var notification = require('./routes/notification');
+var history = require('./routes/history');
+
 
 var app = express();
 
@@ -67,6 +69,7 @@ app.use('/alert', alert);
 app.use('/template', template);
 app.use('/user', user);
 app.use('/notification', notification);
+app.use('/history', history);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

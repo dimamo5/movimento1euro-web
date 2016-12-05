@@ -1,9 +1,7 @@
 $(document).ready(function () {
     var dummy = {
         name: 'Ines',
-        nextPayment: new Date(2017, 9, 23, 16, 25, 0, 0),
-        nameCause: 'Nome previsualização',
-        descriptionCause: 'Descrição para previsualização'
+        nextPayment: new Date(2017, 9, 23, 16, 25, 0, 0)
     };
 
     var table = new Vue({
@@ -139,8 +137,7 @@ $(document).ready(function () {
 
                 let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
 
-                this.previewContent = this.selectedContent.replace('@nome', dummy.name).replace('@proxPagamento', date)
-                    .replace('@nomeCausa', dummy.nameCause).replace('@descricaoCausa', dummy.descriptionCause);
+                this.previewContent = this.selectedContent.replace('@nome', dummy.name).replace('@proxPagamento', date);
             }
         }
     })
@@ -191,8 +188,7 @@ $(document).ready(function () {
 
                 let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
 
-                this.previewContent = this.content.replace('@nome', dummy.name).replace('@proxPagamento', date)
-                    .replace('@nomeCausa', dummy.nameCause).replace('@descricaoCausa', dummy.descriptionCause);
+                this.previewContent = this.content.replace('@nome', dummy.name).replace('@proxPagamento', date);
             }
         }
     })
