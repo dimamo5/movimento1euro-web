@@ -87,16 +87,16 @@ function sendTemplateMessage(templateId, usersIds, success) {
                 }
             });
 
+        }, function (err) {
+            // if any of the notification processing produced an error, err would equal that error
+            if (err) {
+                // One of the iterations produced an error.
+                console.log('Failed to async process. Erro:' + err);
+            } else {
+                success(results);
+                console.log('All notifications have been processed successfully');
+            }
         });
-    }, function (err) {
-        // if any of the notification processing produced an error, err would equal that error
-        if (err) {
-            // One of the iterations produced an error.
-            console.log('Failed to async process. Erro:' + err);
-        } else {
-            success(results);
-            console.log('All notifications have been processed successfully');
-        }
     });
 }
 
