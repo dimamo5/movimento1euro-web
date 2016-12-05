@@ -8,10 +8,13 @@ const notifications = require('../routes/notification');
 
 let dayBefore, alertGlobal;
 
-let users2alert = function () {
+let users2alert = function (next) {
     db.Alert.findOne()
         .then((alert) => {
             dayBefore = alert.start_alert;
+            if(!alert.active){
+                return Promise.reject("Alert is not active");
+            }
             alertGlobal = JSON.parse(JSON.stringify(alert));
             return api.getUsersInfo();
         })
@@ -34,8 +37,13 @@ let users2alert = function () {
             });
             notifications.sendTemplateMessage(alertGlobal.TemplateId, usersId, function (results) {
                 console.log(results);
+                next(results)
             })
 
+        })
+        .catch((err)=>{
+            console.log(err);
+            next(err);
         })
 };
 

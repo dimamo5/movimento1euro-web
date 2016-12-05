@@ -45,7 +45,7 @@ describe('Alert', function () {
 
         const alert1 = db.Alert.build({
             id: 1,
-            active: false,
+            active: true,
             start_alert: 1
         });
 
