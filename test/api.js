@@ -231,7 +231,7 @@ describe('Causes', function () {
                 expect(res).to.be.json;
                 expect(res.body).to.have.property('result');
                 expect(res.body.result).to.be.equal('success');
-                expect(res.body.causes).to.have.lengthOf(3);
+                expect(res.body.votacao).to.have.lengthOf(1);
                 done();
             });
     });
@@ -240,20 +240,21 @@ describe('Causes', function () {
     it('should obtain all past winner causes', (done) => {
         chai.request(app)
             .get('/api/winnerCauses')
+            .query({ano	: 2016})
             .set('Authorization', TOKEN)
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
                 expect(res.body).to.have.property('result');
                 expect(res.body.result).to.be.equal('success');
-                expect(res.body.causes).to.have.lengthOf(2);
+                expect(res.body.causes).to.have.lengthOf(1);
                 done();
             });
     });
-
+/*
     it('should set a vote from user in a specific cause', (done) => {
         chai.request(app)
-            .post('/api/voteCause/1')
+            .post('/api/voteCause/125/130')
             .set('Authorization', TOKEN)
             .end((err, res) => {
                 expect(err).to.be.null;
@@ -261,6 +262,8 @@ describe('Causes', function () {
                 done();
             });
     });
+    */
+
 });
 
 describe('Notification', function () {
