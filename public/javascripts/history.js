@@ -106,16 +106,26 @@ $(document).ready(function () {
                         }
                     }
                 } else if (filter === 'na_data' && hasFilter && content != "") {
-                    for (user of this.users) {
-                        if (content === 's' || content === 'sim') {
-                            user.visible = user.votedMonth;
+                    for (msg of this.messages) {
+                        let d = new Date(msg.date)
+                        let d1 = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate());
+                        d1.setHours(0,0,0,0);
+                        let d2 = new Date(content);
+                        d2.setHours(0,0,0,0);
+                        console.log(d2);
+                        if (d1.getTime() == d2.getTime()) {
+                            msg.visible = true;
                         }
-                        else if (content === 'n' || content === 'nao')
-                            user.visible = !user.votedMonth;
+                        else
+                            msg.visible = false;
                     }
                 } else if (filter === 'com_erros' && hasFilter && content != "") {
-                    for (user of this.users) {
-                        user.visible = user.cellphone.startsWith(content);
+                    for (msg of this.messages) {
+                        console.log(msg.sent );
+                        if(msg.sent == 1)
+                            msg.visible = true;
+                        else
+                            msg.visible = false;
                     }
                 } else if (!hasFilter) {
                     for (msg of this.messages) {

@@ -16,7 +16,7 @@ $(document).ready(function () {
                     msgContent: ''
                 },
                 created: function () {
-                    $.get('/user/api/users', (data)=> {
+                    $.get('/user/api/users', (data) => {
                         for (var i = 0; i < data.length; i++) {
                             this.users.push({
                                 select: false,
@@ -36,6 +36,13 @@ $(document).ready(function () {
                     checkAll: function () {
                         for (var i = 0; i < this.users.length; i++) {
                             this.users[i]['select'] = this.users[i].visible ? this.checkAll : false;
+                            if (this.users[i].visible) {
+                                if (this.checkAll) {
+                                    this.counter++;
+                                } else {
+                                    this.counter--;
+                                }
+                            }
                         }
                     },
                     search: function () {
@@ -68,7 +75,7 @@ $(document).ready(function () {
                             $('#notificationSendModal').modal('show')
                         }
                         else {
-                            alert(this.counter);
+                            //alert(this.counter);
                             //alert('Seleccione pelo menos 1 utilizador!');
                             this.counter = 0;
                         }
@@ -77,7 +84,7 @@ $(document).ready(function () {
                         $('#templateList').hide();
                         $('#contentManualMsg').hide();
                         //======
-                        $.get('/template/api', (data)=> {
+                        $.get('/template/api', (data) => {
                             for (let i = 0; i < data.templates.length; i++) {
                                 this.templates.push({
                                     id: data.templates[i].id,
@@ -122,7 +129,7 @@ $(document).ready(function () {
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
-                                    console.log(data)
+                                    console.log(data);
                                 }
                             });
                         } else if (this.picked === 'Template') {
