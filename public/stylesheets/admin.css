@@ -248,3 +248,7 @@ ul.alert-dropdown {
 .clicable{
     cursor: pointer;
 }
+
+textarea.form-control{
+    resize: vertical;
+}
