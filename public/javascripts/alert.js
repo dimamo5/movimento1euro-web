@@ -9,11 +9,13 @@ $(document).ready(function () {
             el: '#alertInfo',
             data: {
                 alert: {},
+                alertTemplate : {},
                 alert_prev:{}
             },
             beforeMount: function () {
                 $.get('/alert/api/alert', (data) => {
-                    this.alert = data.alert
+                    this.alert = data.alert;
+                    this.alertTemplate = data.alertTemplate;
                     console.log(this.alert);
                 })
             },
