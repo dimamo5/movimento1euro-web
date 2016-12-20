@@ -108,24 +108,44 @@ $(document).ready(function () {
                 } else if (filter === 'na_data' && hasFilter && content != "") {
                     for (msg of this.messages) {
                         let d = new Date(msg.date)
-                        let d1 = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate());
-                        d1.setHours(0,0,0,0);
+                        d.setHours(0,0,0,0);
                         let d2 = new Date(content);
+                        console.log(d2.toISOString());
                         d2.setHours(0,0,0,0);
-                        console.log(d2);
-                        if (d1.getTime() == d2.getTime()) {
+                        if (d.getTime() == d2.getTime()) {
                             msg.visible = true;
                         }
                         else
                             msg.visible = false;
                     }
-                } else if (filter === 'com_erros' && hasFilter && content != "") {
+                } else if (filter === 'entre_datas' && hasFilter && content != "") {
                     for (msg of this.messages) {
-                        console.log(msg.sent );
-                        if(msg.sent == 1)
-                            msg.visible = true;
+                        let split = content.split(/\s+/);
+                        if (split.length > 1) {
+                            let d1 = new Date(split[0]);
+                            let d2 = new Date(split[1]);
+                            let d3 = new Date(msg.date)
+                            console.log('Primeiro '); console.log(d3.getTime()  >= d1.getTime())
+                            console.log('Segunda '); console.log(d3.getTime()  <= d2.getTime())
+                            if ((d3.getTime() >= d1.getTime()) && (d3.getTime()  <= d2.getTime())) {
+                                msg.visible = true;
+                            }
+                            else
+                                msg.visible = false;
+                        }
                         else
-                            msg.visible = false;
+                            break;
+                    }
+                } else if (filter === 'nao_enviada' && hasFilter) {
+                    for (msg of this.messages) {
+                        for (user of msg.info) {
+                            if (msg.info.length == 0) {
+                                msg.visible = false;
+                            }
+                            else {
+                                msg.visible = !user.UserMsg.sent;
+                            }
+                        }
                     }
                 } else if (!hasFilter) {
                     for (msg of this.messages) {
