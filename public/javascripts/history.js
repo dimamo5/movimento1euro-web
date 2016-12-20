@@ -107,16 +107,24 @@ $(document).ready(function () {
                     }
                 } else if (filter === 'na_data' && hasFilter && content != "") {
                     for (msg of this.messages) {
-                        let d = new Date(msg.date)
-                        d.setHours(0,0,0,0);
+                        let d = new Date(msg.date);
+                        d.setHours(0, 0, 0, 0);
+
                         let d2 = new Date(content);
-                        console.log(d2.toISOString());
-                        d2.setHours(0,0,0,0);
-                        if (d.getTime() == d2.getTime()) {
-                            msg.visible = true;
-                        }
-                        else
-                            msg.visible = false;
+                        d2.setHours(0, 0, 0, 0);
+                        let datePart = d2.toISOString().substring(0, 10).split("-");
+                        if (datePart.length >= 3) {
+                            let year = datePart[0],
+                                month = datePart[2],
+                                day = datePart[1];
+                            let d3 = new Date(year, month - 1, day);
+                            if (d.getTime() == d3.getTime()) {
+                                msg.visible = true;
+                            }
+                            else
+                                msg.visible = false;
+                        } else break;
+
                     }
                 } else if (filter === 'entre_datas' && hasFilter && content != "") {
                     for (msg of this.messages) {
@@ -124,10 +132,9 @@ $(document).ready(function () {
                         if (split.length > 1) {
                             let d1 = new Date(split[0]);
                             let d2 = new Date(split[1]);
-                            let d3 = new Date(msg.date)
-                            console.log('Primeiro '); console.log(d3.getTime()  >= d1.getTime())
-                            console.log('Segunda '); console.log(d3.getTime()  <= d2.getTime())
-                            if ((d3.getTime() >= d1.getTime()) && (d3.getTime()  <= d2.getTime())) {
+                            let d3 = new Date(msg.date);
+
+                            if ((d3.getTime() >= d1.getTime()) && (d3.getTime() <= d2.getTime())) {
                                 msg.visible = true;
                             }
                             else
