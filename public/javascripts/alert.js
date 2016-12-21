@@ -31,7 +31,7 @@ $(document).ready(function () {
                 },
                 methods: {
                     editAlert: function () {
-                        var url = '/alert/api/';
+                        let url = '/alert/api/';
                         let id = this.alert.id;
                         $.ajax({
                             url: url + id,
@@ -40,7 +40,7 @@ $(document).ready(function () {
                             contentType: 'application/json',
                             success: (data) => {
                                 if (data.result == 'success') {
-                                    console.log('edit com success')
+                                    console.log('edit com success');
                                     console.log(this.alert)
                                 }
                             },
