@@ -25,7 +25,6 @@
                         </select>
                     </div>
 
-
                     <div id="contentManualMsg" class="form-group" style="display:none">
                         <label for="manual-msg">Escreva a sua mensagem:</label>
                         <br>
@@ -38,7 +37,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button v-if="picked" v-on:click="reviewContent" type="button" class="btn btn-default" data-toggle="collapse"
+                        <button v-if="picked == Template" v-on:click="reviewContent" type="button"
+                                class="btn btn-default" data-toggle="collapse"
                                 data-target="#previewCreate">Pré-visualização
                         </button>
                         <button type="submit" class="btn btn-default">
@@ -49,6 +49,7 @@
                             <textarea v-model="previewContent" rows="4" cols="50" name="content" class="form-control">
                 </textarea>
                         </div>
+                    </div>
                 </form>
             </div>
         </div>

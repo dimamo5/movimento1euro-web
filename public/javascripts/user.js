@@ -111,18 +111,8 @@ $(document).ready(function () {
                     reviewContent: function () {
                         let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
                         let copy = "";
-                        if (this.select == "Template") {
-                            copy = this.templates[this.select].content;
-                            this.previewContent = copy.replace('@name', dummy.name).replace('@proxPagamento', date);
-                        }
-                        else {
-                            for (user of this.users) {
-                                if (user['select']) {
-                                    this.previewContent = this.msgContent.replace('@name', user.name).replace('@proxPagamento', user.nextPayment.toLocaleString())
-
-                                }
-                            }
-                        }
+                        copy = this.templates[this.select].content;
+                        this.previewContent = copy.replace('@name', dummy.name).replace('@proxPagamento', date);
 
                     },
                     sendNotification: function () {
