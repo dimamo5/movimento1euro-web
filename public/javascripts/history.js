@@ -99,8 +99,8 @@ $(document).ready(function () {
                         else {
                             for (user of msg.info) {
                                 msg.visible = user.name.toLowerCase().includes(content);
-                                console.log('result: ' + user.name.toLowerCase().includes(content))
-                                console.log(msg.type)
+                                //console.log('result: ' + user.name.toLowerCase().includes(content))
+                                //console.log(msg.type)
                                 //console.log('name: ' + user.name)
                             }
                         }
@@ -153,7 +153,6 @@ $(document).ready(function () {
                                 // it is a date
                                 if (isNaN(d1.getTime()) && isNaN(d2.getTime())) {  // d.valueOf() could also work
                                     // date is not valid
-
                                     swal("a data inserida não é valida!");
                                     break;
                                 }

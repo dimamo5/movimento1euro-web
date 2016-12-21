@@ -129,6 +129,9 @@ $(document).ready(function () {
                                 selected_users.push(user.id);
                                 user['select'] = false;
                             }
+                            //TODO: rever isto porque é desnecessario correr tantas vezes
+                            if(this.checkAll)
+                                this.checkAll = false;
                         }
 
                         if (this.picked === 'Manual') {
