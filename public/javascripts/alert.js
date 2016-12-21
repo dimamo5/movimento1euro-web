@@ -32,7 +32,7 @@ $(document).ready(function () {
                 methods: {
                     editAlert: function () {
                         var url = '/alert/api/';
-                        var id = this.alert.id;
+                        let id = this.alert.id;
                         $.ajax({
                             url: url + id,
                             type: 'PUT',
