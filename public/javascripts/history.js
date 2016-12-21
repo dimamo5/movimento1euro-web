@@ -111,20 +111,36 @@ $(document).ready(function () {
                         d.setHours(0, 0, 0, 0);
 
                         let d2 = new Date(content);
-                        d2.setHours(0, 0, 0, 0);
-                        let datePart = d2.toISOString().substring(0, 10).split("-");
-                        if (datePart.length >= 3) {
-                            let year = datePart[0],
-                                month = datePart[2],
-                                day = datePart[1];
-                            let d3 = new Date(year, month - 1, day);
-                            if (d.getTime() == d3.getTime()) {
-                                msg.visible = true;
+                        if ( Object.prototype.toString.call(d2) === "[object Date]" ) {
+                            // it is a date
+                            if ( isNaN( d2.getTime() ) ) {  // d.valueOf() could also work
+                                // date is not valid
+                                swal("date is not valid!");
+                                break;
                             }
-                            else
-                                msg.visible = false;
-                        } else break;
-
+                            else {
+                                d2.setHours(0, 0, 0, 0);
+                                let datePart = d2.toISOString().substring(0, 10).split("-");
+                                if (datePart.length >= 3) {
+                                    let year = datePart[0],
+                                        month = datePart[2],
+                                        day = datePart[1];
+                                    let d3 = new Date(year, month - 1, day);
+                                    if (d.getTime() == d3.getTime()) {
+                                        msg.visible = true;
+                                    }
+                                    else
+                                        msg.visible = false;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            swal("Not a date!");
+                            msg.visible = true;
+                            break;
+                        }
                     }
                 } else if (filter === 'entre_datas' && hasFilter && content != "") {
                     for (msg of this.messages) {
@@ -133,15 +149,53 @@ $(document).ready(function () {
                             let d1 = new Date(split[0]);
                             let d2 = new Date(split[1]);
                             let d3 = new Date(msg.date);
+                            if ( Object.prototype.toString.call(d1) === "[object Date]" && Object.prototype.toString.call(d2) === "[object Date]" ) {
+                                // it is a date
+                                if (isNaN(d1.getTime()) && isNaN(d2.getTime())) {  // d.valueOf() could also work
+                                    // date is not valid
 
-                            if ((d3.getTime() >= d1.getTime()) && (d3.getTime() <= d2.getTime())) {
-                                msg.visible = true;
-                            }
+                                    swal("date is not valid!");
+                                    break;
+                                }
+                                else {
+                                    // date is valid
+                                    d1.setHours(0, 0, 0, 0);
+                                    d2.setHours(0, 0, 0, 0);
+                                    d3.setHours(0, 0, 0, 0);
+                                    let datePart = d2.toISOString().substring(0, 10).split("-");
+                                    if (datePart.length >= 3) {
+                                        let year = datePart[0],
+                                            month = datePart[2],
+                                            day = datePart[1];
+                                        let d4 = new Date(year, month - 1, day);
+
+
+                                        datePart = d1.toISOString().substring(0, 10).split("-");
+                                        if (datePart.length >= 3) {
+                                            let year = datePart[0],
+                                                month = datePart[2],
+                                                day = datePart[1];
+                                            let d5 = new Date(year, month - 1, day);
+
+
+                                            if ((d3.getTime() >= d5.getTime()) && (d3.getTime() <= d4.getTime())) {
+                                                msg.visible = true;
+                                            }
+                                            else
+                                                msg.visible = false;
+                                        }
+                                    }
+                                        else
+                                            break;
+                                    }
+                                }
                             else
-                                msg.visible = false;
-                        }
-                        else
-                            break;
+                                {
+                                    // not a date
+                                    swal("Not a date!");
+                                    break;
+                                }
+                            }
                     }
                 } else if (filter === 'nao_enviada' && hasFilter) {
                     for (msg of this.messages) {
@@ -170,7 +224,8 @@ $(document).ready(function () {
                     }
                 }
             }
-        },
+        }
+        ,
         watch: {
             search: function () {
                 this.filter();

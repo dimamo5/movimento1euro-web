@@ -2,6 +2,11 @@ $(document).ready(function () {
     let locationSplited = window.location.href.split('/');
     let location = locationSplited[locationSplited.length - 1];
     if (location !== 'template' && location === 'user') {
+        var dummy = {
+            name: 'Ines',
+            nextPayment: new Date(2017, 9, 23, 16, 25, 0, 0)
+        };
+
         var user = new Vue({
                 el: '#wrapper',
                 data: {
@@ -13,7 +18,8 @@ $(document).ready(function () {
                     picked: '',
                     select: '',
                     msgTitle: '',
-                    msgContent: ''
+                    msgContent: '',
+                    previewContent: ''
                 },
                 created: function () {
                     $.get('/user/api/users', (data) => {
@@ -102,6 +108,13 @@ $(document).ready(function () {
                         //=====
                         $('#contentManualMsg').show();
                     },
+                    reviewContent: function () {
+                        let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
+                        let copy = "";
+                        copy = this.templates[this.select].content;
+                        this.previewContent = copy.replace('@name', dummy.name).replace('@proxPagamento', date);
+
+                    },
                     sendNotification: function () {
                         $('#notificationSendModal').modal('hide');
 
@@ -114,6 +127,7 @@ $(document).ready(function () {
                         for (user of this.users) {
                             if (user['select']) {
                                 selected_users.push(user.id);
+                                user['select'] = false;
                             }
                         }
 
@@ -131,7 +145,9 @@ $(document).ready(function () {
                                 success: function (data, textStatus, jqXHR) {
                                     console.log(data);
                                 }
-                            });
+                            })
+                            ;
+
                         } else if (this.picked === 'Template') {
                             $.ajax({
                                 type: "POST",
@@ -146,9 +162,11 @@ $(document).ready(function () {
                                     console.log(data)
                                 }
                             });
-                        } else {
+                        }
+                        else {
                             console.log("Error on this.picked value. Not recognized.")
                         }
+
                     },
                     filter: function () {
                         let search = this.search.toLowerCase();
@@ -196,7 +214,8 @@ $(document).ready(function () {
                                 user.visible = true;
                             }
                         }
-                    },
+                    }
+                    ,
                     icon: function (value) {
                         if (value) {
                             return '<i class="fa fa-check" aria-hidden="true"></i>'
