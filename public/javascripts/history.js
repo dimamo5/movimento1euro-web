@@ -115,7 +115,7 @@ $(document).ready(function () {
                             // it is a date
                             if ( isNaN( d2.getTime() ) ) {  // d.valueOf() could also work
                                 // date is not valid
-                                swal("date is not valid!");
+                                swal("a data inserida não é valida!");
                                 break;
                             }
                             else {
@@ -137,7 +137,7 @@ $(document).ready(function () {
                             }
                         }
                         else {
-                            swal("Not a date!");
+                            swal("Valor dado não é uma data!");
                             msg.visible = true;
                             break;
                         }
@@ -154,7 +154,7 @@ $(document).ready(function () {
                                 if (isNaN(d1.getTime()) && isNaN(d2.getTime())) {  // d.valueOf() could also work
                                     // date is not valid
 
-                                    swal("date is not valid!");
+                                    swal("a data inserida não é valida!");
                                     break;
                                 }
                                 else {
@@ -192,7 +192,7 @@ $(document).ready(function () {
                             else
                                 {
                                     // not a date
-                                    swal("Not a date!");
+                                    swal("Valor dado não é uma data!");
                                     break;
                                 }
                             }
