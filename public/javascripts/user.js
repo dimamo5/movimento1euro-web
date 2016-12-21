@@ -144,6 +144,15 @@ $(document).ready(function () {
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
                                     console.log(data);
+                                    console.log(textStatus);
+                                 //   if (selected_users.length == data.notificationStates.length)
+                                  //      swal("Sucesso!", "Mensagem enviada para tofos os utilizadores", "success");
+                                  //  else
+                                        swal("Sucesso!", "Mensagem enviada para " + selected_users.length + " utilizadores", "success");
+                                },
+                                error: function (data, textStatus, jqXHR) {
+                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
+                                    console.log(data)
                                 }
                             })
                             ;
@@ -159,6 +168,11 @@ $(document).ready(function () {
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
+                                    swal("Sucesso!", "Mensagem enviada para " + selected_users.length + " utilizadores", "success");
+                                    console.log(data)
+                                },
+                                error: function (data, textStatus, jqXHR) {
+                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
                                     console.log(data)
                                 }
                             });
