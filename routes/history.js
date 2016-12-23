@@ -9,9 +9,10 @@ router.get('/', (req, res) => {
 });
 
 router.get('/api/messages', (req, res) => {
-    db.Message.findAll({include: {model: db.Template, attributes: ['content', 'name']}})
+    db.Message.findAll({include: [ {model: db.Template, attributes: ['content', 'name']}, {model : db.AppUser }]})
         .then((messages) => {
             res.json(messages);
+
         })
         .catch((err) => {
             console.log(err);

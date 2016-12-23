@@ -120,7 +120,5 @@ describe('Alert', function () {
 
     it('should get all users to notify', (done) => {
         autoAlerts.users2alert(done)
-
     })
-
 });

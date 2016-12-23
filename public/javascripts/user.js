@@ -2,6 +2,11 @@ $(document).ready(function () {
     let locationSplited = window.location.href.split('/');
     let location = locationSplited[locationSplited.length - 1];
     if (location !== 'template' && location === 'user') {
+        var dummy = {
+            name: 'Ines',
+            nextPayment: new Date(2017, 9, 23, 16, 25, 0, 0)
+        };
+
         var user = new Vue({
                 el: '#wrapper',
                 data: {
@@ -13,10 +18,11 @@ $(document).ready(function () {
                     picked: '',
                     select: '',
                     msgTitle: '',
-                    msgContent: ''
+                    msgContent: '',
+                    previewContent: ''
                 },
                 created: function () {
-                    $.get('/user/api/users', (data)=> {
+                    $.get('/user/api/users', (data) => {
                         for (var i = 0; i < data.length; i++) {
                             this.users.push({
                                 select: false,
@@ -36,6 +42,13 @@ $(document).ready(function () {
                     checkAll: function () {
                         for (var i = 0; i < this.users.length; i++) {
                             this.users[i]['select'] = this.users[i].visible ? this.checkAll : false;
+                            if (this.users[i].visible) {
+                                if (this.checkAll) {
+                                    this.counter++;
+                                } else {
+                                    this.counter--;
+                                }
+                            }
                         }
                     },
                     search: function () {
@@ -68,7 +81,7 @@ $(document).ready(function () {
                             $('#notificationSendModal').modal('show')
                         }
                         else {
-                            alert(this.counter);
+                            //alert(this.counter);
                             //alert('Seleccione pelo menos 1 utilizador!');
                             this.counter = 0;
                         }
@@ -77,7 +90,7 @@ $(document).ready(function () {
                         $('#templateList').hide();
                         $('#contentManualMsg').hide();
                         //======
-                        $.get('/template/api', (data)=> {
+                        $.get('/template/api', (data) => {
                             for (let i = 0; i < data.templates.length; i++) {
                                 this.templates.push({
                                     id: data.templates[i].id,
@@ -95,6 +108,13 @@ $(document).ready(function () {
                         //=====
                         $('#contentManualMsg').show();
                     },
+                    reviewContent: function () {
+                        let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
+                        let copy = "";
+                        copy = this.templates[this.select].content;
+                        this.previewContent = copy.replace('@name', dummy.name).replace('@proxPagamento', date);
+
+                    },
                     sendNotification: function () {
                         $('#notificationSendModal').modal('hide');
 
@@ -107,7 +127,11 @@ $(document).ready(function () {
                         for (user of this.users) {
                             if (user['select']) {
                                 selected_users.push(user.id);
+                                user['select'] = false;
                             }
+                            //TODO: rever isto porque é desnecessario correr tantas vezes
+                            if(this.checkAll)
+                                this.checkAll = false;
                         }
 
                         if (this.picked === 'Manual') {
@@ -122,9 +146,20 @@ $(document).ready(function () {
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
+                                    console.log(data);
+                                    console.log(textStatus);
+                                 //   if (selected_users.length == data.notificationStates.length)
+                                  //      swal("Sucesso!", "Mensagem enviada para tofos os utilizadores", "success");
+                                  //  else
+                                        swal("Sucesso!", "Mensagem enviada para " + selected_users.length + " utilizadores", "success");
+                                },
+                                error: function (data, textStatus, jqXHR) {
+                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
                                     console.log(data)
                                 }
-                            });
+                            })
+                            ;
+
                         } else if (this.picked === 'Template') {
                             $.ajax({
                                 type: "POST",
@@ -136,12 +171,19 @@ $(document).ready(function () {
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
+                                    swal("Sucesso!", "Mensagem enviada para " + selected_users.length + " utilizadores", "success");
+                                    console.log(data)
+                                },
+                                error: function (data, textStatus, jqXHR) {
+                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
                                     console.log(data)
                                 }
                             });
-                        } else {
+                        }
+                        else {
                             console.log("Error on this.picked value. Not recognized.")
                         }
+
                     },
                     filter: function () {
                         let search = this.search.toLowerCase();
@@ -189,7 +231,8 @@ $(document).ready(function () {
                                 user.visible = true;
                             }
                         }
-                    },
+                    }
+                    ,
                     icon: function (value) {
                         if (value) {
                             return '<i class="fa fa-check" aria-hidden="true"></i>'

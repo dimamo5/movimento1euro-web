@@ -13,7 +13,10 @@ router.get('/', (req, res, next) => {
 router.get('/api/alert', (req, res) => {
     db.Alert.findOne()
         .then((alert) => {
-            res.json({result: 'success', 'alert': alert});
+            db.Template.findOne({where: {id : alert.dataValues.TemplateId}})
+                .then((template) => {
+                    res.json({result: 'success', 'alert': alert, 'alertTemplate' : template});
+                })
         })
 });
 
