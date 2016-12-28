@@ -33,7 +33,7 @@ function sendTemplateMessage(templateId, usersIds, success) {
     let template_content, template_title;
     let msg_type = 'Template';
     let ids = usersIds;
-    let results = [];
+    let results = {success: [], error: []};
     let messageGlobal;
 
     //get template from template_id of the post request
@@ -55,39 +55,46 @@ function sendTemplateMessage(templateId, usersIds, success) {
         async.each(users, function (user, callback) {
             console.log('Processing notification to user #' + user.id);
 
-            let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
+            if (user.firebase_token == null || user.firebase_token == "") {
+                results.error.push(user.name);
+                callback();
+            }
+            else {
 
-            //clone object because async is the thing
-            let options_request = JSON.parse(JSON.stringify(options));
+                let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
 
-            console.log("firebase id: " + user.firebase_token);
+                //clone object because async is the thing
+                let options_request = JSON.parse(JSON.stringify(options));
 
-            options_request.body.to = user.firebase_token;
-            options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
+                console.log("firebase id: " + user.firebase_token);
 
-            request(options_request, (error, response, body) => {
-                if (!error && response.statusCode == 200 && body.failure == 0) {
-                    if (!body.results.error) {
-                        results.push(body.results[0]);
-                        messageGlobal.setAppUsers([user], {
-                            firebaseMsgID: body.results[0].message_id,
-                            content: parsed_content,
-                            sent: true
-                        });
+                options_request.body.to = user.firebase_token;
+                options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
+
+                request(options_request, (error, response, body) => {
+                    if (!error && response.statusCode == 200 && body.failure == 0) {
+                        if (!body.results.error) {
+                            results.success.push(body.results[0]);
+                            messageGlobal.setAppUsers([user], {
+                                firebaseMsgID: body.results[0].message_id,
+                                content: parsed_content,
+                                sent: true
+                            });
+                        }
+                        else { //erro na msg
+                            results.error.push(user.name);
+                            messageGlobal.setAppUsers([user], {
+                                firebaseMsgID: body.results[0].message_id,
+                                content: parsed_content,
+                                sent: false
+                            });
+                        }
+                        callback();
+                    } else {
+                        callback(error);
                     }
-                    else { //erro na msg
-                        messageGlobal.setAppUsers([user], {
-                            firebaseMsgID: body.results[0].message_id,
-                            content: parsed_content,
-                            sent: false
-                        });
-                    }
-                    callback();
-                } else {
-                    callback(error);
-                }
-            });
-
+                });
+            }
         }, function (err) {
             // if any of the notification processing produced an error, err would equal that error
             if (err) {
@@ -124,6 +131,7 @@ router.post('/sendManual', (req, res) => {
     let content = req.body.content;
     let msg_type = 'Manual';
     let ids = req.body.ids;
+    let results = {success: [], error: []};
 
     db.AppUser.findAll({
         where: {id: ids},
@@ -150,8 +158,13 @@ router.post('/sendManual', (req, res) => {
 
                     for (let i = 0; i < body.results.length; i++) {
                         if (!body.results[i].error) {
+                            results.success.push(body.results);
                             message.addAppUser(ids[i], {firebaseMsgID: body.results[i].message_id});
                         } else {   //erro na msg
+                            db.AppUser.findOne({
+                                where: {id: ids[i]}
+                            }).then(user);
+                            results.error.push(user.name);
                             console.log(body.results[i].error);
                         }
                     }
@@ -159,10 +172,11 @@ router.post('/sendManual', (req, res) => {
                         result: 'success',
                         users: ids,
                         msg_id: message.id,
-                        notificationStates: body.results,
+                        notificationStates: results,
                     });
                 } else {
-                    res.json({result: 'Error processing notifications'});
+                    res.json({result: 'Error processing notifications',
+                        notificationStates: results.error});
                     console.log(error, response);
                 }
             });
@@ -177,4 +191,4 @@ router.post('/sendManual', (req, res) => {
 
 
 module.exports = router;
-module.exports.sendTemplateMessage=sendTemplateMessage;
+module.exports.sendTemplateMessage = sendTemplateMessage;
