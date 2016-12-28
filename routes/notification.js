@@ -158,13 +158,8 @@ router.post('/sendManual', (req, res) => {
 
                     for (let i = 0; i < body.results.length; i++) {
                         if (!body.results[i].error) {
-                            results.success.push(body.results);
                             message.addAppUser(ids[i], {firebaseMsgID: body.results[i].message_id});
                         } else {   //erro na msg
-                            db.AppUser.findOne({
-                                where: {id: ids[i]}
-                            }).then(user);
-                            results.error.push(user.name);
                             console.log(body.results[i].error);
                         }
                     }
@@ -172,11 +167,28 @@ router.post('/sendManual', (req, res) => {
                         result: 'success',
                         users: ids,
                         msg_id: message.id,
-                        notificationStates: results,
+                        notificationStates: body.results,
                     });
                 } else {
-                    res.json({result: 'Error processing notifications',
-                        notificationStates: results.error});
+                    let error = [];
+                    for (let i = 0; i < body.results.length; i++) {
+                        if (body.results[i].error) {
+                            db.AppUser.findOne({
+                                where: {id: ids[i]}
+                            }).then((user) => {
+                                error.push(user.name);
+                            }).then(() => {
+                                //testo se esta na ultima iteração
+                                //TODO: esta trolha pois isto é só para evitar que ele mande a resposta antes dos nomes estarem todos
+                                if(i == (body.results.length-1)) {
+                                    res.json({
+                                        result: 'Error processing notifications',
+                                        notificationStates: error
+                                    })
+                                }
+                            })
+                        }
+                    }
                     console.log(error, response);
                 }
             });
@@ -187,7 +199,8 @@ router.post('/sendManual', (req, res) => {
         }
     );
 
-});
+})
+;
 
 
 module.exports = router;

@@ -154,10 +154,26 @@ $(document).ready(function () {
                                     if (selected_users.length == data.notificationStates.length)
                                         swal("Sucesso!", "Mensagem enviada para todos os utilizadores selecionados", "success");
                                     else
-                                        swal("Erro!", "Mensagem enviada para " + selected_users.length + " utilizadores", "error");
+                                        swal({
+                                                title: "Erro!",
+                                                text: "Mensagem não enviada para " + data.notificationStates.length + " utilizadores",
+                                                type: "error",
+                                                showCancelButton: true,
+                                                closeOnConfirm: false,
+                                                confirmButtonText: "Mostrar Utilizadores",
+                                            },
+                                            function () {
+                                                let users = "";
+                                                for (let i = 0; i < data.notificationStates.length - 1; i++)
+                                                    users += data.notificationStates[i] + ', ';
+
+                                                users += data.notificationStates[data.notificationStates.length - 1]
+
+                                                swal("Utilizadores: ", users, "info");
+                                            });
                                 },
                                 error: function (data, textStatus, jqXHR) {
-                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
+                                    swal("Erro!", "Ocorreu um erro ao enviar mensagem", "error");
                                     console.log(data)
                                 }
                             })
@@ -177,7 +193,6 @@ $(document).ready(function () {
                                     if (selected_users.length == data.notificationStates.success.length)
                                         swal("Sucesso", "Mensagem enviada para todos os utilizadores selecionados", "success");
                                     else
-                                    // swal("Erro!", "Mensagem enviada para " + selected_users.error.length + " utilizadores", "error");
                                         swal({
                                                 title: "Erro!",
                                                 text: "Mensagem não enviada para " + data.notificationStates.error.length + " utilizadores",
@@ -188,7 +203,7 @@ $(document).ready(function () {
                                             },
                                             function () {
                                                 let users = "";
-                                                for (let i = 0; i < data.notificationStates.error.length - 1 ; i++)
+                                                for (let i = 0; i < data.notificationStates.error.length - 1; i++)
                                                     users += data.notificationStates.error[i] + ', ';
 
                                                 users += data.notificationStates.error[data.notificationStates.error.length - 1]
