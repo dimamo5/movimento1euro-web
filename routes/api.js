@@ -160,6 +160,7 @@ router.get('/logout', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
+        res.status(401);
     } else {
         db.AppUser.update({token: null},
             {where: {token: auth}})
@@ -228,6 +229,7 @@ router.get('/winnerCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
+        res.status(401);
         return;
     }
 
@@ -300,6 +302,7 @@ router.put('/firebaseToken', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
+        res.status(401);
     } else if (!req.body.firebaseToken) {
         res.json({result: 'Wrong params'});
     } else {
@@ -339,6 +342,7 @@ router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
+        res.status(401);
         return;
     }
     const formData = {
@@ -459,6 +463,7 @@ router.get('/votingCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
+        res.status(401);
         return;
     }
     const formData = {action: 'm1e_votacoes_ativas'};
@@ -502,5 +507,38 @@ router.get('/votingCauses', (req, res) => {
 router.put('/notificationSeen/:notificationId', (req, res) => {
     // TODO not a priority right now
 });
+
+
+router.get('/days_to_warn', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+        res.status(401);
+        return;
+    }
+    const formData = {action: 'm1e_votacoes_ativas'};
+    let causes = [];
+
+    request.post({
+            url: M1E_URL,
+            form: formData
+        }, function (err, response, body) {
+            let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+            if (!err && response.statusCode == 200) {
+                if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
+                    res.status(400);
+                    res.json({result: bodyJSON.mensagem})
+                } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
+                    let votacao = bodyJSON.resultados;
+                    res.json({result: 'success', votacao: votacao});
+                } else {
+                    res.status(500);
+                    res.json({result: 'Erro desconhecido'})
+                }
+            }
+        }
+    );
+});
+
 
 module.exports = router;
