@@ -55,46 +55,46 @@ function sendTemplateMessage(templateId, usersIds, success) {
         async.each(users, function (user, callback) {
             console.log('Processing notification to user #' + user.id);
 
-            if (user.firebase_token == null || user.firebase_token == "") {
-                results.error.push(user.name);
-                callback();
-            }
-            else {
+            let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
 
-                let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
+            //clone object because async is the thing
+            let options_request = JSON.parse(JSON.stringify(options));
 
-                //clone object because async is the thing
-                let options_request = JSON.parse(JSON.stringify(options));
+            console.log("firebase id: " + user.firebase_token);
 
-                console.log("firebase id: " + user.firebase_token);
+            options_request.body.to = user.firebase_token;
+            options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
 
-                options_request.body.to = user.firebase_token;
-                options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
-
-                request(options_request, (error, response, body) => {
-                    if (!error && response.statusCode == 200 && body.failure == 0) {
-                        if (!body.results.error) {
-                            results.success.push(body.results[0]);
-                            messageGlobal.setAppUsers([user], {
-                                firebaseMsgID: body.results[0].message_id,
-                                content: parsed_content,
-                                sent: true
-                            });
-                        }
-                        else { //erro na msg
-                            results.error.push(user.name);
-                            messageGlobal.setAppUsers([user], {
-                                firebaseMsgID: body.results[0].message_id,
-                                content: parsed_content,
-                                sent: false
-                            });
-                        }
-                        callback();
-                    } else {
-                        callback(error);
+            request(options_request, (error, response, body) => {
+                if (!error && response.statusCode == 200 && body.failure == 0) {
+                    if (!body.results.error) {
+                        results.success.push(body.results[0]);
+                        messageGlobal.setAppUsers([user], {
+                            firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
+                            sent: true
+                        });
                     }
-                });
-            }
+                    else { //erro na msg
+                        results.error.push(user.name);
+                        messageGlobal.setAppUsers([user], {
+                            firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
+                            sent: false
+                        });
+                    }
+                    callback();
+                } else {
+                    //Resposta com status code a 400
+                    results.error.push(user.name);
+                    messageGlobal.setAppUsers([user], {
+                        firebaseMsgID: body.results[0].message_id,
+                        content: parsed_content,
+                        sent: false
+                    });
+                    callback(error);
+                }
+            });
         }, function (err) {
             // if any of the notification processing produced an error, err would equal that error
             if (err) {
@@ -180,7 +180,7 @@ router.post('/sendManual', (req, res) => {
                             }).then(() => {
                                 //testo se esta na ultima iteração
                                 //TODO: esta trolha pois isto é só para evitar que ele mande a resposta antes dos nomes estarem todos
-                                if(i == (body.results.length-1)) {
+                                if (i == (body.results.length - 1)) {
                                     res.json({
                                         result: 'Error processing notifications',
                                         notificationStates: error

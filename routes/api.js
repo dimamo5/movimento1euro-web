@@ -159,8 +159,8 @@ router.post('/loginfb', (req, res) => {
 router.get('/logout', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
-        res.json({result: 'Authorization required'});
         res.status(401);
+        res.json({result: 'Authorization required'});
     } else {
         db.AppUser.update({token: null},
             {where: {token: auth}})
@@ -228,15 +228,15 @@ router.get('/logout', (req, res) => {
 router.get('/winnerCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
-        res.json({result: 'Authorization required'});
         res.status(401);
+        res.json({result: 'Authorization required'});
         return;
     }
 
     const formData = {action: 'm1e_votacoes_vencedores'};
     let causes = [];
     if (req.query.ano) {
-        let year = req.query.ano
+        let year = req.query.ano;
         if(year.length == 4)
             formData.ano = year
     }
@@ -301,8 +301,8 @@ router.get('/winnerCauses', (req, res) => {
 router.put('/firebaseToken', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
-        res.json({result: 'Authorization required'});
         res.status(401);
+        res.json({result: 'Authorization required'});
     } else if (!req.body.firebaseToken) {
         res.json({result: 'Wrong params'});
     } else {
@@ -341,8 +341,8 @@ router.put('/firebaseToken', (req, res) => {
 router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
-        res.json({result: 'Authorization required'});
         res.status(401);
+        res.json({result: 'Authorization required'});
         return;
     }
     const formData = {
@@ -462,8 +462,8 @@ router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
 router.get('/votingCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
-        res.json({result: 'Authorization required'});
         res.status(401);
+        res.json({result: 'Authorization required'});
         return;
     }
     const formData = {action: 'm1e_votacoes_ativas'};
@@ -512,8 +512,8 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
 router.get('/days_to_warn', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
-        res.json({result: 'Authorization required'});
         res.status(401);
+        res.json({result: 'Authorization required'});
         return;
     }
     const formData = {action: 'm1e_votacoes_ativas'};
