@@ -168,7 +168,9 @@ router.get('/logout', (req, res) => {
                 if (results.length > 0) {
                     res.json({result: 'success'});
                 } else {
-                    res.json({result: 'error'});
+                    //Mensagem de erro!
+                    res.status(401);
+                    res.json({result: 'Error firebase token not valid'});
                 }
             });
     }
@@ -312,12 +314,18 @@ router.put('/firebaseToken', (req, res) => {
             },
         })
             .then((result) => {
-                result.set('firebase_token', req.body.firebaseToken);
-                result.save()
-                    .then(res.json({result: 'success'}));
+                if (results.length > 0) {
+                    result.set('firebase_token', req.body.firebaseToken);
+                    result.save()
+                        .then(res.json({result: 'success'}));
+                } else {
+                    //Mensagem de erro!
+                    res.status(401);
+                    res.json({result: 'Error firebase token not valid'});
+                }
             })
             .catch(() => {
-                res.json({result: 'error'});
+                res.json({result: 'Error'});
             });
     }
 });
@@ -364,7 +372,7 @@ router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
                     res.json({result: 'success'});
                 } else {
                     res.status(500);
-                    res.json({result: 'Erro desconhecido'})
+                    res.json({result: 'Error unknown'})
                 }
             }
         }
@@ -483,7 +491,7 @@ router.get('/votingCauses', (req, res) => {
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
-                    res.json({result: 'Erro desconhecido'})
+                    res.json({result: 'Error unknown'})
                 }
             }
         }
@@ -533,7 +541,7 @@ router.get('/days_to_warn', (req, res) => {
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
-                    res.json({result: 'Erro desconhecido'})
+                    res.json({result: 'Error unknown'})
                 }
             }
         }
