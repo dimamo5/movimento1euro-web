@@ -458,7 +458,7 @@ function populateDB() {
     });
 
     Promise.all([msg1.save(), msg2.save(), msg3.save(), msg4.save(), msg5.save(), msg6.save(), temp1.save(), temp2.save(), temp3.save(),
-        appUser1.save(), appUser2.save(), appUser3.save(), appUser4.save(), appUser5.save(), appUser6.save(), appUser7.save(), alert1.save()])
+            appUser1.save(), appUser2.save(), appUser3.save(), appUser4.save(), appUser5.save(), appUser6.save(), appUser7.save(), alert1.save()])
         .then(() => {
             temp1.setAlerts([alert1]); // associa alerta a temp
             temp2.setMessages([msg2]); // associa mensagem a temp
