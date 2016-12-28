@@ -118,6 +118,22 @@ describe('Alert', function () {
             });
     });
 
+    it('should return the number of days to warn', (done) => {
+        chai.request(app)
+            .get('/api/days_to_warn')
+            .set('Authorization', TOKEN)
+            .end((err, res) => {
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                expect(res).to.be.json;
+                expect(res.body).to.have.property('result');
+                expect(res.body.result).to.be.equal('success');
+                expect(res.body).to.have.property('days_to_warn');
+                expect(res.body.days_to_warn).to.be.equal(1);
+                done();
+            });
+    });
+
     it('should get all users to notify', (done) => {
         autoAlerts.users2alert(done)
     })

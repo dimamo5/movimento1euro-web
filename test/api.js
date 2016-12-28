@@ -98,11 +98,11 @@ describe('Authenticate User', function () {
                     expect(res.body).to.have.property('result');
                     expect(res.body.result).to.be.equal('success');
                     db.AppUser.findOne({where: {id: res.body.id}})
-                        .then((user)=> {
+                        .then((user) => {
                             expect(user.token).to.be.string;
                             done();
                         })
-                        .catch((err)=>done(err))
+                        .catch((err) => done(err))
 
                 }
             );
@@ -240,7 +240,7 @@ describe('Causes', function () {
     it('should obtain all past winner causes', (done) => {
         chai.request(app)
             .get('/api/winnerCauses')
-            .query({ano	: 2016})
+            .query({ano: 2016})
             .set('Authorization', TOKEN)
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -251,18 +251,18 @@ describe('Causes', function () {
                 done();
             });
     });
-/*
-    it('should set a vote from user in a specific cause', (done) => {
-        chai.request(app)
-            .post('/api/voteCause/125/130')
-            .set('Authorization', TOKEN)
-            .end((err, res) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
-    */
+    /*
+     it('should set a vote from user in a specific cause', (done) => {
+     chai.request(app)
+     .post('/api/voteCause/125/130')
+     .set('Authorization', TOKEN)
+     .end((err, res) => {
+     expect(err).to.be.null;
+     expect(res).to.have.status(200);
+     done();
+     });
+     });
+     */
 
 });
 
@@ -289,8 +289,8 @@ describe('Notification', function () {
             .then(function () {
                 return wpUser5.save();
             })
-            .then(()=>done())
-            .catch((err)=>done(err));
+            .then(() => done())
+            .catch((err) => done(err));
     });
 
     it('should replace the existing token by a new one', (done) => {
