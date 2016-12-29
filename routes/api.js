@@ -520,34 +520,36 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
  */
 router.get('/days_to_warn', (req, res) => {
     const auth = req.get('Authorization');
-    if (!auth) {
+if (!auth) {
+    res.status(401);
+    res.json({result: 'Authorization required'});
+    return;
+}
+else {
+    db.AppUser.findOne({
+        where: {
+            token: auth,
+        },
+    })
+        .then((result) => {
+        if (result != null) {
+        db.Alert.findOne()
+            .then((alert) => {
+            db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
+            .then((template) => {
+            res.status(200);
+            res.json({result: 'success', 'days_to_warn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
+    })})
+    } else {
+        //Mensagem de erro!
         res.status(401);
-        res.json({result: 'Authorization required'});
-        return;
+        res.json({result: 'Error firebase token not valid'});
     }
-    else {
-        db.AppUser.findOne({
-            where: {
-                token: auth,
-            },
-        })
-            .then((result) => {
-                if (result != null) {
-                    db.Alert.findOne()
-                        .then((alert) => {
-                            res.status(200);
-                            res.json({result: 'success', 'days_to_warn': alert.start_alert});
-                        })
-                } else {
-                    //Mensagem de erro!
-                    res.status(401);
-                    res.json({result: 'Error firebase token not valid'});
-                }
-            })
-            .catch(() => {
-                res.json({result: 'Error'});
-            });
-    }
+})
+.catch(() => {
+        res.json({result: 'Error'});
+});
+}
 });
 
 
