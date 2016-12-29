@@ -181,7 +181,7 @@ router.get('/logout', (req, res) => {
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {String} ano Causas do Ano especifico / Caso não seja enviado retorna todas as causas passadas
+ * @apiParam {String} Year Causes of the year given / if not sent it will return all past causes
  *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Object[]} causes Array with all the causes
@@ -504,7 +504,20 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
     // TODO not a priority right now
 });
 
-
+/**
+ * @api {put} /api/days_to_warn Get number of days to warn the user
+ * @apiDescription Get number of days to warn the user
+ * @apiName Get number of days to warn the user
+ * @apiGroup Alerts
+ * @apiVersion 0.1.0
+ * @apiHeader {String} Authorization User token
+ *
+ *
+ * @apiSuccess {String} result Returns 'success'
+ * @apiSuccess {Number} days_to_warn number of days to warn the user
+ *
+ * @apiError {String} result Returns 'error'
+ */
 router.get('/days_to_warn', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
