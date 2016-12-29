@@ -505,7 +505,7 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
 });
 
 /**
- * @api {put} /api/days_to_warn Get number of days to warn the user
+ * @api {put} /api/daysToWarn Get number of days to warn the user
  * @apiDescription Get number of days to warn the user
  * @apiName Get number of days to warn the user
  * @apiGroup Alerts
@@ -515,10 +515,12 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
  *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Number} days_to_warn number of days to warn the user
+ * @apiSuccess {String} alertTitle title of the alert
+ * @apiSuccess {String} alertMsg content of the message with tag of the alert
  *
  * @apiError {String} result Returns 'error'
  */
-router.get('/days_to_warn', (req, res) => {
+router.get('/daysToWarn', (req, res) => {
     const auth = req.get('Authorization');
 if (!auth) {
     res.status(401);
@@ -538,7 +540,7 @@ else {
             db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
             .then((template) => {
             res.status(200);
-            res.json({result: 'success', 'days_to_warn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
+            res.json({result: 'success', 'daysToWarn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
     })})
     } else {
         //Mensagem de erro!
