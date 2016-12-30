@@ -540,7 +540,7 @@ else {
             db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
             .then((template) => {
             res.status(200);
-            res.json({result: 'success', 'daysToWarn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
+            res.json({result: 'success', 'active': alert.active, 'daysToWarn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
     })})
     } else {
         //Mensagem de erro!

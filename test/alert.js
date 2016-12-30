@@ -94,6 +94,28 @@ describe('Alert', function () {
             });
     });
 
+    it('should return the number of days to warn', (done) => {
+        chai.request(app)
+        .get('/api/daysToWarn')
+        .set('Authorization', TOKEN)
+        .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            expect(res).to.be.json;
+            expect(res.body).to.have.property('result');
+            expect(res.body.result).to.be.equal('success');
+            expect(res.body).to.have.property('active');
+            expect(res.body.active).to.be.equal(true);
+            expect(res.body).to.have.property('daysToWarn');
+            expect(res.body.daysToWarn).to.be.equal(1);
+            expect(res.body).to.have.property('alertTitle');
+            expect(res.body.alertTitle).to.be.equal('Pagamento proximo da data');
+            expect(res.body).to.have.property('alertMsg');
+            expect(res.body.alertMsg).to.be.equal('O pagamento da mensalidade encontra-se proximo @proxPagamento');
+            done();
+        });
+    });
+
     it('should edit alert from db', (done) => {
         agent
             .put('/alert/api/1')
@@ -115,22 +137,6 @@ describe('Alert', function () {
                     .catch((err) => {
                         done(err);
                     })
-            });
-    });
-
-    it('should return the number of days to warn', (done) => {
-        chai.request(app)
-            .get('/api/days_to_warn')
-            .set('Authorization', TOKEN)
-            .end((err, res) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(200);
-                expect(res).to.be.json;
-                expect(res.body).to.have.property('result');
-                expect(res.body.result).to.be.equal('success');
-                expect(res.body).to.have.property('days_to_warn');
-                expect(res.body.days_to_warn).to.be.equal(1);
-                done();
             });
     });
 
