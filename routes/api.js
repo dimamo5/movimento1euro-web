@@ -181,7 +181,7 @@ router.get('/logout', (req, res) => {
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {String} ano Causas do Ano especifico / Caso não seja enviado retorna todas as causas passadas
+ * @apiParam {String} Year Causes of the year given / if not sent it will return all past causes
  *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Object[]} causes Array with all the causes
@@ -235,7 +235,7 @@ router.get('/winnerCauses', (req, res) => {
     let causes = [];
     if (req.query.ano) {
         let year = req.query.ano
-        if(year.length == 4)
+        if (year.length == 4)
             formData.ano = year
     }
 
@@ -270,7 +270,7 @@ router.get('/winnerCauses', (req, res) => {
                         res.json({result: 'success', causes: causes});
                     }
                 });
-            } else{
+            } else {
                 causes = bodyJSON.resultados;
                 res.json({result: 'success', causes: causes});
 
@@ -301,6 +301,7 @@ router.put('/firebaseToken', (req, res) => {
     if (!auth) {
         res.json({result: 'Authorization required'});
     } else if (!req.body.firebaseToken) {
+        res.status(401);
         res.json({result: 'Wrong params'});
     } else {
         db.AppUser.findOne({
@@ -468,13 +469,13 @@ router.get('/votingCauses', (req, res) => {
             url: M1E_URL,
             form: formData
         }, function (err, response, body) {
-        let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+            let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
             if (!err && response.statusCode == 200) {
                 if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
                     res.status(400);
                     res.json({result: bodyJSON.mensagem})
                 } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
-                   let votacao = bodyJSON.resultados;
+                    let votacao = bodyJSON.resultados;
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
@@ -502,5 +503,56 @@ router.get('/votingCauses', (req, res) => {
 router.put('/notificationSeen/:notificationId', (req, res) => {
     // TODO not a priority right now
 });
+
+/**
+ * @api {put} /api/daysToWarn Get number of days to warn the user
+ * @apiDescription Get number of days to warn the user
+ * @apiName Get number of days to warn the user
+ * @apiGroup Alerts
+ * @apiVersion 0.1.0
+ * @apiHeader {String} Authorization User token
+ *
+ *
+ * @apiSuccess {String} result Returns 'success'
+ * @apiSuccess {Number} days_to_warn number of days to warn the user
+ * @apiSuccess {String} alertTitle title of the alert
+ * @apiSuccess {String} alertMsg content of the message with tag of the alert
+ *
+ * @apiError {String} result Returns 'error'
+ */
+router.get('/daysToWarn', (req, res) => {
+    const auth = req.get('Authorization');
+if (!auth) {
+    res.status(401);
+    res.json({result: 'Authorization required'});
+    return;
+}
+else {
+    db.AppUser.findOne({
+        where: {
+            token: auth,
+        },
+    })
+        .then((result) => {
+        if (result != null) {
+        db.Alert.findOne()
+            .then((alert) => {
+            db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
+            .then((template) => {
+            res.status(200);
+            res.json({result: 'success', 'active': alert.active, 'daysToWarn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
+    })})
+    } else {
+        //Mensagem de erro!
+        res.status(401);
+        res.json({result: 'Error firebase token not valid'});
+    }
+})
+.catch(() => {
+        res.json({result: 'Error'});
+});
+}
+});
+
 
 module.exports = router;
