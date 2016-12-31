@@ -29,50 +29,87 @@ const M1E_URL = 'https://movimento1euro.pdmfc.com/wp-admin/admin-ajax.php';
  */
 router.post('/login', (req, res) => {
     if (req.body.mail && req.body.password) {
-        apiWrapper.getUser(req.body.mail, req.body.password, (wpuser) => {
-                if (wpuser) {
-                    db.AppUser.findOrCreate({
-                        where: {
-                            external_link_id: wpuser.id,
-                        },
-                        defaults: {
-                            external_link_id: wpuser.id,
-                            name: wpuser.name,
-                        },
-                    }).spread((result) => {
-                        if (result) {
-                            if (result.token) {
-                                res.json({
-                                    result: 'success',
-                                    token: result.token,
-                                    id: result.id,
-                                    name: result.name,
-                                    expDate: wpuser.nextPayment
-                                });
-                            } else {
-                                crypto.randomBytes(48, (err, buffer) => {
-                                    const token = buffer.toString('hex');
-                                    result.token = token;
-                                    result.save().then(() => res.json({
+
+        const formData = {
+            action: 'm1e_autenticar',
+            email: req.body.mail,
+            pwd: req.body.password
+        };
+
+        request.post({
+                url: M1E_URL,
+                form: formData
+            }, function (err, response, body) {
+                if (!err && response.statusCode == 200) {
+                    let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+                    if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
+                        res.status(400);
+                        res.json({result: 'login failed'});
+                    } else if (bodyJSON.estado == "OK") {      //Caso tenha sucesso
+
+                        db.AppUser.findOrCreate({
+                            where: {
+                                external_link_id: bodyJSON.id_utilizador,
+                            },
+                            defaults: {
+                                external_link_id: bodyJSON.id_utilizador,
+                                name: bodyJSON.nome,
+                            },
+                        }).spread((result) => {
+                            if (result) {
+                                if (result.token) {
+                                    var l = apiWrapper.parseCookies(response.headers["set-cookie"][0])
+
+                                    result.cookieAdim0 = response.headers["set-cookie"][0];
+                                    result.cookieAdim1 = response.headers["set-cookie"][1];
+                                    result.cookie = response.headers["set-cookie"][2];
+
+                                    res.json({
                                         result: 'success',
-                                        token,
+                                        token: result.token,
                                         id: result.id,
                                         name: result.name,
-                                        expDate: wpuser.nextPayment
-                                    }));
-                                });
+                                        expDate: bodyJSON.data_renovacao,
+                                        cookie: result.cookie,
+                                        cookieAdmin0 : result.cookieAdmin0,
+                                        cookieAdmin1 : result.cookieAdmin1
+                                    });
+                                } else {
+                                    crypto.randomBytes(48, (err, buffer) => {
+                                        const token = buffer.toString('hex');
+                                        result.token = token;
+                                        var l = apiWrapper.parseCookies(response.headers["set-cookie"][0])
+                                        result.cookieAdim0 = response.headers["set-cookie"][0];
+                                        result.cookieAdim1 = response.headers["set-cookie"][1];
+                                        result.cookie = response.headers["set-cookie"][2];
+
+                                        result.save().then(() => res.json({
+                                            result: 'success',
+                                            token,
+                                            id: result.id,
+                                            name: result.name,
+                                            expDate: bodyJSON.data_renovacao,
+                                            cookie: result.cookie,
+                                            cookieAdmin0 : result.cookieAdmin0,
+                                            cookieAdmin1 : result.cookieAdmin1
+                                        }));
+                                    });
+                                }
                             }
-                        }
-                    });
-                } else {
-                    res.json({result: 'login failed'});
+                        });
+                    } else {
+                        res.status(500);
+                        res.json({result: 'Erro desconhecido'})
+                    }
                 }
             }
-        );
+        )
+        ;
     } else {
         res.json({result: 'wrong params'});
     }
-});
+})
+;
 
 
 /**
@@ -91,6 +128,7 @@ router.post('/login', (req, res) => {
  * @apiError {String} result Returns 'error'
  */
 router.post('/loginfb', (req, res) => {
+
     if (req.body.token && req.body.id) {
         apiWrapper.getUserFB(req.body.id, function (error, user) {
             if (error) {
@@ -235,7 +273,7 @@ router.get('/winnerCauses', (req, res) => {
     let causes = [];
     if (req.query.ano) {
         let year = req.query.ano
-        if(year.length == 4)
+        if (year.length == 4)
             formData.ano = year
     }
 
@@ -270,7 +308,7 @@ router.get('/winnerCauses', (req, res) => {
                         res.json({result: 'success', causes: causes});
                     }
                 });
-            } else{
+            } else {
                 causes = bodyJSON.resultados;
                 res.json({result: 'success', causes: causes});
 
@@ -468,13 +506,13 @@ router.get('/votingCauses', (req, res) => {
             url: M1E_URL,
             form: formData
         }, function (err, response, body) {
-        let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+            let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
             if (!err && response.statusCode == 200) {
                 if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
                     res.status(400);
                     res.json({result: bodyJSON.mensagem})
                 } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
-                   let votacao = bodyJSON.resultados;
+                    let votacao = bodyJSON.resultados;
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);

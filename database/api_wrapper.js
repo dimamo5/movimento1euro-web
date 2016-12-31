@@ -48,6 +48,21 @@ function getUsersInfoIds(ids) {
         })
 }
 
+function parseCookies (request) {
+    var list = {},
+        rc = request;
+
+    rc && rc.split(';').forEach(function( cookie ) {
+        var parts = cookie.split('=');
+        list[parts.shift().trim()] = parts.join('=');
+    });
+
+
+
+    return list;
+}
+
+
 function getWpUserInfoIds(user) {
     return db.WpUser.findById(user.external_link_id)
         .then((wpuser) => {
@@ -88,5 +103,6 @@ module.exports.getUser = getUser;
 module.exports.getUsersInfo = getUsersInfo;
 module.exports.getUserFB = getUserFB;
 module.exports.getUsersInfoIds = getUsersInfoIds;
+module.exports.parseCookies = parseCookies;
 
 

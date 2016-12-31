@@ -56,7 +56,9 @@ const AppUser = sequelize.define('AppUser', {
         type: Sequelize.STRING(96),
     },
     firebase_token: Sequelize.TEXT('medium'),
-    cookie:Sequelize.TEXT('medium')
+    cookie:Sequelize.TEXT('medium'),
+    cookieAdim0:Sequelize.TEXT('medium'),
+    cookieAdim1:Sequelize.TEXT('medium'),
 });
 
 // table template
