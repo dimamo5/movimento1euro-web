@@ -74,6 +74,40 @@ router.post('/login', (req, res) => {
     }
 });
 
+router.get('/refresh', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.status(401);
+        res.json({result: 'Authorization required'});
+        return;
+    }
+    let appUserTemp;
+    db.AppUser.findOne({where: {token: auth}})
+        .then((appUser) => {
+            appUserTemp = appUser;
+            return db.WpUser.findOne({
+                where: {
+                    id: appUser.external_link_id,
+                }
+            })
+        })
+        .catch(()=>{
+            res.status(401);
+            res.json({result: 'Not Authorized'});
+        })
+        .then((wpUser) => {
+            res.json({
+                result: 'success',
+                token: appUserTemp.token,
+                id: appUserTemp.id,
+                name: wpUser.name,
+                expDate: wpUser.nextPayment
+            });
+        })
+        .catch(() => {
+            res.json({result: "Error"})
+        })
+});
 
 /**
  * @api {get} /api/loginFB Verify FB login
@@ -523,36 +557,43 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
  */
 router.get('/daysToWarn', (req, res) => {
     const auth = req.get('Authorization');
-if (!auth) {
-    res.status(401);
-    res.json({result: 'Authorization required'});
-    return;
-}
-else {
-    db.AppUser.findOne({
-        where: {
-            token: auth,
-        },
-    })
-        .then((result) => {
-        if (result != null) {
-        db.Alert.findOne()
-            .then((alert) => {
-            db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
-            .then((template) => {
-            res.status(200);
-            res.json({result: 'success', 'active': alert.active, 'daysToWarn': alert.start_alert, 'alertTitle': template.name, 'alertMsg': template.content});
-    })})
-    } else {
-        //Mensagem de erro!
+    if (!auth) {
         res.status(401);
-        res.json({result: 'Error firebase token not valid'});
+        res.json({result: 'Authorization required'});
+        return;
     }
-})
-.catch(() => {
-        res.json({result: 'Error'});
-});
-}
+    else {
+        db.AppUser.findOne({
+            where: {
+                token: auth,
+            },
+        })
+            .then((result) => {
+                if (result != null) {
+                    db.Alert.findOne()
+                        .then((alert) => {
+                            db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
+                                .then((template) => {
+                                    res.status(200);
+                                    res.json({
+                                        result: 'success',
+                                        'active': alert.active,
+                                        'daysToWarn': alert.start_alert,
+                                        'alertTitle': template.name,
+                                        'alertMsg': template.content
+                                    });
+                                })
+                        })
+                } else {
+                    //Mensagem de erro!
+                    res.status(401);
+                    res.json({result: 'Error firebase token not valid'});
+                }
+            })
+            .catch(() => {
+                res.json({result: 'Error'});
+            });
+    }
 });
 
 
