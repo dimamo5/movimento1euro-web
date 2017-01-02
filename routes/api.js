@@ -521,7 +521,7 @@ router.get('/votingCauses', (req, res) => {
 });
 
 /**
- * @api {put} /api/notificationSeen/:notificationId Set notification as seen
+ * @api {put} /api/notificationSeen/ Set notification as seen
  * @apiDescription Set notification as seen
  * @apiName Set Notification Seen
  * @apiGroup Notifications
@@ -534,16 +534,20 @@ router.get('/votingCauses', (req, res) => {
  *
  * @apiError {String} result Returns 'error'
  */
-router.put('/notificationSeen/:notificationId', (req, res) => {
+router.put('/notificationSeen/', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
         res.json({result: 'Authorization required'});
         return;
     }
+    if (!req.body.notificationId) {
+        res.status(400);
+        res.json({result: 'Wrong params'});
+    }
 
     db.AppUser.findOne({where: {'token': auth}})
         .then(() => {
-            return db.UserMsg.update({seen:true},{where: {'firebaseMsgID': req.params.notificationId}})
+            return db.UserMsg.update({seen:true},{where: {'firebaseMsgID': req.body.notificationId}})
         })
         .then(()=>{
             res.json({result:'Success'})
