@@ -505,7 +505,7 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
 });
 
 /**
- * @api {put} /api/daysToWarn Get title, alert message and number of days to warn the user
+ * @api {get} /api/daysToWarn Get title, alert message and number of days to warn the user
  * @apiDescription Get title, alert message and number of days to warn the user
  * @apiName Get number of days to warn the user
  * @apiGroup Alerts
@@ -517,6 +517,7 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
  * @apiSuccess {Number} days_to_warn number of days to warn the user
  * @apiSuccess {String} alertTitle title of the alert
  * @apiSuccess {String} alertMsg content of the message with tag of the alert
+ * @apiSuccess {Boolean} active status of the alert (active or not)
  *
  * @apiError {String} result Returns 'error'
  */
