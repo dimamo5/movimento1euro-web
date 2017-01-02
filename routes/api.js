@@ -91,7 +91,7 @@ router.get('/refresh', (req, res) => {
                 }
             })
         })
-        .catch(()=>{
+        .catch(() => {
             res.status(401);
             res.json({result: 'Not Authorized'});
         })
@@ -535,7 +535,22 @@ router.get('/votingCauses', (req, res) => {
  * @apiError {String} result Returns 'error'
  */
 router.put('/notificationSeen/:notificationId', (req, res) => {
-    // TODO not a priority right now
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+        return;
+    }
+
+    db.AppUser.findOne({where: {'token': auth}})
+        .then(() => {
+            return db.UserMsg.update({seen:true},{where: {'firebaseMsgID': req.params.notificationId}})
+        })
+        .then(()=>{
+            res.json({result:'Success'})
+        })
+        .catch(()=>{
+            res.json({result:'Error'})
+        })
 });
 
 /**
