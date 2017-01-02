@@ -505,8 +505,8 @@ router.put('/notificationSeen/:notificationId', (req, res) => {
 });
 
 /**
- * @api {put} /api/daysToWarn Get number of days to warn the user
- * @apiDescription Get number of days to warn the user
+ * @api {put} /api/daysToWarn Get title, alert message and number of days to warn the user
+ * @apiDescription Get title, alert message and number of days to warn the user
  * @apiName Get number of days to warn the user
  * @apiGroup Alerts
  * @apiVersion 0.1.0
