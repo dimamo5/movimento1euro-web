@@ -549,8 +549,11 @@ router.put('/notificationSeen/', (req, res) => {
         .then(() => {
             return db.UserMsg.update({seen:true},{where: {'firebaseMsgID': req.body.notificationId}})
         })
-        .then(()=>{
-            res.json({result:'Success'})
+        .then((array)=>{
+            if(array[0]>0)
+                res.json({result:'Success'});
+            else
+                res.json({result:'Error'});
         })
         .catch(()=>{
             res.json({result:'Error'})
