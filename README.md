@@ -13,13 +13,14 @@ The product includes two applications. A mobile application for ordinary users, 
 
 ##Technologies used
 ###Backend Services
--Node.js (v6.8.1)
--Sequelize.js (v3.24.1)
--Express.js (v4.14.0)
--Handlebars.js
--MySQL
+- Node.js (v6.8.1)
+- Sequelize.js (v3.24.1)
+- Express.js (v4.14.0)
+- Handlebars.js
+- MySQL
 For the proxy server
--NGinx
+- NGinx
+
 ###Frontend Services
--Bootstrap (v3.3.7)
--Vue.js (v2.0)
+- Bootstrap (v3.3.7)
+- Vue.js (v2.0)
