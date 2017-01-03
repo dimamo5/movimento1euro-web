@@ -1,5 +1,6 @@
 /**
  * Created by diogo on 27/10/2016.
+ * Some aux functions related with users
  */
 const db = require('../database/database.js');
 const crypto = require('crypto');

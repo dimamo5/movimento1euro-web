@@ -1,5 +1,6 @@
 /**
  * Created by diogo on 17/10/2016.
+ * Routes to authenticate a user in the notification backoffice
  */
 const express = require('express');
 const crypto = require('crypto');
@@ -22,6 +23,7 @@ router.get('/login', (req, res) => {
   }
 });
 
+//Sets the session
 router.post('/process_login', (req, res) => {
   if (req.session.id && req.session.username) {
     res.redirect('/user');

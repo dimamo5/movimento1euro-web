@@ -1,5 +1,7 @@
 /**
  * Created by diogo on 16/10/2016.
+ * File with functions related with database like setup a connection, populate the database dependent on the environment
+ * and dump the database.
  */
 
 /* establishing Connection*/
