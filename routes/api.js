@@ -74,6 +74,23 @@ router.post('/login', (req, res) => {
     }
 });
 
+/**
+ * @api {get} /api/refresh User Token Refresh
+ * @apiDescription Get updated information from an user
+ * @apiName Refresh
+ * @apiGroup Authentication
+ * @apiVersion 0.1.0
+ *
+ * @apiParam {String} token User's Token
+ *
+ * @apiSuccess {String} result Returns success
+ * @apiSuccess {String} token Token for future calls to the API
+ * @apiSuccess {Number} id Id of the logged user
+ * @apiSuccess {String} name Name of the logged user
+ * @apiSuccess {String} expDate Date of the last payment
+ *
+ * @apiError {String} result Returns 'login failed' or 'wrong params'
+ */
 router.get('/refresh', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {

@@ -1,6 +1,6 @@
 /**
  * Created by diogo on 04/12/2016.
- * File to be used with a cronjob to send automatic notifications.
+ * File to be used with a cronjob to send automatic notifications to the users that their payment date is close.
  */
 const api = require('./api_wrapper');
 const db = require('./database');

@@ -1,7 +1,11 @@
 /**
  * Created by diogo on 16/10/2016.
- * File with functions related with database like setup a connection, populate the database dependent on the environment
- * and dump the database.
+ * File with functions related with database like:
+ *  - Setup a connection
+ *  - Populate the database dependent on the environment
+ *  - Dump the database
+ *
+ * It is also made a Wordpress Database Simulation
  */
 
 /* establishing Connection*/
