@@ -16,12 +16,11 @@ const options = {
     },
     json: true,
     body: {
-        notification: {
+        data: {
             title: 'Titulo',
             body: 'Corpo',
             sound: 'default'
-        },
-        data: {message: "teste"}
+        }
     }
 };
 
@@ -64,7 +63,7 @@ function sendTemplateMessage(templateId, usersIds, success) {
             console.log("firebase id: " + user.firebase_token);
 
             options_request.body.to = user.firebase_token;
-            options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
+            options_request.body.data = {title: template_title, body: parsed_content, sound: 'default'};
 
             request(options_request, (error, response, body) => {
                 if (!error && response.statusCode == 200 && body.failure == 0) {
@@ -138,7 +137,7 @@ router.post('/sendManual', (req, res) => {
         }
 
         options.body.registration_ids = firebase_ids;
-        options.body.notification = {title: title, body: content, sound: 'default'};
+        options.body.data = {title: title, body: content, sound: 'default'};
 
         db.Message.create({
             msg_type: msg_type,
