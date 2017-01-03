@@ -21,6 +21,7 @@ const options = {
             body: 'Corpo',
             sound: 'default'
         },
+        data: {message: "teste"}
     }
 };
 
@@ -177,4 +178,4 @@ router.post('/sendManual', (req, res) => {
 
 
 module.exports = router;
-module.exports.sendTemplateMessage=sendTemplateMessage;
+module.exports.sendTemplateMessage = sendTemplateMessage;
