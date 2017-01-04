@@ -4,7 +4,7 @@
     margin-top: 35px;
 }
 .form {
-    background-color: #8DC26F;
+    background-color: rgb(253, 217, 0);
     position: relative;
     z-index: 1;
     /* background: #FFFFFF;*/
@@ -31,7 +31,7 @@
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: #4CAF50;
+    background: black;
     width: 100%;
     border: 0;
     padding: 15px;
@@ -43,7 +43,8 @@
 }
 
 .form button:hover, .form button:active, .form button:focus {
-    background: #43A047;
+    background: rgb(44, 46, 49);
+    color: #FFFFFF;
 }
 
 .form .message {
