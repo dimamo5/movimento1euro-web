@@ -197,6 +197,7 @@ router.post('/loginfb', (req, res) => {
 router.get('/logout', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
+        res.status(401);
         res.json({result: 'Authorization required'});
     } else {
         db.AppUser.update({token: null},
@@ -205,7 +206,9 @@ router.get('/logout', (req, res) => {
                 if (results.length > 0) {
                     res.json({result: 'success'});
                 } else {
-                    res.json({result: 'error'});
+                    //Mensagem de erro!
+                    res.status(401);
+                    res.json({result: 'Error firebase token not valid'});
                 }
             });
     }
@@ -265,6 +268,7 @@ router.get('/logout', (req, res) => {
 router.get('/winnerCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
+        res.status(401);
         res.json({result: 'Authorization required'});
         return;
     }
@@ -272,8 +276,8 @@ router.get('/winnerCauses', (req, res) => {
     const formData = {action: 'm1e_votacoes_vencedores'};
     let causes = [];
     if (req.query.ano) {
-        let year = req.query.ano
-        if (year.length == 4)
+        let year = req.query.ano;
+        if(year.length == 4)
             formData.ano = year
     }
 
@@ -337,6 +341,7 @@ router.get('/winnerCauses', (req, res) => {
 router.put('/firebaseToken', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
+        res.status(401);
         res.json({result: 'Authorization required'});
     } else if (!req.body.firebaseToken) {
         res.json({result: 'Wrong params'});
@@ -347,12 +352,18 @@ router.put('/firebaseToken', (req, res) => {
             },
         })
             .then((result) => {
-                result.set('firebase_token', req.body.firebaseToken);
-                result.save()
-                    .then(res.json({result: 'success'}));
+                if (results.length > 0) {
+                    result.set('firebase_token', req.body.firebaseToken);
+                    result.save()
+                        .then(res.json({result: 'success'}));
+                } else {
+                    //Mensagem de erro!
+                    res.status(401);
+                    res.json({result: 'Error firebase token not valid'});
+                }
             })
             .catch(() => {
-                res.json({result: 'error'});
+                res.json({result: 'Error'});
             });
     }
 });
@@ -376,6 +387,7 @@ router.put('/firebaseToken', (req, res) => {
 router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
+        res.status(401);
         res.json({result: 'Authorization required'});
         return;
     }
@@ -398,7 +410,7 @@ router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
                     res.json({result: 'success'});
                 } else {
                     res.status(500);
-                    res.json({result: 'Erro desconhecido'})
+                    res.json({result: 'Error unknown'})
                 }
             }
         }
@@ -496,6 +508,7 @@ router.post('/voteCause/:idVotacao/:idCausa', (req, res) => {
 router.get('/votingCauses', (req, res) => {
     const auth = req.get('Authorization');
     if (!auth) {
+        res.status(401);
         res.json({result: 'Authorization required'});
         return;
     }
@@ -516,7 +529,7 @@ router.get('/votingCauses', (req, res) => {
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
-                    res.json({result: 'Erro desconhecido'})
+                    res.json({result: 'Error unknown'})
                 }
             }
         }
@@ -540,5 +553,38 @@ router.get('/votingCauses', (req, res) => {
 router.put('/notificationSeen/:notificationId', (req, res) => {
     // TODO not a priority right now
 });
+
+
+router.get('/days_to_warn', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.status(401);
+        res.json({result: 'Authorization required'});
+        return;
+    }
+    const formData = {action: 'm1e_votacoes_ativas'};
+    let causes = [];
+
+    request.post({
+            url: M1E_URL,
+            form: formData
+        }, function (err, response, body) {
+            let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+            if (!err && response.statusCode == 200) {
+                if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
+                    res.status(400);
+                    res.json({result: bodyJSON.mensagem})
+                } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
+                    let votacao = bodyJSON.resultados;
+                    res.json({result: 'success', votacao: votacao});
+                } else {
+                    res.status(500);
+                    res.json({result: 'Error unknown'})
+                }
+            }
+        }
+    );
+});
+
 
 module.exports = router;

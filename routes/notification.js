@@ -33,7 +33,7 @@ function sendTemplateMessage(templateId, usersIds, success) {
     let template_content, template_title;
     let msg_type = 'Template';
     let ids = usersIds;
-    let results = [];
+    let results = {success: [], error: []};
     let messageGlobal;
 
     //get template from template_id of the post request
@@ -68,7 +68,7 @@ function sendTemplateMessage(templateId, usersIds, success) {
             request(options_request, (error, response, body) => {
                 if (!error && response.statusCode == 200 && body.failure == 0) {
                     if (!body.results.error) {
-                        results.push(body.results[0]);
+                        results.success.push(body.results[0]);
                         messageGlobal.setAppUsers([user], {
                             firebaseMsgID: body.results[0].message_id,
                             content: parsed_content,
@@ -76,6 +76,7 @@ function sendTemplateMessage(templateId, usersIds, success) {
                         });
                     }
                     else { //erro na msg
+                        results.error.push(user.name);
                         messageGlobal.setAppUsers([user], {
                             firebaseMsgID: body.results[0].message_id,
                             content: parsed_content,
@@ -84,10 +85,16 @@ function sendTemplateMessage(templateId, usersIds, success) {
                     }
                     callback();
                 } else {
+                    //Resposta com status code a 400
+                    results.error.push(user.name);
+                    messageGlobal.setAppUsers([user], {
+                        firebaseMsgID: body.results[0].message_id,
+                        content: parsed_content,
+                        sent: false
+                    });
                     callback(error);
                 }
             });
-
         }, function (err) {
             // if any of the notification processing produced an error, err would equal that error
             if (err) {
@@ -124,6 +131,7 @@ router.post('/sendManual', (req, res) => {
     let content = req.body.content;
     let msg_type = 'Manual';
     let ids = req.body.ids;
+    let results = {success: [], error: []};
 
     db.AppUser.findAll({
         where: {id: ids},
@@ -162,7 +170,25 @@ router.post('/sendManual', (req, res) => {
                         notificationStates: body.results,
                     });
                 } else {
-                    res.json({result: 'Error processing notifications'});
+                    let error = [];
+                    for (let i = 0; i < body.results.length; i++) {
+                        if (body.results[i].error) {
+                            db.AppUser.findOne({
+                                where: {id: ids[i]}
+                            }).then((user) => {
+                                error.push(user.name);
+                            }).then(() => {
+                                //testo se esta na ultima iteração
+                                //TODO: esta trolha pois isto é só para evitar que ele mande a resposta antes dos nomes estarem todos
+                                if (i == (body.results.length - 1)) {
+                                    res.json({
+                                        result: 'Error processing notifications',
+                                        notificationStates: error
+                                    })
+                                }
+                            })
+                        }
+                    }
                     console.log(error, response);
                 }
             });
@@ -173,8 +199,9 @@ router.post('/sendManual', (req, res) => {
         }
     );
 
-});
+})
+;
 
 
 module.exports = router;
-module.exports.sendTemplateMessage=sendTemplateMessage;
+module.exports.sendTemplateMessage = sendTemplateMessage;
