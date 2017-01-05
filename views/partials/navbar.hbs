@@ -13,7 +13,7 @@
     <!-- Top Menu Items -->
     <ul class="nav navbar-right top-nav">
         <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Nelson Oliveira <b
+            <a id = "userName" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-fw fa-user"></i> Nelson Oliveira <b
                     class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li>
@@ -26,16 +26,16 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             <li {{#with usersPage}}class="active" {{/with}}>
-                <a href="/user"><i class="fa fa-fw fa-dashboard"></i> Utilizadores</a>
+                <a href="/user"><i class="fa fa-fw fa-users" aria-hidden="true"></i> Utilizadores</a>
             </li>
             <li {{#with historyPage}}class="active" {{/with}}>
-                <a href="/history"><i class="fa fa-fw fa-bar-chart-o"></i> Histórico de Mensagens</a>
+                <a href="/history"><i class="fa fa-fw fa-history"></i> Histórico de Mensagens</a>
             </li>
             <li {{#with templatesPage}}class="active" {{/with}}>
-                <a href="/template"><i class="fa fa-fw fa-table"></i> Gestão de Templates </a>
+                <a href="/template"><i class="fa fa-fw fa-edit"></i> Gestão de Templates </a>
             </li>
             <li {{#with alertsPage}}class="active" {{/with}}>
-                <a href="/alert"><i class="fa fa-fw fa-edit"></i> Gestão Alertas</a>
+                <a href="/alert"><i class="fa fa-fw fa-bell"></i> Gestão Alertas</a>
             </li>
 
         </ul>
