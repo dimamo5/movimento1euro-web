@@ -74,6 +74,57 @@ router.post('/login', (req, res) => {
     }
 });
 
+/**
+ * @api {get} /api/refresh User Token Refresh
+ * @apiDescription Get updated information from an user
+ * @apiName Refresh
+ * @apiGroup Authentication
+ * @apiVersion 0.1.0
+ *
+ * @apiParam {String} token User's Token
+ *
+ * @apiSuccess {String} result Returns success
+ * @apiSuccess {String} token Token for future calls to the API
+ * @apiSuccess {Number} id Id of the logged user
+ * @apiSuccess {String} name Name of the logged user
+ * @apiSuccess {String} expDate Date of the last payment
+ *
+ * @apiError {String} result Returns 'login failed' or 'wrong params'
+ */
+router.get('/refresh', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.status(401);
+        res.json({result: 'Authorization required'});
+        return;
+    }
+    let appUserTemp;
+    db.AppUser.findOne({where: {token: auth}})
+        .then((appUser) => {
+            appUserTemp = appUser;
+            return db.WpUser.findOne({
+                where: {
+                    id: appUser.external_link_id,
+                }
+            })
+        })
+        .catch(() => {
+            res.status(401);
+            res.json({result: 'Not Authorized'});
+        })
+        .then((wpUser) => {
+            res.json({
+                result: 'success',
+                token: appUserTemp.token,
+                id: appUserTemp.id,
+                name: wpUser.name,
+                expDate: wpUser.nextPayment
+            });
+        })
+        .catch(() => {
+            res.json({result: "Error"})
+        })
+});
 
 /**
  * @api {get} /api/loginFB Verify FB login
@@ -181,7 +232,7 @@ router.get('/logout', (req, res) => {
  * @apiVersion 0.1.0
  * @apiHeader {String} Authorization User token
  *
- * @apiParam {String} ano Causas do Ano especifico / Caso não seja enviado retorna todas as causas passadas
+ * @apiParam {String} Year Causes of the year given / if not sent it will return all past causes
  *
  * @apiSuccess {String} result Returns 'success'
  * @apiSuccess {Object[]} causes Array with all the causes
@@ -235,7 +286,7 @@ router.get('/winnerCauses', (req, res) => {
     let causes = [];
     if (req.query.ano) {
         let year = req.query.ano
-        if(year.length == 4)
+        if (year.length == 4)
             formData.ano = year
     }
 
@@ -270,7 +321,7 @@ router.get('/winnerCauses', (req, res) => {
                         res.json({result: 'success', causes: causes});
                     }
                 });
-            } else{
+            } else {
                 causes = bodyJSON.resultados;
                 res.json({result: 'success', causes: causes});
 
@@ -468,13 +519,13 @@ router.get('/votingCauses', (req, res) => {
             url: M1E_URL,
             form: formData
         }, function (err, response, body) {
-        let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
+            let bodyJSON = JSON.parse(body.slice(body.indexOf('{')))
             if (!err && response.statusCode == 200) {
                 if (bodyJSON.estado == "NOK") {            //Caso retorne logo erro
                     res.status(400);
                     res.json({result: bodyJSON.mensagem})
                 } else if (bodyJSON.estado == "OK") {    //Caso tenha sucesso
-                   let votacao = bodyJSON.resultados;
+                    let votacao = bodyJSON.resultados;
                     res.json({result: 'success', votacao: votacao});
                 } else {
                     res.status(500);
@@ -486,7 +537,7 @@ router.get('/votingCauses', (req, res) => {
 });
 
 /**
- * @api {put} /api/notificationSeen/:notificationId Set notification as seen
+ * @api {put} /api/notificationSeen/ Set notification as seen
  * @apiDescription Set notification as seen
  * @apiName Set Notification Seen
  * @apiGroup Notifications
@@ -499,8 +550,89 @@ router.get('/votingCauses', (req, res) => {
  *
  * @apiError {String} result Returns 'error'
  */
-router.put('/notificationSeen/:notificationId', (req, res) => {
-    // TODO not a priority right now
+router.put('/notificationSeen/', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.json({result: 'Authorization required'});
+        return;
+    }
+    if (!req.body.notificationId) {
+        res.status(400);
+        res.json({result: 'Wrong params'});
+    }
+
+    db.AppUser.findOne({where: {'token': auth}})
+        .then(() => {
+            return db.UserMsg.update({seen:true},{where: {'firebaseMsgID': req.body.notificationId}})
+        })
+        .then((array)=>{
+            if(array[0]>0)
+                res.json({result:'Success'});
+            else
+                res.json({result:'Error'});
+        })
+        .catch(()=>{
+            res.json({result:'Error'})
+        })
 });
+
+/**
+ * @api {get} /api/daysToWarn Get title, alert message and number of days to warn the user
+ * @apiDescription Get title, alert message and number of days to warn the user
+ * @apiName Get number of days to warn the user
+ * @apiGroup Alerts
+ * @apiVersion 0.1.0
+ * @apiHeader {String} Authorization User token
+ *
+ *
+ * @apiSuccess {String} result Returns 'success'
+ * @apiSuccess {Number} days_to_warn number of days to warn the user
+ * @apiSuccess {String} alertTitle title of the alert
+ * @apiSuccess {String} alertMsg content of the message with tag of the alert
+ * @apiSuccess {Boolean} active status of the alert (active or not)
+ *
+ * @apiError {String} result Returns 'error'
+ */
+router.get('/daysToWarn', (req, res) => {
+    const auth = req.get('Authorization');
+    if (!auth) {
+        res.status(401);
+        res.json({result: 'Authorization required'});
+        return;
+    }
+    else {
+        db.AppUser.findOne({
+            where: {
+                token: auth,
+            },
+        })
+            .then((result) => {
+                if (result != null) {
+                    db.Alert.findOne()
+                        .then((alert) => {
+                            db.Template.findOne({where: {id: alert.dataValues.TemplateId}})
+                                .then((template) => {
+                                    res.status(200);
+                                    res.json({
+                                        result: 'success',
+                                        'active': alert.active,
+                                        'daysToWarn': alert.start_alert,
+                                        'alertTitle': template.name,
+                                        'alertMsg': template.content
+                                    });
+                                })
+                        })
+                } else {
+                    //Mensagem de erro!
+                    res.status(401);
+                    res.json({result: 'Error firebase token not valid'});
+                }
+            })
+            .catch(() => {
+                res.json({result: 'Error'});
+            });
+    }
+});
+
 
 module.exports = router;
