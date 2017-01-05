@@ -453,14 +453,14 @@ function populateDB() {
 
     const temp2 = Template.build({
         name: 'Causa vencedora',
-        content: 'A causa vencedora deste mês é: @nomeCausa, @descricaoCausa',
+        content: 'A causa vencedora deste mês é: nomeCausa, descricaoCausa',
     });
 
 
     const temp3 = Template.build({
         name: 'Nova causa',
-        content: 'Ex.@name,' +
-        ' Este mes temos o prazer de apresentar @nameCausa.',
+        content: 'Ex.@nome,' +
+        ' Este mes temos o prazer de apresentar Causa#1.',
     });
 
     Promise.all([msg1.save(), msg2.save(), msg3.save(), msg4.save(), msg5.save(), msg6.save(), temp1.save(), temp2.save(), temp3.save(),

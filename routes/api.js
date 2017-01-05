@@ -352,7 +352,6 @@ router.put('/firebaseToken', (req, res) => {
     if (!auth) {
         res.json({result: 'Authorization required'});
     } else if (!req.body.firebaseToken) {
-        res.status(401);
         res.json({result: 'Wrong params'});
     } else {
         db.AppUser.findOne({

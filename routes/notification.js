@@ -16,27 +16,24 @@ const options = {
     },
     json: true,
     body: {
-        data: {
+        notification: {
             title: 'Titulo',
             body: 'Corpo',
             sound: 'default'
-        }
+        },
     }
 };
 
-//Parse the template for a specific user
 function parseTemplate(message, user) {
     return message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment.toLocaleString())
 }
 
-//Send the notification for the users in usersIds with the templateId
-//Returns an http response with the users the message succeeded
 function sendTemplateMessage(templateId, usersIds, success) {
     let template_id = templateId;
     let template_content, template_title;
     let msg_type = 'Template';
     let ids = usersIds;
-    let results = [];
+    let results = {success: [], error: []};
     let messageGlobal;
 
     //get template from template_id of the post request
@@ -58,39 +55,46 @@ function sendTemplateMessage(templateId, usersIds, success) {
         async.each(users, function (user, callback) {
             console.log('Processing notification to user #' + user.id);
 
-            let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
+            if (user.firebase_token == null || user.firebase_token == "") {
+                results.error.push(user.name);
+                callback();
+            }
+            else {
 
-            //clone object because async is the thing
-            let options_request = JSON.parse(JSON.stringify(options));
+                let parsed_content = parseTemplate(template_content, user.wpUser); // parse i
 
-            console.log("firebase id: " + user.firebase_token);
+                //clone object because async is the thing
+                let options_request = JSON.parse(JSON.stringify(options));
 
-            options_request.body.to = user.firebase_token;
-            options_request.body.data = {title: template_title, body: parsed_content, sound: 'default'};
+                console.log("firebase id: " + user.firebase_token);
 
-            request(options_request, (error, response, body) => {
-                if (!error && response.statusCode == 200 && body.failure == 0) {
-                    if (!body.results.error) {
-                        results.push(body.results[0]);
-                        messageGlobal.setAppUsers([user], {
-                            firebaseMsgID: body.results[0].message_id,
-                            content: parsed_content,
-                            sent: true
-                        });
+                options_request.body.to = user.firebase_token;
+                options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
+
+                request(options_request, (error, response, body) => {
+                    if (!error && response.statusCode == 200 && body.failure == 0) {
+                        if (!body.results.error) {
+                            results.success.push(body.results[0]);
+                            messageGlobal.setAppUsers([user], {
+                                firebaseMsgID: body.results[0].message_id,
+                                content: parsed_content,
+                                sent: true
+                            });
+                        }
+                        else { //erro na msg
+                            results.error.push(user.name);
+                            messageGlobal.setAppUsers([user], {
+                                firebaseMsgID: body.results[0].message_id,
+                                content: parsed_content,
+                                sent: false
+                            });
+                        }
+                        callback();
+                    } else {
+                        callback(error);
                     }
-                    else { //erro na msg
-                        messageGlobal.setAppUsers([user], {
-                            firebaseMsgID: body.results[0].message_id,
-                            content: parsed_content,
-                            sent: false
-                        });
-                    }
-                    callback();
-                } else {
-                    callback(error);
-                }
-            });
-
+                });
+            }
         }, function (err) {
             // if any of the notification processing produced an error, err would equal that error
             if (err) {
@@ -117,8 +121,6 @@ router.post('/sendTemplate', (req, res) => {
     });
 });
 
-//Sends a notifications with the message to be sent in the request body and
-// returns a http response with the users the notifications wa sent successfully
 router.post('/sendManual', (req, res) => {
     if (!(req.body.ids && req.body.title && req.body.content)) {
         res.json({error: 'Wrong params'});
@@ -129,6 +131,7 @@ router.post('/sendManual', (req, res) => {
     let content = req.body.content;
     let msg_type = 'Manual';
     let ids = req.body.ids;
+    let results = {success: [], error: []};
 
     db.AppUser.findAll({
         where: {id: ids},
@@ -142,7 +145,7 @@ router.post('/sendManual', (req, res) => {
         }
 
         options.body.registration_ids = firebase_ids;
-        options.body.data = {title: title, body: content, sound: 'default'};
+        options.body.notification = {title: title, body: content, sound: 'default'};
 
         db.Message.create({
             msg_type: msg_type,
@@ -167,7 +170,25 @@ router.post('/sendManual', (req, res) => {
                         notificationStates: body.results,
                     });
                 } else {
-                    res.json({result: 'Error processing notifications'});
+                    let error = [];
+                    for (let i = 0; i < body.results.length; i++) {
+                        if (body.results[i].error) {
+                            db.AppUser.findOne({
+                                where: {id: ids[i]}
+                            }).then((user) => {
+                                error.push(user.name);
+                            }).then(() => {
+                                //testo se esta na ultima iteração
+                                //TODO: esta trolha pois isto é só para evitar que ele mande a resposta antes dos nomes estarem todos
+                                if(i == (body.results.length-1)) {
+                                    res.json({
+                                        result: 'Error processing notifications',
+                                        notificationStates: error
+                                    })
+                                }
+                            })
+                        }
+                    }
                     console.log(error, response);
                 }
             });
@@ -178,7 +199,8 @@ router.post('/sendManual', (req, res) => {
         }
     );
 
-});
+})
+;
 
 
 module.exports = router;
