@@ -78,10 +78,9 @@ router.post('/login', (req, res) => {
                                     crypto.randomBytes(48, (err, buffer) => {
                                         const token = buffer.toString('hex');
                                         result.token = token;
-                                        var l = apiWrapper.parseCookies(response.headers["set-cookie"][0])
-                                        result.cookieAdim0 = response.headers["set-cookie"][0];
-                                        result.cookieAdim1 = response.headers["set-cookie"][1];
-                                        result.cookie = response.headers["set-cookie"][2];
+                                        result.cookieAdim0 = apiWrapper.parseCookies(response.headers["set-cookie"][0])[0];
+                                        result.cookieAdim1 = apiWrapper.parseCookies(response.headers["set-cookie"][1])[0];
+                                        result.cookie = apiWrapper.parseCookies(response.headers["set-cookie"][2])[0];
 
                                         result.save().then(() => res.json({
                                             result: 'success',

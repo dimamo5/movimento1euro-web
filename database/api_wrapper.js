@@ -55,17 +55,14 @@ function getUsersInfoIds(ids) {
 }
 
 function parseCookies (request) {
-    var list = {},
+    var list = [], res = ""
         rc = request;
+    var i = 0;
 
     rc && rc.split(';').forEach(function( cookie ) {
         var parts = cookie.split('=');
-        list[parts.shift().trim()] = parts.join('=');
+        list.push(parts.join('='));
     });
-
-
-
-
 
     return list;
 }
