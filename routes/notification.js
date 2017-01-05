@@ -16,7 +16,7 @@ const options = {
     },
     json: true,
     body: {
-        notification: {
+        data: {
             title: 'Titulo',
             body: 'Corpo',
             sound: 'default'
@@ -24,10 +24,13 @@ const options = {
     }
 };
 
+//Parse the template for a specific user
 function parseTemplate(message, user) {
     return message.replace('@nome', user.name).replace('@proxPagamento', user.nextPayment.toLocaleString())
 }
 
+//Send the notification for the users in usersIds with the templateId
+//Returns an http response with the users the message succeeded
 function sendTemplateMessage(templateId, usersIds, success) {
     let template_id = templateId;
     let template_content, template_title;
@@ -69,7 +72,7 @@ function sendTemplateMessage(templateId, usersIds, success) {
                 console.log("firebase id: " + user.firebase_token);
 
                 options_request.body.to = user.firebase_token;
-                options_request.body.notification = {title: template_title, body: parsed_content, sound: 'default'};
+                options_request.body.data = {title: template_title, body: parsed_content, sound: 'default'};
 
                 request(options_request, (error, response, body) => {
                     if (!error && response.statusCode == 200 && body.failure == 0) {
@@ -91,6 +94,13 @@ function sendTemplateMessage(templateId, usersIds, success) {
                         }
                         callback();
                     } else {
+                        //Resposta com status code a 400
+                        results.error.push(user.name);
+                        messageGlobal.setAppUsers([user], {
+                            firebaseMsgID: body.results[0].message_id,
+                            content: parsed_content,
+                            sent: false
+                        });
                         callback(error);
                     }
                 });
@@ -121,6 +131,8 @@ router.post('/sendTemplate', (req, res) => {
     });
 });
 
+//Sends a notifications with the message to be sent in the request body and
+// returns a http response with the users the notifications wa sent successfully
 router.post('/sendManual', (req, res) => {
     if (!(req.body.ids && req.body.title && req.body.content)) {
         res.json({error: 'Wrong params'});
@@ -145,7 +157,7 @@ router.post('/sendManual', (req, res) => {
         }
 
         options.body.registration_ids = firebase_ids;
-        options.body.notification = {title: title, body: content, sound: 'default'};
+        options.body.data = {title: title, body: content, sound: 'default'};
 
         db.Message.create({
             msg_type: msg_type,
@@ -180,7 +192,7 @@ router.post('/sendManual', (req, res) => {
                             }).then(() => {
                                 //testo se esta na ultima iteração
                                 //TODO: esta trolha pois isto é só para evitar que ele mande a resposta antes dos nomes estarem todos
-                                if(i == (body.results.length-1)) {
+                                if (i == (body.results.length - 1)) {
                                     res.json({
                                         result: 'Error processing notifications',
                                         notificationStates: error
