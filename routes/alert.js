@@ -1,5 +1,6 @@
 /**
  * Created by inesa on 02/12/2016.
+ * Routes for the alerts page in the notification backoffice
  */
 const express = require('express');
 const db = require('../database/database');

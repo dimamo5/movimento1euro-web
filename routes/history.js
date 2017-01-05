@@ -1,3 +1,6 @@
+/**
+ * Routes to the history page in the notification backoffice
+ */
 const express = require('express');
 const db = require('../database/database');
 const api = require('../database/api_wrapper');
