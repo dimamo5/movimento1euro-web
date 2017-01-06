@@ -413,7 +413,7 @@ function populateDB() {
         external_link_id: 3,
         name: 'Ines',
         last_visit: new Date(2016, 10, 1, 16, 45, 0, 0),
-        firebase_token: 'ckV2oHB7J7o:APA91bGyTiXaK-f2HJyrUY9c-SEWmp03Aox5hTeBxuK2KEzkT-U_vH2CVwPTH3Wv_NbzOjFscrFnpvkqxD8t-9yn6pGClrp7fmah-9PGXwV8knjHC1ZWAqUj1NVmmqejFiJHd6iDtkut'
+        firebase_token: 'c7MSdY87IWI:APA91bHBnzxoRvGqcVGTszHSH74XO9bsTR1TIsZ_EHGt7J522E4ePyR0EYrweNJiletW0QE4LMHs1BOmhw5MyutI0lQA3Hk49X1rYPgfVc0MPjmztmO4pMYmVP9zhsJVBC_sQW7FP-ru'
     });
 
     const appUser4 = AppUser.build({
