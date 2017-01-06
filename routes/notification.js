@@ -96,11 +96,6 @@ function sendTemplateMessage(templateId, usersIds, success) {
                     } else {
                         //Resposta com status code a 400
                         results.error.push(user.name);
-                        messageGlobal.setAppUsers([user], {
-                            firebaseMsgID: body.results[0].message_id,
-                            content: parsed_content,
-                            sent: false
-                        });
                         callback(error);
                     }
                 });

@@ -111,7 +111,7 @@ $(document).ready(function () {
                     reviewContent: function () {
                         let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
                         let copy = "";
-                        copy = this.templates[this.select].content;
+                        copy = this.templates[this.select-1].content;
                         this.previewContent = copy.replace('@name', dummy.name).replace('@proxPagamento', date);
 
                     },
