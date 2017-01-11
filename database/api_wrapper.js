@@ -1,5 +1,11 @@
 /**
  * Created by diogo on 27/10/2016.
+ * This file performs the following user operations:
+ *  - Given an e-mail and password returns the corresponding user
+ *  - Given a facebook ID it is returned the corresponding user
+ *  - Get the information from all users
+ *  - Given an ID, it is returned the corresponding user information (also possible to get from an external database)
+ *  - Get the information from an user on an external database
  */
 const db = require('../database/database.js');
 const crypto = require('crypto');

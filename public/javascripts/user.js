@@ -111,7 +111,7 @@ $(document).ready(function () {
                     reviewContent: function () {
                         let date = dummy.nextPayment.getUTCDay() + '-' + dummy.nextPayment.getUTCMonth() + '-' + dummy.nextPayment.getUTCFullYear()
                         let copy = "";
-                        copy = this.templates[this.select].content;
+                        copy = this.templates[this.select-1].content;
                         this.previewContent = copy.replace('@name', dummy.name).replace('@proxPagamento', date);
 
                     },
@@ -128,10 +128,13 @@ $(document).ready(function () {
                             if (user['select']) {
                                 selected_users.push(user.id);
                                 user['select'] = false;
+                                this.counter--;
                             }
-                            //TODO: rever isto porque é desnecessario correr tantas vezes
-                            if(this.checkAll)
-                                this.checkAll = false;
+                        }
+
+                        if (this.checkAll) {
+                            this.checkAll = false;
+                            this.counter = 0;
                         }
 
                         if (this.picked === 'Manual') {
@@ -148,13 +151,29 @@ $(document).ready(function () {
                                 success: function (data, textStatus, jqXHR) {
                                     console.log(data);
                                     console.log(textStatus);
-                                 //   if (selected_users.length == data.notificationStates.length)
-                                  //      swal("Sucesso!", "Mensagem enviada para tofos os utilizadores", "success");
-                                  //  else
-                                        swal("Sucesso!", "Mensagem enviada para " + selected_users.length + " utilizadores", "success");
+                                    if (selected_users.length == data.notificationStates.length)
+                                        swal("Sucesso!", "Mensagem enviada para todos os utilizadores selecionados", "success");
+                                    else
+                                        swal({
+                                                title: "Erro!",
+                                                text: "Mensagem não enviada para " + data.notificationStates.length + " utilizadores",
+                                                type: "error",
+                                                showCancelButton: true,
+                                                closeOnConfirm: false,
+                                                confirmButtonText: "Mostrar Utilizadores",
+                                            },
+                                            function () {
+                                                let users = "";
+                                                for (let i = 0; i < data.notificationStates.length - 1; i++)
+                                                    users += data.notificationStates[i] + ', ';
+
+                                                users += data.notificationStates[data.notificationStates.length - 1]
+
+                                                swal("Utilizadores: ", users, "info");
+                                            });
                                 },
                                 error: function (data, textStatus, jqXHR) {
-                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
+                                    swal("Erro!", "Ocorreu um erro ao enviar mensagem", "error");
                                     console.log(data)
                                 }
                             })
@@ -171,14 +190,34 @@ $(document).ready(function () {
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
-                                    swal("Sucesso!", "Mensagem enviada para " + selected_users.length + " utilizadores", "success");
-                                    console.log(data)
+                                    if (selected_users.length == data.notificationStates.success.length)
+                                        swal("Sucesso", "Mensagem enviada para todos os utilizadores selecionados", "success");
+                                    else
+                                        swal({
+                                                title: "Erro!",
+                                                text: "Mensagem não enviada para " + data.notificationStates.error.length + " utilizadores",
+                                                type: "error",
+                                                showCancelButton: true,
+                                                closeOnConfirm: false,
+                                                confirmButtonText: "Mostrar Utilizadores",
+                                            },
+                                            function () {
+                                                let users = "";
+                                                for (let i = 0; i < data.notificationStates.error.length - 1; i++)
+                                                    users += data.notificationStates.error[i] + ', ';
+
+                                                users += data.notificationStates.error[data.notificationStates.error.length - 1]
+
+                                                swal("Utilizadores: ", users, "info");
+                                            });
+                                    console.log(data);
                                 },
                                 error: function (data, textStatus, jqXHR) {
-                                    swal("Eroo!", "Ocorreu um erro ao enviar mensagem", "error");
+                                    swal("Erro!", "Ocorreu um erro ao enviar mensagem", "error");
                                     console.log(data)
                                 }
                             });
+                            this.templates = [];
                         }
                         else {
                             console.log("Error on this.picked value. Not recognized.")

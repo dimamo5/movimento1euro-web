@@ -110,6 +110,20 @@ ul.alert-dropdown {
     width: 200px;
 }
 
+.navbar-inverse .navbar-brand {
+    color: rgb(253, 217, 0);
+}
+/*
+#userName {
+    color: rgb(253, 217, 0);
+}*/
+/*
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+    color: #fff;
+     background-color: rgb(253, 217, 0);
+}
+*/
+
 /* Side Navigation */
 
 @media(min-width:768px) {
@@ -132,7 +146,10 @@ ul.alert-dropdown {
         width: 225px;
     }
 
-    .side-nav li a:hover,
+    .side-nav li a:hover{
+        outline: none;
+        background-color: rgb(253, 217, 0) !important;
+    }
     .side-nav li a:focus {
         outline: none;
         background-color: #000 !important;

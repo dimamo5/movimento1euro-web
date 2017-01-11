@@ -1,5 +1,6 @@
 /**
  * Created by diogo on 16/10/2016.
+ * Routes to the template page in the notification backoffice
  */
 
 const express = require('express');
